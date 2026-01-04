@@ -1,16 +1,16 @@
 <script lang="ts">
   import Carousel_Stories from "./_components/Carousel_Stories.svelte";
-  import { getUserFirstLastNames } from "$lib/common-library/sharepoint-rest-api/helpers";
+  import { getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
   import { cn } from "$lib/utils";
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/const/classes";
+  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
   import { global_State } from "$lib/data/global-state.svelte";
   import { SHAREPOINT_ENV } from "$lib/env/env";
   import Separator from "$lib/components/ui/separator/separator.svelte";
-  import { BENEFITS } from "./data";
+  import { FRAMEWORK_FEATURES } from "./data";
   import { fade, fly, scale, slide } from "svelte/transition";
   import { IsInViewport } from "runed";
-  import { trackAnalytics } from "$lib/common-library/analytics/analytics";
+  import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
 
   let targetNode = $state<HTMLElement>()!;
   const inViewport = new IsInViewport(() => targetNode);
@@ -55,7 +55,7 @@
 
       {#if inViewport.current}
         <ul class="list-disc ml-4 space-y-1.5 text-pretty text-muted-foreground lg:py-6">
-          {#each BENEFITS as benefit, idx}
+          {#each FRAMEWORK_FEATURES as benefit, idx}
             <li in:fly|global={{ y: -10, delay: 200 + idx * 100 }}>{benefit}</li>
           {/each}
         </ul>

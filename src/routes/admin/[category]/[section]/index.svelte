@@ -1,11 +1,11 @@
 <script>
-  import StatusMessage from "$lib/common-library/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { cn } from "$lib/utils";
   import { DASHBOARD_SAMPLE_DATA } from "$routes/admin/_components/data.svelte";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
 
   import { route } from "sv-router/generated";
-  import { trackAnalytics } from "$lib/common-library/analytics/analytics";
+  import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   const params = $derived(route.getParams("/admin/:category/:section"));
   const categorySlug = $derived(params.category);
   const sectionSlug = $derived(params.section);

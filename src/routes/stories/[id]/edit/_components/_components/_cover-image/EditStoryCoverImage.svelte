@@ -2,13 +2,13 @@
   import * as Field from "$lib/components/ui/field/index.js";
   import type { Story_ListItem } from "$lib/data/types";
   import Button from "$lib/components/ui/button/button.svelte";
-  import CropperJsWrapper from "$lib/common-library/components/cropper/CropperJsWrapper.svelte";
-  import FileDropZoneWrapper from "$lib/common-library/components/file/FileDropZoneWrapper.svelte";
+  import CropperJsWrapper from "$lib/common-library/utils/components/cropper/CropperJsWrapper.svelte";
+  import FileDropZoneWrapper from "$lib/common-library/utils/components/file/FileDropZoneWrapper.svelte";
   import Image from "@lucide/svelte/icons/image";
   import PenLine from "@lucide/svelte/icons/pen-line";
-  import { LOCAL_MODE } from "$lib/common-library/local-dev/modes";
-  import { AsyncSubmitState } from "$lib/common-library/functions/async.svelte";
-  import { ImageCropperState } from "$lib/common-library/components/cropper/cropperState.svelte";
+  import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
+  import { AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+  import { ImageCropperState } from "$lib/common-library/utils/components/cropper/cropperState.svelte";
   import type { typeToFlattenedError } from "zod/v3";
   import { uploadCroppedImage } from "./post.svelte";
 

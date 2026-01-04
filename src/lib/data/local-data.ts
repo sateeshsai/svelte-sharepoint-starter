@@ -16,6 +16,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Engagements: [],
     Tags: "One, Three",
     CoverFileName: "1.avif",
+    ActiveStatus: "Active",
+    PublishStatus: "Published",
   },
   {
     Id: 2,
@@ -31,6 +33,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Engagements: [],
     Tags: "Two, Four",
     CoverFileName: "2.avif",
+    ActiveStatus: "Active",
+    PublishStatus: "Published",
   },
   {
     Id: 3,
@@ -46,6 +50,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Engagements: [],
     Tags: "Two, Four",
     CoverFileName: "3.avif",
+    ActiveStatus: "Active",
+    PublishStatus: "Published",
   },
   {
     Id: 4,
@@ -61,6 +67,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Engagements: [],
     Tags: "Two, Four",
     CoverFileName: "4.avif",
+    ActiveStatus: "Active",
+    PublishStatus: "Published",
   },
 ];
 

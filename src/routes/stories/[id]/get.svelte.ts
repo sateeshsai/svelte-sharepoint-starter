@@ -1,13 +1,13 @@
-import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/sharepoint-rest-api/const";
-import { getListItems } from "$lib/common-library/sharepoint-rest-api/get/getListItems";
-import { createSelectExapandQueries } from "$lib/common-library/sharepoint-rest-api/helpers";
+import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/const";
+import { getListItems } from "$lib/common-library/integrations/sharepoint-rest-api/get/getListItems";
+import { createSelectExapandQueries } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
 import { LOCAL_STORY_ITEMS } from "$lib/data/local-data";
 import { createNew_Story_ListItem } from "$lib/data/new-items.svelte";
 import { SHAREPOINT_ENV } from "$lib/env/env";
 import { LOCAL_FILES } from "$lib/data/local-data";
 import { createNew_File_ListItem } from "$lib/data/new-items.svelte";
 import type { File_ListItem, Story_ListItem } from "$lib/data/types";
-import type { AsyncLoadState } from "$lib/common-library/functions/async.svelte";
+import type { AsyncLoadState } from "$lib/common-library/utils/functions/async.svelte";
 
 export async function getStory(storyId: number, storyLoadState: AsyncLoadState<Story_ListItem>) {
   const selectExpand = createSelectExapandQueries(createNew_Story_ListItem);
@@ -17,7 +17,7 @@ export async function getStory(storyId: number, storyLoadState: AsyncLoadState<S
     operations: [
       ["select", selectExpand.select],
       ["expand", selectExpand.expand],
-      ["filter", `Slug eq '${storyId}'`],
+      ["filter", `Id eq '${storyId}'`],
       ["top", 5000],
     ],
     logToConsole: false,

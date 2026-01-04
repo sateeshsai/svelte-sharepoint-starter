@@ -1,10 +1,15 @@
-# TO-DO
+# To-Do
 
 ## Features:
+
+- Docs
+  -- Linking to assets
+  -- Pwa
 
 ## Examples
 
 - []
+- Parallax scroll
 
 ---
 

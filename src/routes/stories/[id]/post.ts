@@ -1,13 +1,13 @@
-import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/sharepoint-rest-api/const";
-import { getFormDigestValue } from "$lib/common-library/sharepoint-rest-api/get/getFormDigestValue";
-import { postListItem } from "$lib/common-library/sharepoint-rest-api/post/postListItem";
+import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/const";
+import { getFormDigestValue } from "$lib/common-library/integrations/sharepoint-rest-api/get/getFormDigestValue";
+import { postListItem } from "$lib/common-library/integrations/sharepoint-rest-api/post/postListItem";
 import { convert_Story_ListItem_ToPost } from "$lib/data/convert-items";
 import { createNew_Story_ListItem } from "$lib/data/new-items.svelte";
 import { SHAREPOINT_ENV } from "$lib/env/env";
 import { navigate } from "sv-router/generated";
 import type { Story_ListItem } from "$lib/data/types";
-import type { AsyncSubmitState } from "$lib/common-library/functions/async.svelte";
-import type { ReturnResolvedType } from "$lib/common-library/types/util-types";
+import type { AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+import type { ReturnResolvedType } from "$lib/common-library/utils/types/util-types";
 
 export async function postNewStory(newStoryState: AsyncSubmitState) {
   const formDigestValue = await getFormDigestValue();

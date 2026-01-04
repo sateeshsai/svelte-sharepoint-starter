@@ -1,15 +1,15 @@
-import type { AsyncSubmitState } from "$lib/common-library/functions/async.svelte";
-import { randomInt } from "$lib/common-library/functions/number";
-import { randomIdString } from "$lib/common-library/functions/string";
-import { getFormDigestValue } from "$lib/common-library/sharepoint-rest-api/get/getFormDigestValue";
-import { postListItem } from "$lib/common-library/sharepoint-rest-api/post/postListItem";
-import { readAnduploadFile } from "$lib/common-library/sharepoint-rest-api/post/readAndUploadFile";
+import type { AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+import { randomInt } from "$lib/common-library/utils/functions/number";
+import { randomIdString } from "$lib/common-library/utils/functions/string";
+import { getFormDigestValue } from "$lib/common-library/integrations/sharepoint-rest-api/get/getFormDigestValue";
+import { postListItem } from "$lib/common-library/integrations/sharepoint-rest-api/post/postListItem";
+import { readAnduploadFile } from "$lib/common-library/integrations/sharepoint-rest-api/post/readAndUploadFile";
 import type {
   Sharepoint_Error_Formatted,
   Sharepoint_PostItem_SuccessResponse_WithPostedData,
   Sharepoint_PostItemResponse,
   Sharepoint_UploadFile_SuccessResponse,
-} from "$lib/common-library/sharepoint-rest-api/types";
+} from "$lib/common-library/integrations/sharepoint-rest-api/types";
 import type { File_ListItem, File_ListItem_Post_ForStory } from "$lib/data/types";
 import { SHAREPOINT_ENV } from "$lib/env/env";
 
@@ -82,7 +82,7 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
       listName: SHAREPOINT_ENV.lists.Files.name,
       formDigest: formDigestValue as string,
       dataToPost: fileDetailsToPost,
-      dataToAddInLocalMode: { Id: randomInt(), parentId: storyId },
+      dataToIncludeInResponse_InLocalMode: { Id: randomInt(), parentId: storyId },
     });
     fileDetailsPromises.push(fileDetailsPostPromise);
   });

@@ -1,4 +1,4 @@
-import type { Sharepoint_PostItem_SuccessResponse_WithPostedData } from "$lib/common-library/sharepoint-rest-api/types";
+import type { Sharepoint_PostItem_SuccessResponse_WithPostedData } from "$lib/common-library/integrations/sharepoint-rest-api/types";
 import {
   EngagementListSchema,
   EngagementPostSchema,

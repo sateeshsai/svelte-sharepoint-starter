@@ -14,5 +14,5 @@
   "files": [],
   "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
   "include": ["src/**/*.ts", "scripts/**/*.ts"],
-  "exclude": ["src/lib/components/ui/**", "src/lib/common-library/components/edra-rich-text/**"]
+  "exclude": ["src/lib/components/ui/**", "src/lib/common-library/integrations/components/edra-rich-text/**"]
 }

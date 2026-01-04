@@ -7,6 +7,8 @@ export function convert_Story_ListItem_ToPost(storyListItem: Story_ListItem): St
     Content: storyListItem.Content,
     Tags: storyListItem.Tags,
     CoverFileName: storyListItem.CoverFileName,
+    PublishStatus: storyListItem.PublishStatus,
+    ActiveStatus: storyListItem.ActiveStatus,
   };
 }
 

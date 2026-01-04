@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Content, Editor } from "@tiptap/core";
-  import { EdraEditor, EdraToolBar, EdraDragHandleExtended } from "$lib/common-library/components/edra-rich-text/shadcn";
+  import { EdraEditor, EdraToolBar, EdraDragHandleExtended } from "$lib/common-library/integrations/components/edra-rich-text/shadcn";
   // Editor states
   let { content = $bindable() }: { content: Content } = $props();
   // let content = $state<Content>(``);

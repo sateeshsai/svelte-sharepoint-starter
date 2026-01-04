@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/const/classes";
+  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import { cn } from "$lib/utils";
   import { navigate, p, route } from "sv-router/generated";
   import { getStory, getStoryFiles } from "./get.svelte";
@@ -8,19 +8,18 @@
   import { SHAREPOINT_ENV } from "$lib/env/env";
   import { global_State } from "$lib/data/global-state.svelte";
   import PenLine from "@lucide/svelte/icons/pen-line";
-  import { getUserFirstLastNames } from "$lib/common-library/sharepoint-rest-api/helpers";
+  import { getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
-  import { getCurrentUserProperties } from "$lib/common-library/sharepoint-rest-api/get/getCurrentUserProperties";
-  import { LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/common-library/sharepoint-rest-api/local-data";
-  import type { Sharepoint_User_Properties } from "$lib/common-library/sharepoint-rest-api/types";
+  import { getCurrentUserProperties } from "$lib/common-library/integrations/sharepoint-rest-api/get/getCurrentUserProperties";
+  import { LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/common-library/integrations/sharepoint-rest-api/local-data";
+  import type { Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/types";
   import StoryFileGallery from "./_components/StoryFileGallery.svelte";
-  import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/functions/async.svelte";
-  import StatusMessage from "$lib/common-library/components/ui-utils/StatusMessage.svelte";
+  import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { fade, fly, scale, slide } from "svelte/transition";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
-  import { watch } from "runed";
-  import LineAnimated from "$lib/common-library/components/ui-utils/Line_Animated.svelte";
-  import { trackAnalytics } from "$lib/common-library/analytics/analytics";
+  import LineAnimated from "$lib/common-library/utils/components/ui-utils/Line_Animated.svelte";
+  import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
 
   const params = $derived(route.getParams("/stories/:id"));
   const storyId = $derived(params.id.toLowerCase() === "new" ? undefined : params.id);
@@ -116,7 +115,7 @@
         {/if}
       </header>
 
-      <img in:scale|global={{ start: 0 }} alt={story.Title} src={SHAREPOINT_ENV.paths.assets + "images/" + story.CoverFileName} class="rounded-md mt-2 max-h-75 w-full object-cover object-center" />
+      <img in:scale|global={{ start: 0 }} alt={story.Title} src={"./assets/StoryFiles/" + story.CoverFileName} class="rounded-md mt-2 max-h-75 w-full object-cover object-center" />
 
       <h3 class="">{story.Introduction}</h3>
       <LineAnimated class="mt-8 mb-6" />

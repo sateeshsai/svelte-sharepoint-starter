@@ -1,19 +1,18 @@
 <script lang="ts">
   import { Router } from "sv-router";
   import { cn } from "$lib/utils";
-  import { navigating } from "$lib/common-library/router/router-helpers.svelte";
+  import { navigating } from "$lib/common-library/integrations/router/router-helpers.svelte";
   import { onMount } from "svelte";
   import { ModeWatcher } from "mode-watcher";
   import { getAndStoreCurrentUserInfo } from "./get.svelte";
   import { Toaster } from "svelte-sonner";
-  import { AsyncLoadState } from "$lib/common-library/functions/async.svelte";
-  import Head from "$lib/common-library/pwa/Head.svelte";
+  import { AsyncLoadState } from "$lib/common-library/utils/functions/async.svelte";
+  import Head from "$lib/common-library/integrations/pwa/Head.svelte";
   import Header from "./_components/Header.svelte";
   import Footer from "./_components/Footer.svelte";
-  import TailwindViewportHelper from "$lib/common-library/components/ui-utils/TailwindViewportHelper.svelte";
-  import StatusMessage from "$lib/common-library/components/ui-utils/StatusMessage.svelte";
-  import Button from "$lib/components/ui/button/button.svelte";
-  import ErrorBoundaryMessage from "$lib/common-library/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import TailwindViewportHelper from "$lib/common-library/utils/components/ui-utils/TailwindViewportHelper.svelte";
+  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
 
   onMount(() => {
     loadData();

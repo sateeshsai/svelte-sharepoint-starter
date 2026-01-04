@@ -1,7 +1,7 @@
-import type { AccessRole } from "$lib/common-library/sharepoint-rest-api/types";
+import type { AccessRole } from "$lib/common-library/integrations/sharepoint-rest-api/types";
 import { p, type Routes } from "sv-router/generated";
 
-export const NAVIGATION_MENU_ITEMS: { name: string; route: ReturnType<typeof p>; accessRole?: AccessRole; slug?: string }[] = [
+export const NAVIGATION_MENU_ITEMS: { name: string; route: ReturnType<typeof p>; accessRole?: AccessRole }[] = [
   {
     name: "Home",
     // route: p("/"),
@@ -14,7 +14,7 @@ export const NAVIGATION_MENU_ITEMS: { name: string; route: ReturnType<typeof p>;
   },
   {
     name: "Create",
-    // route: p("/stories/:slug", { params: { slug: "new" } }),
+    // route: p("/stories/:id", { params: { id: "new" } }),
     route: "/stories/new",
   },
   {

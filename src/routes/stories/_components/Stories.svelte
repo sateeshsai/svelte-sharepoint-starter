@@ -19,7 +19,7 @@
       out:send={{ key: story.Id, duration: 500 }}
       animate:flip={{ duration: 500 }}
     >
-      <div class="storyThumbnail rounded bg-center bg-cover h-36 w-36" style="background-image:{`url(${'./assets/images/' + story.CoverFileName})`}"></div>
+      <div class="storyThumbnail rounded bg-center bg-cover h-36 w-36" style="background-image:{`url(${'./assets/StoryFiles/' + story.CoverFileName})`}"></div>
       <div class="storyInfo grid gap-2 content-start">
         <p class="font-bold">{story.Title}</p>
         <p class="text-sm">{story.Introduction}</p>

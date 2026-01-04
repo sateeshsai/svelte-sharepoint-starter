@@ -1,9 +1,8 @@
-import type { AsyncLoadState } from "$lib/common-library/functions/async.svelte";
-import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/sharepoint-rest-api/const";
-import { getCurrentUser } from "$lib/common-library/sharepoint-rest-api/get/getCurrentUser";
-import { getCurrentUserProperties } from "$lib/common-library/sharepoint-rest-api/get/getCurrentUserProperties";
-import { getListItems } from "$lib/common-library/sharepoint-rest-api/get/getListItems";
-import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/common-library/sharepoint-rest-api/local-data";
+import type { AsyncLoadState } from "$lib/common-library/utils/functions/async.svelte";
+import { getCurrentUser } from "$lib/common-library/integrations/sharepoint-rest-api/get/getCurrentUser";
+import { getCurrentUserProperties } from "$lib/common-library/integrations/sharepoint-rest-api/get/getCurrentUserProperties";
+import { getListItems } from "$lib/common-library/integrations/sharepoint-rest-api/get/getListItems";
+import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/common-library/integrations/sharepoint-rest-api/local-data";
 import { global_State } from "$lib/data/global-state.svelte";
 import { LOCAL_USERS } from "$lib/data/local-data";
 import { SHAREPOINT_ENV } from "$lib/env/env";

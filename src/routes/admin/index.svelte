@@ -4,7 +4,7 @@
   import BarChart from "./_components/_charts/BarChart.svelte";
   import LineChart from "./_components/_charts/LineChart.svelte";
   import DonutChart from "./_components/_charts/DonutChart.svelte";
-  import { trackAnalytics } from "$lib/common-library/analytics/analytics";
+  import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
 
   let { children }: { children: Snippet } = $props();
 

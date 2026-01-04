@@ -1,4 +1,4 @@
-import { Sharepoint_Default_Props_Schema, SharepointTitleProps_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "$lib/common-library/sharepoint-rest-api/schemas";
+import { Sharepoint_Default_Props_Schema, SharepointTitleProps_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "$lib/common-library/integrations/sharepoint-rest-api/schemas";
 import { z } from "zod";
 import dayjs from "dayjs";
 
@@ -57,6 +57,8 @@ export const StorySchema = z.strictObject({
   Tags: z.string(), //Comma seperated string
   Introduction: z.string("Minimum 10 and maximum 255 characters.").min(10).max(255),
   CoverFileName: z.string().min(2, "Please add cover art."),
+  ActiveStatus: z.enum(["Active", "Inactive"]),
+  PublishStatus: z.enum(["Draft", "Published"]),
 });
 
 export const StoryListSchema = z.strictObject({

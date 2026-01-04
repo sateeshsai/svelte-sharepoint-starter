@@ -2,7 +2,7 @@
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import { Separator } from "$lib/components/ui/separator/index.js";
   import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-  import { navigating } from "$lib/common-library/router/router-helpers.svelte";
+  import { navigating } from "$lib/common-library/integrations/router/router-helpers.svelte";
   import type { Snippet } from "svelte";
   import { p } from "sv-router/generated";
   import AppSidebar from "./_components/AppSidebar.svelte";

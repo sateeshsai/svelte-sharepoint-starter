@@ -1,6 +1,6 @@
-import type { AsyncSubmitState } from "$lib/common-library/functions/async.svelte";
-import { getFormDigestValue } from "$lib/common-library/sharepoint-rest-api/get/getFormDigestValue";
-import { updateListItem } from "$lib/common-library/sharepoint-rest-api/update/updateListItem";
+import type { AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+import { getFormDigestValue } from "$lib/common-library/integrations/sharepoint-rest-api/get/getFormDigestValue";
+import { updateListItem } from "$lib/common-library/integrations/sharepoint-rest-api/update/updateListItem";
 import { convert_Story_ListItem_ToPost } from "$lib/data/convert-items";
 import type { Story_ListItem } from "$lib/data/types";
 import { SHAREPOINT_ENV } from "$lib/env/env";

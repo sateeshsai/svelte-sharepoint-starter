@@ -1,10 +1,10 @@
 <script lang="ts">
   import { SHAREPOINT_ENV } from "$lib/env/env";
   import { NAVIGATION_MENU_ITEMS } from "./navigation";
-  import { getPictureUrl, getUserFirstLastNames } from "$lib/common-library/sharepoint-rest-api/helpers";
+  import { getPictureUrl, getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
   let { sheetIsOpen = $bindable() }: { sheetIsOpen: boolean } = $props();
   import * as Avatar from "$lib/components/ui/avatar/index.js";
-  import LightDarkIcon from "$lib/common-library/components/icons/LightDark_Icon.svelte";
+  import LightDarkIcon from "$lib/common-library/utils/components/icons/LightDark_Icon.svelte";
   import { toggleMode } from "mode-watcher";
   import { global_State } from "$lib/data/global-state.svelte";
   import { isActiveLink } from "sv-router";

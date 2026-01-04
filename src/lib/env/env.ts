@@ -1,18 +1,20 @@
 import { EngagementListSchema, EngagementPostSchema, StoryListSchema, StoryPostSchema, StorySchema, UserListSchema, UserPostSchema } from "$lib/data/schemas";
 import { z, type ZodObject } from "zod";
-import { LOCAL_MODE } from "$lib/common-library/local-dev/modes";
-import { AnalyticsEntryListSchema, AnalyticsEntryPostSchema } from "$lib/common-library/analytics/schemas";
+import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
+import { AnalyticsEntryListSchema, AnalyticsEntryPostSchema } from "$lib/common-library/integrations/analytics/schemas";
 
 export type SharepointListNames = "Story" | "Engagements" | "Files" | "UsersInfo" | "Analytics";
 export type SharepointFolderNames = "StoryFiles";
-// https://americas.internal.deloitteonline.com/sites/sitename/rootfolder/
 
+const ROOT_FOLDER_PATH_RELATIVE_TO_SITE_COLLECTION_URL = "pages/builder-test/"; //https://americas.internal.deloitteonline.com/sites/sitename/<root folder relative path>/pagename.html
+
+//DO NOT MODIFY _X varibales unless you know what you are doing.
 const _PAGE_URL = window?.location.href.split("#")[0];
 const _PAGE_URL_SPLIT = _PAGE_URL.split("/sites/");
 const _SHAREPOINT_DOMAIN_URL = LOCAL_MODE ? _PAGE_URL : _PAGE_URL_SPLIT[0];
 const _SHAREPOINT_SITECOLLECTION_NAME = LOCAL_MODE ? "" : _PAGE_URL_SPLIT?.[1]?.split("/")?.[0] ?? "";
 const _SHAREPOINT_SITECOLLECTION_URL = _SHAREPOINT_DOMAIN_URL + (LOCAL_MODE ? "" : "/sites/" + _SHAREPOINT_SITECOLLECTION_NAME);
-const _ROOT_FOLDER_REL_PATH = LOCAL_MODE ? "" : "pages/builder-test/"; // Set to "SitePages" if you need to host the files there
+const _ROOT_FOLDER_REL_PATH = LOCAL_MODE ? "" : ROOT_FOLDER_PATH_RELATIVE_TO_SITE_COLLECTION_URL; // Set to "SitePages" if you need to host the files there
 const _ROOT_FOLDER_URL = LOCAL_MODE ? _PAGE_URL : _SHAREPOINT_SITECOLLECTION_URL + "/" + _ROOT_FOLDER_REL_PATH;
 const _ASSETS_FOLDER_URL = _ROOT_FOLDER_URL + "assets/";
 

@@ -1,12 +1,12 @@
-import { AsyncSubmitState } from "$lib/common-library/functions/async.svelte";
-import { getFormDigestValue } from "$lib/common-library/sharepoint-rest-api/get/getFormDigestValue";
-import { deleteListItem } from "$lib/common-library/sharepoint-rest-api/delete/deleteListItem";
-import { updateListItem } from "$lib/common-library/sharepoint-rest-api/update/updateListItem";
+import { AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+import { getFormDigestValue } from "$lib/common-library/integrations/sharepoint-rest-api/get/getFormDigestValue";
+import { deleteListItem } from "$lib/common-library/integrations/sharepoint-rest-api/delete/deleteListItem";
+import { updateListItem } from "$lib/common-library/integrations/sharepoint-rest-api/update/updateListItem";
 
 import type { File_ListItem_Post_ForStory } from "$lib/data/types";
 import { SHAREPOINT_ENV } from "$lib/env/env";
 import { toast } from "svelte-sonner";
-import type { ReturnResolvedType } from "$lib/common-library/types/util-types";
+import type { ReturnResolvedType } from "$lib/common-library/utils/types/util-types";
 
 export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Partial<File_ListItem_Post_ForStory>, updateFileState: AsyncSubmitState) {
   const formDigestValue = await getFormDigestValue();

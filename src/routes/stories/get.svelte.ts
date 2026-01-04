@@ -1,9 +1,9 @@
-import type { AsyncLoadState } from "$lib/common-library/functions/async.svelte";
-import { randomInt } from "$lib/common-library/functions/number";
-import { randomIdString } from "$lib/common-library/functions/string";
-import { getListItems } from "$lib/common-library/sharepoint-rest-api/get/getListItems";
-import { createSelectExapandQueries } from "$lib/common-library/sharepoint-rest-api/helpers";
-import type { Sharepoint_Get_Operations } from "$lib/common-library/sharepoint-rest-api/types";
+import type { AsyncLoadState } from "$lib/common-library/utils/functions/async.svelte";
+import { randomInt } from "$lib/common-library/utils/functions/number";
+import { randomIdString } from "$lib/common-library/utils/functions/string";
+import { getListItems } from "$lib/common-library/integrations/sharepoint-rest-api/get/getListItems";
+import { createSelectExapandQueries } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
+import type { Sharepoint_Get_Operations } from "$lib/common-library/integrations/sharepoint-rest-api/types";
 import { LOCAL_STORY_ITEMS } from "$lib/data/local-data";
 import { createNew_Story_ListItem } from "$lib/data/new-items.svelte";
 import type { Story_ListItem } from "$lib/data/types";

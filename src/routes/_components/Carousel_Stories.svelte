@@ -6,9 +6,9 @@
   import Autoplay from "embla-carousel-autoplay";
   import type { Story_ListItem } from "$lib/data/types";
   import { getStories } from "$routes/stories/get.svelte";
-  import StatusMessage from "$lib/common-library/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { p } from "sv-router/generated";
-  import { AsyncLoadState } from "$lib/common-library/functions/async.svelte";
+  import { AsyncLoadState } from "$lib/common-library/utils/functions/async.svelte";
 
   let api = $state<CarouselAPI>();
 

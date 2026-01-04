@@ -1,11 +1,11 @@
 <script>
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/const/classes";
+  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import { cn } from "$lib/utils";
   import { p, route } from "sv-router/generated";
   import { DASHBOARD_SAMPLE_DATA } from "../_components/data.svelte";
-  import StatusMessage from "$lib/common-library/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
-  import { trackAnalytics } from "$lib/common-library/analytics/analytics";
+  import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   const params = $derived(route.getParams("/admin/:category"));
   const categorySlug = $derived(params.category);
   const categoryData = $derived(DASHBOARD_SAMPLE_DATA.navMain.find((c) => c.title.toLowerCase().replaceAll(" ", "-") === categorySlug));

@@ -1,4 +1,4 @@
-import { navigating } from "$lib/common-library/router/router-helpers.svelte";
+import { navigating } from "$lib/common-library/integrations/router/router-helpers.svelte";
 import { global_State } from "$lib/data/global-state.svelte";
 
 import type { Hooks } from "sv-router";

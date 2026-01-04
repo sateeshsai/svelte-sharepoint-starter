@@ -17,6 +17,8 @@ export function createNew_Story_ListItem(): Story_ListItem {
     Content: "New story content",
     Tags: "",
     CoverFileName: "",
+    ActiveStatus: "Active",
+    PublishStatus: "Published",
   };
   return story;
 }
