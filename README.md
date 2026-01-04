@@ -5,6 +5,7 @@
 - Docs
   -- Linking to assets
   -- Pwa
+  -- Covert docs page to .md and render using mdsvex
 
 ## Examples
 
