@@ -2,10 +2,13 @@
 
 ## Features:
 
-- Docs
-  -- Linking to assets
-  -- Pwa
-  -- Covert docs page to .md and render using mdsvex
+### Docs
+
+-- Linking to assets
+-- Pwa
+-- Covert docs page to .md and render using mdsvex
+
+### Move dynamic variables to a seperate file in env.ts. May be even a better name for it.
 
 ## Examples
 
