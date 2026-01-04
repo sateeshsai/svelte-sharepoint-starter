@@ -11,7 +11,7 @@
 </script>
 
 <div class="stories grid gap-8 md:grid-cols-2 xl:grid-cols-3" in:slide|global>
-  {#each stories as story (story.Id)}
+  {#each [...stories].sort((a, b) => (new Date(a.Created) > new Date(b.Created) ? -1 : 1)) as story (story.Id)}
     <a
       class="storyItem @container rounded border dark:border-muted-foreground/50 p-3 shadow-lg grid h-full w-full grid-cols-[auto_1fr] items-center gap-4"
       href={SHAREPOINT_ENV.paths.page + "#/stories/" + story.Id}

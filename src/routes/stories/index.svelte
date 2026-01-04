@@ -9,7 +9,7 @@
   import type { Story_ListItem } from "$lib/data/types";
   import type { Filter } from "./_components/StoryFilters.svelte";
   import StoryFilters from "./_components/StoryFilters.svelte";
-  import { getStories } from "./get";
+  import { getStories } from "./get.svelte";
   import { AsyncLoadState } from "$lib/common-library/functions/async.svelte";
   import { onMount } from "svelte";
   import StatusMessage from "$lib/common-library/components/ui-utils/StatusMessage.svelte";
@@ -21,19 +21,27 @@
   let storiesLoadState = new AsyncLoadState<Story_ListItem[]>();
   let stories: Story_ListItem[] | undefined = $state();
 
+  let stopPolling: ReturnType<typeof poll>;
+
   onMount(() => {
     loadStories();
+    return stopPolling;
   });
 
   async function loadStories() {
-    const stopPolling = poll(async () => {
-      const storiesFromDB = await getStories(storiesLoadState);
+    let lastFetchTimeString: string | undefined;
+
+    //Poll for new stories every n seconds
+    stopPolling = poll(async () => {
+      const storiesFromDB = await getStories(storiesLoadState, lastFetchTimeString);
+      lastFetchTimeString = new Date().toISOString();
+      console.log(storiesFromDB);
       if (!storiesFromDB) {
         stopPolling();
         return;
       }
-      stories = storiesFromDB;
-    }, 5000);
+      stories = stories ? [...stories, ...storiesFromDB] : storiesFromDB;
+    }, 2000);
   }
 
   let storiesToShow = $derived(
@@ -108,7 +116,7 @@
     {/if}
 
     {#if storiesLoadState.error}
-      <p class="text-destructive">{storiesLoadState.error}</p>
+      <StatusMessage type="error" message={storiesLoadState.error} />
     {/if}
   </section>
 </main>

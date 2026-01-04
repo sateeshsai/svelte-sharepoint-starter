@@ -1,5 +1,5 @@
 import { randomIdString } from "../functions/string";
-import { SHAREPOINT_ENV, SITE_VERSION } from "$lib/env/env";
+import { SHAREPOINT_ENV } from "$lib/env/env";
 import { postListItem } from "../sharepoint-rest-api/post/postListItem";
 import type { AnalyticsEntry_ListItem_Post } from "./types";
 import { AnalyticsEntryPostSchema } from "./schemas";
@@ -20,7 +20,7 @@ let route: string;
 export async function trackAnalytics(Data?: StringifiedObject) {
   async function postAnalyticsEntry() {
     let newAnalyticsEntry: AnalyticsEntry_ListItem_Post = {
-      Title: SITE_VERSION,
+      Title: SHAREPOINT_ENV.info.version,
       SessionId: sessionId,
       Route: window.location.hash,
       Data: stringifyKVObject(Data ?? {}),
@@ -46,10 +46,11 @@ export async function trackAnalytics(Data?: StringifiedObject) {
 
 export async function untrackAnalytics() {
   console.log(route, "END");
+  //Not really updating any info. Updating only so that we can use the Modified property as user leaving a page.
   const postResponse = await updateListItem({
     listName: SHAREPOINT_ENV.lists.Analytics.name,
     itemId: postedAnalyticsEntryId,
-    dataToUpdate: { Title: SITE_VERSION },
+    dataToUpdate: { Title: SHAREPOINT_ENV.info.version },
   });
 
   if ("error" in postResponse) {

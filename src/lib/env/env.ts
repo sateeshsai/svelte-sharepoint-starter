@@ -3,8 +3,6 @@ import { z, type ZodObject } from "zod";
 import { LOCAL_MODE } from "$lib/common-library/local-dev/modes";
 import { AnalyticsEntryListSchema, AnalyticsEntryPostSchema } from "$lib/common-library/analytics/schemas";
 
-export const SITE_VERSION = "ALPHA";
-
 export type SharepointListNames = "Story" | "Engagements" | "Files" | "UsersInfo" | "Analytics";
 export type SharepointFolderNames = "StoryFiles";
 // https://americas.internal.deloitteonline.com/sites/sitename/rootfolder/
@@ -32,6 +30,7 @@ export interface SharepointFolder {
 }
 
 export interface SharepointEnv {
+  info: { version: string; emails: { support: { email: string; subject: string; body: string; cc: string[]; bcc: string[] } } };
   lists: Record<SharepointListNames, SharepointList>;
   paths: {
     root: string;
@@ -45,6 +44,18 @@ export interface SharepointEnv {
 }
 
 export const SHAREPOINT_ENV: SharepointEnv = {
+  info: {
+    version: "Version 1",
+    emails: {
+      support: {
+        email: "smodukuru@deloitte.com",
+        subject: "Site name: support request",
+        body: "%0D%0A%0D%0APlease describe the issue you are facing, along with any additional details and screenshots",
+        cc: [""],
+        bcc: ["smodukuru@deloitte.com"],
+      },
+    },
+  },
   paths: {
     root: _ROOT_FOLDER_URL,
     assets: _ASSETS_FOLDER_URL,

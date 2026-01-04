@@ -2,9 +2,6 @@
 
 ## Features:
 
-- Analytics
-- Error boundaries
-
 ## Examples
 
 - []
@@ -12,6 +9,12 @@
 ---
 
 # Completed
+
+## Features
+
+- Error boundaries
+- Polling
+- Analytics
 
 ## Examples
 

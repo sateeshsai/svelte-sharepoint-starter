@@ -83,3 +83,15 @@ export interface Sharepoint_UploadFile_SuccessResponse {
 }
 
 // export type Sharepoint_UploadFileResponse = Sharepoint_UploadFile_SuccessResponse | Sharepoint_Error | undefined;
+
+export type Sharepoint_Get_Operations =
+  | (
+      | ["select", string]
+      | ["filter", string]
+      | ["expand", string]
+      | ["top", number]
+      | ["skip", number]
+      // TODO: HANDLE ORDERBY
+      | ["orderby", "asc" | "desc"]
+    )[]
+  | `$${string}=${string}`;

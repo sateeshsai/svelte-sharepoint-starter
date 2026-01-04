@@ -12,6 +12,8 @@
   import Footer from "./_components/Footer.svelte";
   import TailwindViewportHelper from "$lib/common-library/components/ui-utils/TailwindViewportHelper.svelte";
   import StatusMessage from "$lib/common-library/components/ui-utils/StatusMessage.svelte";
+  import Button from "$lib/components/ui/button/button.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/ui-utils/ErrorBoundaryMessage.svelte";
 
   onMount(() => {
     loadData();
@@ -28,23 +30,28 @@
 <ModeWatcher />
 <TailwindViewportHelper />
 <Head />
-<Toaster position="top-right" />
+<Toaster richColors closeButton position="top-right" />
 <div class="grainy-gradient fixed top-0 left-[50%] w-full h-full -z-10 max-w-screen-4xl translate-x-[-50%]"></div>
 
 <div class="min-h-screen grid max-w-screen-4xl mx-auto">
-  {#if initialDataLoadState?.loading}
-    <StatusMessage type="loading" message="Loading..." />
-  {:else if initialDataLoadState?.ready}
-    <div class="innerBody grid grid-rows-[auto_1fr_auto] h-full">
-      <Header />
-      <Router base="#" />
-      <Footer />
-    </div>
-  {/if}
+  <svelte:boundary>
+    {#snippet failed(error: any, reset)}
+      <ErrorBoundaryMessage {error} {reset} />
+    {/snippet}
+    {#if initialDataLoadState?.loading}
+      <StatusMessage type="loading" message="Loading..." />
+    {:else if initialDataLoadState?.ready}
+      <div class="innerBody grid grid-rows-[auto_1fr_auto] h-full">
+        <Header />
+        <Router base="#" />
+        <Footer />
+      </div>
+    {/if}
 
-  {#if initialDataLoadState?.error}
-    <StatusMessage type="error" message={initialDataLoadState.error} />
-  {/if}
+    {#if initialDataLoadState?.error}
+      <StatusMessage type="error" message={initialDataLoadState.error} />
+    {/if}
+  </svelte:boundary>
 </div>
 
 <style>

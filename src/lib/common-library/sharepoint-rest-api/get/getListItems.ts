@@ -1,22 +1,12 @@
 import { LOCAL_MODE } from "$lib/common-library/local-dev/modes";
 import { SHAREPOINT_ENV } from "$lib/env/env";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
-import type { Sharepoint_Error, Sharepoint_Error_Formatted } from "../types";
+import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_Get_Operations } from "../types";
 
 export function getListItems<T extends { value: Record<string, any> }>(options: {
   siteCollectionUrl?: string;
   listName: string;
-  operations?:
-    | (
-        | ["select", string]
-        | ["filter", string]
-        | ["expand", string]
-        | ["top", number]
-        | ["skip", number]
-        // TODO: HANDLE ORDERBY
-        | ["orderby", "asc" | "desc"]
-      )[]
-    | `$${string}=${string}`;
+  operations?: Sharepoint_Get_Operations;
   dataToReturnInLocalMode: T; //To simulate API returning your data in local dev mode,
   logToConsole?: boolean;
 }): Promise<T | Sharepoint_Error_Formatted> {
@@ -48,13 +38,7 @@ export function getListItems<T extends { value: Record<string, any> }>(options: 
   if (LOCAL_MODE) {
     return new Promise((res, rej) => {
       setTimeout(() => {
-        let random = Math.random();
-        console.log(random < 0.5);
-        if (random < 0.5) {
-          res(options.dataToReturnInLocalMode);
-        } else {
-          rej({ error: "getListItems - Local error message" });
-        }
+        res(options.dataToReturnInLocalMode);
       }, 300);
     });
   }
