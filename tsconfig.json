@@ -1,0 +1,18 @@
+{
+  "extends": ["./.router/tsconfig.json"],
+  "compilerOptions": {
+    "paths": {
+      "$lib": ["./src/lib"],
+      "$lib/*": ["./src/lib/*"],
+      "$routes": ["./src/routes"],
+      "$routes/*": ["./src/routes/*"],
+      "sv-router/generated": ["./.router/router"]
+    },
+    "lib": ["ESNext.Array", "DOM", "ESNext", "ES2023.Array"]
+    // "types": ["dom-chromium-installation-events", "web-app-manifest"]
+  },
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
+  "include": ["src/**/*.ts", "scripts/**/*.ts"],
+  "exclude": ["src/lib/components/ui/**", "src/lib/common-library/components/edra-rich-text/**"]
+}

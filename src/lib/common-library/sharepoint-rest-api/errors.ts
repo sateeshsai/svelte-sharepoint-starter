@@ -1,0 +1,14 @@
+const SHAREPOINT_ERROR_RESPONSES = {
+	credentials: [
+		{
+			'odata.error': {
+				code: '-2130575251, Microsoft.SharePoint.SPException',
+				message: {
+					lang: 'en-US',
+					value:
+						"The security validation for this page is invalid and might be corrupted. Please use your web browser's Back button to try your operation again."
+				}
+			}
+		}
+	]
+};

@@ -1,0 +1,77 @@
+import type { AsyncLoadState } from "$lib/common-library/functions/async.svelte";
+import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/sharepoint-rest-api/const";
+import { getCurrentUser } from "$lib/common-library/sharepoint-rest-api/get/getCurrentUser";
+import { getCurrentUserProperties } from "$lib/common-library/sharepoint-rest-api/get/getCurrentUserProperties";
+import { getListItems } from "$lib/common-library/sharepoint-rest-api/get/getListItems";
+import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/common-library/sharepoint-rest-api/local-data";
+import { global_State } from "$lib/data/global-state.svelte";
+import { LOCAL_USERS } from "$lib/data/local-data";
+import { SHAREPOINT_ENV } from "$lib/env/env";
+import { toast } from "svelte-sonner";
+
+export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState<true>) {
+  const fetchResponse = await getCurrentUser({
+    siteCollectionUrl: SHAREPOINT_ENV.paths.site_collection,
+    dataToReturnInLocalMode: LOCAL_SHAREPOINT_USERS[0],
+    logToConsole: false,
+  });
+
+  if ("error" in fetchResponse) {
+    const errorMessage = "Something went wrong. Could not fetch user details. " + fetchResponse.error;
+    dataLoadState.setError(errorMessage);
+    navigator.clipboard.writeText(fetchResponse.error);
+    toast.error(fetchResponse.error);
+    return;
+  }
+
+  //STORE IN GLOBAL STATE
+  global_State.user = fetchResponse;
+
+  //FETCH USER ACCESS ROLE
+  const userId = fetchResponse.Id!;
+
+  const userAccessRoleFetchResponse = await getListItems({
+    listName: SHAREPOINT_ENV.lists.UsersInfo.name,
+    operations: [
+      ["select", "User/Id,AccessRole"],
+      ["expand", "User"],
+      ["filter", `User/Id eq ${userId}`],
+    ],
+    dataToReturnInLocalMode: { value: LOCAL_USERS[0] },
+  });
+
+  if ("error" in userAccessRoleFetchResponse) {
+    const errorMessage = "Something went wrong. Could not verify user role. " + userAccessRoleFetchResponse.error;
+    dataLoadState.setError(errorMessage);
+    navigator.clipboard.writeText(errorMessage);
+    toast.error(errorMessage);
+    return;
+  }
+
+  //STORE IN GLOBAL STATE
+  global_State.AccessRole = userAccessRoleFetchResponse.value.AccessRole;
+
+  //NOT WAITING FOR THIS DATA
+  fetchAndSetCurrentUserProperties();
+
+  dataLoadState.setReady();
+  return;
+}
+
+async function fetchAndSetCurrentUserProperties() {
+  //FETCH USER PROPERTIES
+  const userPropertiesResponse = await getCurrentUserProperties({
+    siteCollectionUrl: SHAREPOINT_ENV.paths.site_collection,
+    dataToReturnInLocalMode: LOCAL_SHAREPOINT_USERS_PROPERTIES[0],
+  });
+
+  if ("error" in userPropertiesResponse) {
+    const errorMessage = "Something went wrong. Could not fetch user details. " + userPropertiesResponse.error;
+    navigator.clipboard.writeText(errorMessage);
+    toast.error(errorMessage);
+    return;
+  }
+
+  //STORE IN GLOBAL STATE
+  global_State.userProperties = userPropertiesResponse;
+}
