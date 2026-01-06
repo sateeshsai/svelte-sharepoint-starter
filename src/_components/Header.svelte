@@ -1,6 +1,6 @@
 <script>
   import TextAlignJustify from "@lucide/svelte/icons/text-align-justify";
-  import { SHAREPOINT_ENV } from "$lib/env/env";
+  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import DeloitteLogo from "$lib/common-library/integrations/components/deloitte/DeloitteLogo.svelte";
   import * as Sheet from "$lib/components/ui/sheet/index.js";
   import NavItems from "./_components/NavItems.svelte";
@@ -9,7 +9,7 @@
 </script>
 
 <header class="flex h-11 w-full items-center justify-between px-6 shadow md:px-8 sticky top-0 bg-background/50 backdrop-blur-md border-b z-100">
-  <a class="logo" href={SHAREPOINT_ENV.paths.page + "#/"}>
+  <a class="logo" href={SHAREPOINT_CONFIG.paths.page + "#/"}>
     <DeloitteLogo />
   </a>
   <nav class="">

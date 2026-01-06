@@ -1,5 +1,5 @@
 <script>
-  import { SHAREPOINT_ENV } from "$lib/env/env";
+  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { MANIFEST_DATA } from "./manifest";
   import PWA from "./PWA.svelte";
 </script>

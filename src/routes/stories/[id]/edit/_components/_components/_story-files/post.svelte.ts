@@ -1,19 +1,17 @@
-import { AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { getFormDigestValue } from "$lib/common-library/integrations/sharepoint-rest-api/get/getFormDigestValue";
 import { deleteListItem } from "$lib/common-library/integrations/sharepoint-rest-api/delete/deleteListItem";
 import { updateListItem } from "$lib/common-library/integrations/sharepoint-rest-api/update/updateListItem";
 
 import type { File_ListItem_Post_ForStory } from "$lib/data/types";
-import { SHAREPOINT_ENV } from "$lib/env/env";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
 import type { ReturnResolvedType } from "$lib/common-library/utils/types/util-types";
 
 export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Partial<File_ListItem_Post_ForStory>, updateFileState: AsyncSubmitState) {
-  const formDigestValue = await getFormDigestValue();
   const updateResponse = await updateListItem({
-    listName: SHAREPOINT_ENV.lists.Files.name,
+    listName: SHAREPOINT_CONFIG.lists.Files.name,
     itemId: fileId,
-    formDigest: formDigestValue as string,
     dataToUpdate: fileDetailsToUpdate,
   });
 
@@ -28,11 +26,9 @@ export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Parti
 
 export async function deleteStoryFile(fileId: number, deleteFileState: AsyncSubmitState) {
   deleteFileState.setInprogress();
-  const formDigestValue = await getFormDigestValue();
   const deleteFileResponse = await deleteListItem({
-    siteCollectionUrl: SHAREPOINT_ENV.paths.site_collection,
-    listName: SHAREPOINT_ENV.lists.Files.name,
-    formDigest: formDigestValue as string,
+    siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+    listName: SHAREPOINT_CONFIG.lists.Files.name,
     itemId: fileId,
   });
 

@@ -1,11 +1,11 @@
 <script lang="ts">
   import "@khmyznikov/pwa-install";
   import { onMount } from "svelte";
-  const siteRootPath = SHAREPOINT_ENV.paths.page;
+  const siteRootPath = SHAREPOINT_CONFIG.paths.page;
   //@ts-ignore
   // import System from "svelte-system-info";
   import { MANIFEST_DATA } from "./manifest";
-  import { SHAREPOINT_ENV } from "$lib/env/env";
+  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 
   if ("serviceWorker" in navigator) {

@@ -6,7 +6,7 @@
   import { ModeWatcher } from "mode-watcher";
   import { getAndStoreCurrentUserInfo } from "./get.svelte";
   import { Toaster } from "svelte-sonner";
-  import { AsyncLoadState } from "$lib/common-library/utils/functions/async.svelte";
+  import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import Head from "$lib/common-library/integrations/pwa/Head.svelte";
   import Header from "./_components/Header.svelte";
   import Footer from "./_components/Footer.svelte";
@@ -18,25 +18,27 @@
     loadData();
   });
 
-  let initialDataLoadState = new AsyncLoadState<true>();
+  let initialDataLoadState = new AsyncLoadState();
 
   async function loadData() {
     await getAndStoreCurrentUserInfo(initialDataLoadState);
   }
 </script>
 
-<div class={cn("fixed  top-0 left-0  h-1 w-full origin-left bg-dgreen-bright transition-discrete duration-1000", navigating.beforeload ? " scale-x-100" : "scale-x-0 ")}></div>
-<ModeWatcher />
-<TailwindViewportHelper />
-<Head />
-<Toaster richColors closeButton position="top-right" />
-<div class="grainy-gradient fixed top-0 left-[50%] w-full h-full -z-10 max-w-screen-4xl translate-x-[-50%]"></div>
+<svelte:boundary>
+  {#snippet failed(error: any, reset)}
+    <ErrorBoundaryMessage customError="Error rendering site." {error} {reset} />
+  {/snippet}
+  <!-- MOSTLY META AND UTIL UI ELEMENTS -->
+  <div class={cn("fixed  top-0 left-0  h-1 w-full origin-left bg-dgreen-bright transition-discrete duration-1000", navigating.beforeload ? " scale-x-100" : "scale-x-0 ")}></div>
+  <ModeWatcher />
+  <TailwindViewportHelper />
+  <Head />
+  <Toaster richColors closeButton position="top-right" />
 
-<div class="min-h-screen grid max-w-screen-4xl mx-auto">
-  <svelte:boundary>
-    {#snippet failed(error: any, reset)}
-      <ErrorBoundaryMessage {error} {reset} />
-    {/snippet}
+  <!-- PAGE -->
+  <div class="grainy-gradient fixed top-0 left-[50%] w-full h-full -z-10 max-w-screen-4xl translate-x-[-50%]"></div>
+  <div class="min-h-screen grid max-w-screen-4xl mx-auto">
     {#if initialDataLoadState?.loading}
       <StatusMessage type="loading" message="Loading..." />
     {:else if initialDataLoadState?.ready}
@@ -50,8 +52,8 @@
     {#if initialDataLoadState?.error}
       <StatusMessage type="error" message={initialDataLoadState.error} />
     {/if}
-  </svelte:boundary>
-</div>
+  </div>
+</svelte:boundary>
 
 <style>
   :global(.dark .grainy-gradient) {

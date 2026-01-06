@@ -1,16 +1,16 @@
 import { dataUriToFile } from "$lib/common-library/utils/functions/file";
-import { AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { readAnduploadFile } from "$lib/common-library/integrations/sharepoint-rest-api/post/readAndUploadFile";
-import { SHAREPOINT_ENV } from "$lib/env/env";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 
 export async function uploadCroppedImage(dataUri: string, file: File, fileUploadState: AsyncSubmitState) {
   fileUploadState.setInprogress();
   const fileToUpload = await dataUriToFile(dataUri, file?.name as string);
 
   const fileUploadResponse = await readAnduploadFile({
-    siteCollectionUrl: SHAREPOINT_ENV.paths.site_collection,
-    serverRelativeUrl: SHAREPOINT_ENV.folders.StoryFiles.rel_path,
-    foldername: SHAREPOINT_ENV.folders.StoryFiles.name,
+    siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+    serverRelativeUrl: SHAREPOINT_CONFIG.folders.StoryFiles.rel_path,
+    foldername: SHAREPOINT_CONFIG.folders.StoryFiles.name,
     file: { name: fileToUpload.name, obj: fileToUpload },
   });
 

@@ -4,7 +4,6 @@
   import type { CarouselAPI } from "$lib/components/ui/carousel/context.js";
   import { cn } from "$lib/utils";
   import Autoplay from "embla-carousel-autoplay";
-  import { SHAREPOINT_ENV } from "$lib/env/env";
 
   let api = $state<CarouselAPI>();
 

@@ -3,19 +3,17 @@ import { getFormDigestValue } from "$lib/common-library/integrations/sharepoint-
 import { postListItem } from "$lib/common-library/integrations/sharepoint-rest-api/post/postListItem";
 import { convert_Story_ListItem_ToPost } from "$lib/data/convert-items";
 import { createNew_Story_ListItem } from "$lib/data/new-items.svelte";
-import { SHAREPOINT_ENV } from "$lib/env/env";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { navigate } from "sv-router/generated";
 import type { Story_ListItem } from "$lib/data/types";
-import type { AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import type { ReturnResolvedType } from "$lib/common-library/utils/types/util-types";
 
 export async function postNewStory(newStoryState: AsyncSubmitState) {
-  const formDigestValue = await getFormDigestValue();
   const newStoryToPost = convert_Story_ListItem_ToPost(createNew_Story_ListItem());
   const postNewStoryResponse = await postListItem({
-    siteCollectionUrl: SHAREPOINT_ENV.paths.site_collection,
-    listName: SHAREPOINT_ENV.lists.Story.name,
-    formDigest: formDigestValue as string,
+    siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+    listName: SHAREPOINT_CONFIG.lists.Story.name,
     dataToPost: newStoryToPost,
     dataToIncludeInResponse_InLocalMode: { Id: 1 }, //Routing to an existing local story in LOCAL_MODE
   });

@@ -1,4 +1,3 @@
-import type { Sharepoint_PostItem_SuccessResponse_WithPostedData } from "$lib/common-library/integrations/sharepoint-rest-api/types";
 import {
   EngagementListSchema,
   EngagementPostSchema,
@@ -12,6 +11,7 @@ import {
 } from "$lib/data/schemas";
 import type z from "zod";
 
+//Type definitions derived from ./schemas.ts where applicable
 export type Story_ListItem = z.infer<typeof StoryListSchema>;
 export type Story_ListItem_Post = z.infer<typeof StoryPostSchema>;
 

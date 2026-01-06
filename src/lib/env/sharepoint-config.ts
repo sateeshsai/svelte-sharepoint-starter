@@ -1,22 +1,11 @@
-import { EngagementListSchema, EngagementPostSchema, StoryListSchema, StoryPostSchema, StorySchema, UserListSchema, UserPostSchema } from "$lib/data/schemas";
+import { EngagementListSchema, EngagementPostSchema, FileListSchema, FilePostSchema_ForStory, StoryListSchema, StoryPostSchema, UserListSchema, UserPostSchema } from "$lib/data/schemas";
 import { z, type ZodObject } from "zod";
-import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 import { AnalyticsEntryListSchema, AnalyticsEntryPostSchema } from "$lib/common-library/integrations/analytics/schemas";
+import { ErrorReportListSchema, ErrorReportPostSchema } from "$lib/common-library/integrations/error-handling/error-schemas";
+import { SHAREPOINT_PATHS, getFolderRelativePath } from "./sharepoint-paths";
 
-export type SharepointListNames = "Story" | "Engagements" | "Files" | "UsersInfo" | "Analytics";
+export type SharepointListNames = "Story" | "Engagements" | "Files" | "UsersInfo" | "Analytics" | "ErrorReports";
 export type SharepointFolderNames = "StoryFiles";
-
-const ROOT_FOLDER_PATH_RELATIVE_TO_SITE_COLLECTION_URL = "pages/builder-test/"; //https://americas.internal.deloitteonline.com/sites/sitename/<root folder relative path>/pagename.html
-
-//DO NOT MODIFY _X varibales unless you know what you are doing.
-const _PAGE_URL = window?.location.href.split("#")[0];
-const _PAGE_URL_SPLIT = _PAGE_URL.split("/sites/");
-const _SHAREPOINT_DOMAIN_URL = LOCAL_MODE ? _PAGE_URL : _PAGE_URL_SPLIT[0];
-const _SHAREPOINT_SITECOLLECTION_NAME = LOCAL_MODE ? "" : _PAGE_URL_SPLIT?.[1]?.split("/")?.[0] ?? "";
-const _SHAREPOINT_SITECOLLECTION_URL = _SHAREPOINT_DOMAIN_URL + (LOCAL_MODE ? "" : "/sites/" + _SHAREPOINT_SITECOLLECTION_NAME);
-const _ROOT_FOLDER_REL_PATH = LOCAL_MODE ? "" : ROOT_FOLDER_PATH_RELATIVE_TO_SITE_COLLECTION_URL; // Set to "SitePages" if you need to host the files there
-const _ROOT_FOLDER_URL = LOCAL_MODE ? _PAGE_URL : _SHAREPOINT_SITECOLLECTION_URL + "/" + _ROOT_FOLDER_REL_PATH;
-const _ASSETS_FOLDER_URL = _ROOT_FOLDER_URL + "assets/";
 
 export interface SharepointList {
   name: string;
@@ -40,12 +29,16 @@ export interface SharepointEnv {
     page: string;
     domain: string;
     site_collection: string;
-    // server_relative: "sites/";
   };
   folders: Record<SharepointFolderNames, SharepointFolder>;
 }
 
-export const SHAREPOINT_ENV: SharepointEnv = {
+/**
+ * Static SharePoint configuration
+ * Contains list definitions with their validation schemas and folder configurations
+ * Uses runtime paths from sharepoint-paths.ts
+ */
+export const SHAREPOINT_CONFIG: SharepointEnv = {
   info: {
     version: "Version 1",
     emails: {
@@ -57,14 +50,6 @@ export const SHAREPOINT_ENV: SharepointEnv = {
         bcc: ["smodukuru@deloitte.com"],
       },
     },
-  },
-  paths: {
-    root: _ROOT_FOLDER_URL,
-    assets: _ASSETS_FOLDER_URL,
-    page: _PAGE_URL,
-    domain: _SHAREPOINT_DOMAIN_URL,
-    site_collection: _SHAREPOINT_SITECOLLECTION_URL,
-    // server_relative: "sites/",
   },
   lists: {
     Analytics: {
@@ -91,8 +76,8 @@ export const SHAREPOINT_ENV: SharepointEnv = {
     Files: {
       name: "FilesList",
       schemas: {
-        list: EngagementListSchema,
-        post: EngagementPostSchema,
+        list: FileListSchema,
+        post: FilePostSchema_ForStory,
       },
     },
     UsersInfo: {
@@ -102,14 +87,21 @@ export const SHAREPOINT_ENV: SharepointEnv = {
         post: UserPostSchema,
       },
     },
+    ErrorReports: {
+      name: "ErrorReportsList",
+      schemas: {
+        list: ErrorReportListSchema,
+        post: ErrorReportPostSchema,
+      },
+    },
   },
-
   folders: {
     StoryFiles: {
       name: "StoryFiles",
-      rel_path: _ROOT_FOLDER_URL.split(_SHAREPOINT_SITECOLLECTION_URL)[1] + "/assets/StoryFiles",
+      rel_path: getFolderRelativePath(SHAREPOINT_PATHS.root) + "/assets/StoryFiles",
     },
   },
+  paths: SHAREPOINT_PATHS,
 };
 
-console.log(SHAREPOINT_ENV);
+console.log(SHAREPOINT_CONFIG);

@@ -52,8 +52,13 @@ export async function deleteListItem(options: {
     })
     .catch((error) => {
       if (options.logToConsole) console.log("FN: deleteListItem Error", error);
+      if (error instanceof Error && error.name === "AbortError") {
+        return {
+          error: "Request timed out or was cancelled. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+        };
+      }
       return {
-        error: "Error message: " + (error?.["odata.error"]?.message?.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+        error: "Network error occurred. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
       };
     });
 }

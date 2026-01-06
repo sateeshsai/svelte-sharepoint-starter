@@ -1,12 +1,15 @@
 import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
-import { SHAREPOINT_ENV } from "$lib/env/env";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
+import { deduplicate } from "../helpers/deduplication";
 import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_User_Properties } from "../types";
 
 export function getCurrentUserProperties<T extends Sharepoint_User_Properties>(options: {
   siteCollectionUrl?: string;
   logToConsole?: boolean;
   dataToReturnInLocalMode: T;
+  signal?: AbortSignal;
+  deduplicationTtlMs?: number;
 }): Promise<T | Sharepoint_Error_Formatted> {
   if (LOCAL_MODE) {
     return new Promise((res, rej) => {
@@ -16,7 +19,7 @@ export function getCurrentUserProperties<T extends Sharepoint_User_Properties>(o
     });
   }
 
-  const requestURL = `${options.siteCollectionUrl ?? SHAREPOINT_ENV.paths.site_collection}/_api/SP.UserProfiles.PeopleManager/GetMyProperties`;
+  const requestURL = `${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/SP.UserProfiles.PeopleManager/GetMyProperties`;
 
   if (options.logToConsole) console.log(requestURL);
 
@@ -30,21 +33,34 @@ export function getCurrentUserProperties<T extends Sharepoint_User_Properties>(o
     }),
   });
 
-  return fetch(fetchRequest)
-    .then((response) => response.json())
-    .then((data: T | Sharepoint_Error | undefined) => {
-      if (options.logToConsole) console.log("FN: getCurrentUserProperties Response", data);
-      if (!data || "odata.error" in data) {
-        return {
-          error: "Unable to fetch current user properties. Error message: " + (data?.["odata.error"].message.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
-        };
-      }
-      return data;
-    })
-    .catch((error) => {
-      if (options.logToConsole) console.log("FN: getCurrentUserProperties Error", error);
-      return {
-        error: "Unable to fetch current user properties. Error message: " + (error?.["odata.error"]?.message?.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
-      };
-    });
+  return deduplicate(
+    requestURL,
+    () =>
+      fetch(fetchRequest, { signal: options.signal })
+        .then((response) => response.json())
+        .then((data: T | Sharepoint_Error | undefined) => {
+          if (options.logToConsole) console.log("FN: getCurrentUserProperties Response", data);
+          if (!data || "odata.error" in data) {
+            return {
+              error: "Unable to fetch current user properties. Error message: " + (data?.["odata.error"].message.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+            };
+          }
+          return data;
+        })
+        .catch((error) => {
+          if (options.logToConsole) console.log("FN: getCurrentUserProperties Error", error);
+          if (error instanceof Error && error.name === "AbortError") {
+            return {
+              error: "Unable to fetch current user properties. Request timed out or was cancelled. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+            };
+          }
+          return {
+            error: "Unable to fetch current user properties. Network error occurred. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+          };
+        }),
+    {
+      ttlMs: options.deduplicationTtlMs ?? 60000, // 60 second default TTL for user properties
+      clearOnError: true,
+    }
+  );
 }

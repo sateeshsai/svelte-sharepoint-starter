@@ -10,15 +10,18 @@
   import type { Filter } from "./_components/StoryFilters.svelte";
   import StoryFilters from "./_components/StoryFilters.svelte";
   import { getStories } from "./get.svelte";
-  import { AsyncLoadState } from "$lib/common-library/utils/functions/async.svelte";
+  import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import { onMount } from "svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { fly } from "svelte/transition";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
-  import { getListItems } from "$lib/common-library/integrations/sharepoint-rest-api/get/getListItems";
   import { poll } from "$lib/common-library/integrations/sharepoint-rest-api/helpers/poll";
+  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import { useAbortController } from "$lib/hooks/useAbortController.svelte";
 
-  let storiesLoadState = new AsyncLoadState<Story_ListItem[]>();
+  const { signal } = useAbortController();
+
+  let storiesLoadState = new AsyncLoadState();
   let stories: Story_ListItem[] | undefined = $state();
 
   let stopPolling: ReturnType<typeof poll>;
@@ -33,13 +36,16 @@
 
     //Poll for new stories every n seconds
     stopPolling = poll(async () => {
-      const storiesFromDB = await getStories(storiesLoadState, lastFetchTimeString);
+      const storiesFromDB = await getStories(storiesLoadState, lastFetchTimeString, signal);
       lastFetchTimeString = new Date().toISOString();
       console.log(storiesFromDB);
-      if (!storiesFromDB) {
+
+      // Stop polling if fetch failed or no data returned
+      if (!storiesFromDB || storiesLoadState.error) {
         stopPolling();
         return;
       }
+
       stories = stories ? [...stories, ...storiesFromDB] : storiesFromDB;
     }, 2000);
   }
@@ -82,41 +88,44 @@
 
 <main class={cn("grid", PAGE_UTIL_CLASSES.padding, PAGE_UTIL_CLASSES.maxWidth)}>
   <section class="stories h-full min-h-[50dvh]">
-    {#if storiesLoadState.loading}
-      <StatusMessage type="loading" message="Loading stories..." />
-    {:else if stories}
-      <div class="titleHeader flex justify-between mb-10 items-center" in:fly={{ y: -10 }}>
-        <h1 class="text-3xl font-light">Stories</h1>
-        <div class="filters">
-          <Sheet.Root>
-            <Sheet.Trigger class="border p-1 aspect-square rounded">
-              <ListFilter size={20} class="text-muted-foreground" />
-            </Sheet.Trigger>
-            <Sheet.Content class="z-100">
-              <Sheet.Header>
-                <Sheet.Title class="text-lg">Filters</Sheet.Title>
-                <Sheet.Description>Filter stories</Sheet.Description>
-              </Sheet.Header>
-              <div class="grid gap-6 px-4">
-                {#each filtersArray as filter, idx}
-                  <div class="filterCategory">
-                    <Label class="mb-1.5 text-base ">{filter.category}</Label>
-                    <StoryFilters type="multiple" bind:filter={filtersArray[idx]} />
-                  </div>
-                {/each}
-              </div>
-            </Sheet.Content>
-          </Sheet.Root>
+    <svelte:boundary>
+      {#snippet failed(error: any, reset)}
+        <ErrorBoundaryMessage customError="Error rendering stories page." {error} {reset} />
+      {/snippet}
+      {#if storiesLoadState.loading}
+        <StatusMessage type="loading" message="Loading stories..." />
+      {:else if storiesLoadState.ready && storiesToShow}
+        <div class="titleHeader flex justify-between mb-10 items-center" in:fly={{ y: -10 }}>
+          <h1 class="text-3xl font-light">Stories</h1>
+          <div class="filters">
+            <Sheet.Root>
+              <Sheet.Trigger class="border p-1 aspect-square rounded">
+                <ListFilter size={20} class="text-muted-foreground" />
+              </Sheet.Trigger>
+              <Sheet.Content class="z-100">
+                <Sheet.Header>
+                  <Sheet.Title class="text-lg">Filters</Sheet.Title>
+                  <Sheet.Description>Filter stories</Sheet.Description>
+                </Sheet.Header>
+                <div class="grid gap-6 px-4">
+                  {#each filtersArray as filter, idx}
+                    <div class="filterCategory">
+                      <Label class="mb-1.5 text-base ">{filter.category}</Label>
+                      <StoryFilters type="multiple" bind:filter={filtersArray[idx]} />
+                    </div>
+                  {/each}
+                </div>
+              </Sheet.Content>
+            </Sheet.Root>
+          </div>
         </div>
-      </div>
 
-      {#if storiesToShow}
         <Stories stories={storiesToShow} />
       {/if}
-    {/if}
 
-    {#if storiesLoadState.error}
-      <StatusMessage type="error" message={storiesLoadState.error} />
-    {/if}
+      {#if storiesLoadState.error}
+        <StatusMessage type="error" message={storiesLoadState.error} />
+      {/if}
+    </svelte:boundary>
   </section>
 </main>

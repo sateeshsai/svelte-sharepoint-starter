@@ -1,5 +1,6 @@
 import { capitalizeFirstLetter } from "$lib/common-library/utils/functions/string";
 import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
 import { LOCAL_LIST_ITEM_UPDATE_SUCCESS_RESPONSE } from "../local-data";
@@ -17,7 +18,7 @@ export async function updateListItem<T extends Record<string, any>>(options: {
   if (options.logToConsole) console.log(options.dataToUpdate);
   if (!options.formDigest) options.formDigest = (await getFormDigestValue()) as string;
 
-  const request = new Request(`${options.siteCollectionUrl}/_api/web/lists/GetByTitle('${options.listName}')/items(${options.itemId})`, {
+  const request = new Request(`${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/web/lists/GetByTitle('${options.listName}')/items(${options.itemId})`, {
     method: "POST",
     credentials: "same-origin", // or credentials: 'include'
     //@ts-ignore
@@ -47,7 +48,7 @@ export async function updateListItem<T extends Record<string, any>>(options: {
   return fetch(request)
     .then((response) => response.json())
     .then((data: Sharepoint_UpdateItemResponse) => {
-      if (options.logToConsole) console.log("FN: deleteListItem Response", data);
+      if (options.logToConsole) console.log("FN: updateListItem Response", data);
       if (!data || "odata.error" in data) {
         return {
           error: "Error message: " + (data?.["odata.error"].message.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
@@ -62,9 +63,14 @@ export async function updateListItem<T extends Record<string, any>>(options: {
       return data;
     })
     .catch((error) => {
-      if (options.logToConsole) console.log("FN: deleteListItem Error", error);
+      if (options.logToConsole) console.log("FN: updateListItem Error", error);
+      if (error instanceof Error && error.name === "AbortError") {
+        return {
+          error: "Request timed out or was cancelled. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+        };
+      }
       return {
-        error: "Error message: " + (error?.["odata.error"]?.message?.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+        error: "Network error occurred. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
       };
     });
 }

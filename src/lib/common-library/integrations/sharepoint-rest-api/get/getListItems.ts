@@ -1,6 +1,7 @@
 import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
-import { SHAREPOINT_ENV } from "$lib/env/env";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
+import { deduplicate } from "../helpers/deduplication";
 import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_Get_Operations } from "../types";
 
 export function getListItems<T extends { value: Record<string, any> }>(options: {
@@ -9,6 +10,8 @@ export function getListItems<T extends { value: Record<string, any> }>(options: 
   operations?: Sharepoint_Get_Operations;
   dataToReturnInLocalMode: T; //To simulate API returning your data in local dev mode,
   logToConsole?: boolean;
+  signal?: AbortSignal; // Optional abort signal for request cancellation
+  deduplicationTtlMs?: number; // Optional TTL for deduplication cache (default: 30s)
 }): Promise<T | Sharepoint_Error_Formatted> {
   let queryString = "?";
 
@@ -22,7 +25,7 @@ export function getListItems<T extends { value: Record<string, any> }>(options: 
     });
   }
 
-  const requestURL = `${options.siteCollectionUrl ?? SHAREPOINT_ENV.paths.site_collection}/_api/web/lists/GetByTitle('${options.listName}')/items${queryString}`;
+  const requestURL = `${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/web/lists/GetByTitle('${options.listName}')/items${queryString}`;
   if (options.logToConsole) console.log(requestURL);
   const fetchRequest = new Request(requestURL, {
     method: "GET",
@@ -43,21 +46,35 @@ export function getListItems<T extends { value: Record<string, any> }>(options: 
     });
   }
 
-  return fetch(fetchRequest)
-    .then((response) => response.json())
-    .then((data: T | Sharepoint_Error | undefined) => {
-      if (options.logToConsole) console.log("FN: getListItems Response", data);
-      if (!data || "odata.error" in data) {
-        return {
-          error: "Error message: " + (data?.["odata.error"].message.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
-        };
-      }
-      return data;
-    })
-    .catch((error) => {
-      if (options.logToConsole) console.log("FN: getListItems Error", error);
-      return {
-        error: "Error message: " + (error?.["odata.error"]?.message?.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
-      };
-    });
+  // Use actual request URL as cache key - includes siteCollectionUrl, listName, and all operations
+  return deduplicate(
+    requestURL,
+    () =>
+      fetch(fetchRequest, { signal: options.signal ?? null })
+        .then((response) => response.json())
+        .then((data: T | Sharepoint_Error | undefined) => {
+          if (options.logToConsole) console.log("FN: getListItems Response", data);
+          if (!data || "odata.error" in data) {
+            return {
+              error: "Error message: " + (data?.["odata.error"].message.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+            };
+          }
+          return data;
+        })
+        .catch((error) => {
+          if (options.logToConsole) console.log("FN: getListItems Error", error);
+          if (error instanceof Error && error.name === "AbortError") {
+            return {
+              error: "Request timed out or was cancelled. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+            };
+          }
+          return {
+            error: "Network error occurred. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+          };
+        }),
+    {
+      ttlMs: options.deduplicationTtlMs ?? 30000, // 30 second default TTL
+      clearOnError: true, // Clear cache on error to allow retries
+    }
+  );
 }

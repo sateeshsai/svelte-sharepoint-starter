@@ -2,6 +2,8 @@ import { Sharepoint_Default_Props_Schema, SharepointTitleProps_Schema, Sharepoin
 import { z } from "zod";
 import dayjs from "dayjs";
 
+// When updating schemas, remember to verify the derived types at ./types.ts
+
 // FILEDETAILS
 export const FileSchema = z.strictObject({
   Title: z.string().min(3, "File name is required."),
@@ -53,7 +55,7 @@ export const EngagementPostSchema = z.strictObject({
 // STORY
 export const StorySchema = z.strictObject({
   Title: z.string().min(10, "Minimum 10 characters."),
-  Content: z.string().min(10, "Minimum 100 characters."),
+  Content: z.string().min(10, "Minimum 10 characters."),
   Tags: z.string(), //Comma seperated string
   Introduction: z.string("Minimum 10 and maximum 255 characters.").min(10).max(255),
   CoverFileName: z.string().min(2, "Please add cover art."),
@@ -75,7 +77,7 @@ export const StoryPostSchema = z.strictObject({
 
 // USER
 export const UserSchema = z.strictObject({
-  AccessRole: z.literal(["Admin"]).nullable(),
+  AccessRole: z.enum(["Admin"]).nullable(),
 });
 
 export const UserListSchema = z.strictObject({

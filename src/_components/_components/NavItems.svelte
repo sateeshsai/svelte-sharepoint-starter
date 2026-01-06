@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SHAREPOINT_ENV } from "$lib/env/env";
+  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { NAVIGATION_MENU_ITEMS } from "./navigation";
   import { getPictureUrl, getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
   let { sheetIsOpen = $bindable() }: { sheetIsOpen: boolean } = $props();
@@ -18,7 +18,7 @@
     {#each NAVIGATION_MENU_ITEMS as menuItem}
       {#if menuItem.accessRole !== "Admin" || global_State.AccessRole === "Admin"}
         <li>
-          <a onclick={() => (sheetIsOpen = false)} class={cn("w-full md:text-sm")} use:isActiveLink={{ className: ACTIVE_LINK_CLASSES }} href={SHAREPOINT_ENV.paths.page + "#" + menuItem.route}>
+          <a onclick={() => (sheetIsOpen = false)} class={cn("w-full md:text-sm")} use:isActiveLink={{ className: ACTIVE_LINK_CLASSES }} href={SHAREPOINT_CONFIG.paths.page + "#" + menuItem.route}>
             {menuItem.name}
           </a>
         </li>

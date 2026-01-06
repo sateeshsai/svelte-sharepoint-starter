@@ -1,7 +1,8 @@
 <script lang="ts">
   import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/const";
+  import { reportError } from "$lib/common-library/integrations/error-handling/report-error";
   import Button from "$lib/components/ui/button/button.svelte";
-  import { SHAREPOINT_ENV } from "$lib/env/env";
+  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { cn } from "$lib/utils";
   import type { Snippet } from "svelte";
 
@@ -13,6 +14,7 @@
     reportSnippet = defaultReportSnippet,
     showReportSnippet = true,
     actionSnippet = defaultActionSnippet,
+    customError,
   }: {
     error: string | Record<string, any> | null;
     reset: () => void;
@@ -21,24 +23,38 @@
     reportSnippet?: Snippet;
     actionSnippet?: Snippet;
     showReportSnippet?: boolean;
+    customError: string;
   } = $props();
 
   const errorString = $derived(typeof error === "string" ? error : typeof error === "object" ? JSON.stringify(error) : "Unknown boundary error.");
 
+  $effect(() => {
+    if (error) {
+      reportError({
+        context: "ErrorBoundary",
+        errorType: "render",
+        technicalMessage: errorString,
+        userMessage: customError,
+      }).catch(() => {});
+    }
+  });
+
   const errorReportEmail_Mailto_Link = $derived(
     "mailto:" +
-      SHAREPOINT_ENV.info.emails.support.email +
+      SHAREPOINT_CONFIG.info.emails.support.email +
       "?subject=" +
-      SHAREPOINT_ENV.info.emails.support.subject +
+      SHAREPOINT_CONFIG.info.emails.support.subject +
       "&body=" +
       "Site URL: " +
       window.location.href +
       "%0D%0A%0D%0A" + //%0D%0A is a line break in the body of the email
       "Error message:%0D%0A" +
-      error +
-      SHAREPOINT_ENV.info.emails.support.body +
-      ((SHAREPOINT_ENV.info.emails.support.cc.length ? "&cc=" + SHAREPOINT_ENV.info.emails.support.cc.join(",") : "") +
-        (SHAREPOINT_ENV.info.emails.support.bcc.length ? "&bcc=" + SHAREPOINT_ENV.info.emails.support.bcc.join(",") : ""))
+      +customError +
+      "%0D%0A" +
+      errorString +
+      SHAREPOINT_CONFIG.info.emails.support.body +
+      ((SHAREPOINT_CONFIG.info.emails.support.cc.length ? "&cc=" + SHAREPOINT_CONFIG.info.emails.support.cc.join(",") : "") +
+        (SHAREPOINT_CONFIG.info.emails.support.bcc.length ? "&bcc=" + SHAREPOINT_CONFIG.info.emails.support.bcc.join(",") : ""))
   );
 </script>
 
@@ -52,7 +68,8 @@
 
 {#snippet defaultMessageSnippet()}
   <h2 class="text-destructive mb-2">An error occured.</h2>
-  <p class="mb-2">Error error: {error}</p>
+  <p class="mb-2">Error message: {customError}</p>
+  <p class="mb-2">Error message: {errorString}</p>
 {/snippet}
 
 {#snippet defaultReportSnippet()}

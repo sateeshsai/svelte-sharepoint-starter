@@ -7,12 +7,7 @@ import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    svelte(),
-    viteSingleFile(),
-    router({ path: "src/routes", ignore: [/[A-Z].*\.svelte$/] })
-  ],
+  plugins: [tailwindcss(), svelte({ extensions: [".svelte", ".md"] }), viteSingleFile(), router({ path: "src/routes", ignore: [/[A-Z].*\.svelte$/] })],
 
   resolve: {
     alias: {
@@ -20,9 +15,9 @@ export default defineConfig({
       $lib: path.resolve("./src/lib"),
       $routes: path.resolve("./src/routes"),
       $: path.resolve("./src"),
-      "sv-router/generated": path.resolve("./.routes/generated")
-    }
+      "sv-router/generated": path.resolve("./.routes/generated"),
+    },
   },
 
-  build: { assetsInlineLimit: Number.POSITIVE_INFINITY }
+  build: { assetsInlineLimit: Number.POSITIVE_INFINITY },
 });

@@ -7,6 +7,7 @@
   import { curveNatural } from "d3-shape";
   import ChartContainer from "$lib/components/ui/chart/chart-container.svelte";
   import { cubicInOut } from "svelte/easing";
+  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
 
   const chartData = [
     { date: new Date("2024-04-01"), desktop: 222, mobile: 150 },
@@ -140,95 +141,100 @@
 </script>
 
 <Card.Root class="">
-  <Card.Header class="flex items-center gap-2 space-y-0 border-b  sm:flex-row">
-    <div class="grid flex-1 gap-1 text-center sm:text-start">
-      <Card.Title class="mb-2">Area chart</Card.Title>
-      <Card.Description>Showing total visitors for the last 3 months</Card.Description>
-    </div>
-    <Select.Root type="single" bind:value={timeRange}>
-      <Select.Trigger class="w-40 rounded-lg sm:ms-auto" aria-label="Select a value">
-        {selectedLabel}
-      </Select.Trigger>
-      <Select.Content class="rounded-xl">
-        <Select.Item value="90d" class="rounded-lg">Last 3 months</Select.Item>
-        <Select.Item value="30d" class="rounded-lg">Last 30 days</Select.Item>
-        <Select.Item value="7d" class="rounded-lg">Last 7 days</Select.Item>
-      </Select.Content>
-    </Select.Root>
-  </Card.Header>
-  <Card.Content>
-    <ChartContainer config={chartConfig} class="-ml-3 aspect-auto h-64 lg:h-72 xl:h-96 w-full">
-      <AreaChart
-        legend
-        data={filteredData}
-        x="date"
-        xScale={scaleUtc()}
-        series={[
-          {
-            key: "mobile",
-            label: "Mobile",
-            color: chartConfig.mobile.color,
-          },
-          {
-            key: "desktop",
-            label: "Desktop",
-            color: chartConfig.desktop.color,
-          },
-        ]}
-        seriesLayout="stack"
-        props={{
-          area: {
-            curve: curveNatural,
-            "fill-opacity": 0.4,
-            line: { class: "stroke-1" },
-            motion: "tween",
-          },
-          xAxis: {
-            ticks: timeRange === "7d" ? 7 : undefined,
-            format: (v) => {
-              return v.toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-              });
+  <svelte:boundary>
+    {#snippet failed(error: any, reset)}
+      <ErrorBoundaryMessage customError="Error rendering Area chart." {error} {reset} />
+    {/snippet}
+    <Card.Header class="flex items-center gap-2 space-y-0 border-b  sm:flex-row">
+      <div class="grid flex-1 gap-1 text-center sm:text-start">
+        <Card.Title class="mb-2">Area chart</Card.Title>
+        <Card.Description>Showing total visitors for the last 3 months</Card.Description>
+      </div>
+      <Select.Root type="single" bind:value={timeRange}>
+        <Select.Trigger class="w-40 rounded-lg sm:ms-auto" aria-label="Select a value">
+          {selectedLabel}
+        </Select.Trigger>
+        <Select.Content class="rounded-xl">
+          <Select.Item value="90d" class="rounded-lg">Last 3 months</Select.Item>
+          <Select.Item value="30d" class="rounded-lg">Last 30 days</Select.Item>
+          <Select.Item value="7d" class="rounded-lg">Last 7 days</Select.Item>
+        </Select.Content>
+      </Select.Root>
+    </Card.Header>
+    <Card.Content>
+      <ChartContainer config={chartConfig} class="-ml-3 aspect-auto h-64 lg:h-72 xl:h-96 w-full">
+        <AreaChart
+          legend
+          data={filteredData}
+          x="date"
+          xScale={scaleUtc()}
+          series={[
+            {
+              key: "mobile",
+              label: "Mobile",
+              color: chartConfig.mobile.color,
             },
-          },
+            {
+              key: "desktop",
+              label: "Desktop",
+              color: chartConfig.desktop.color,
+            },
+          ]}
+          seriesLayout="stack"
+          props={{
+            area: {
+              curve: curveNatural,
+              "fill-opacity": 0.4,
+              line: { class: "stroke-1" },
+              motion: "tween",
+            },
+            xAxis: {
+              ticks: timeRange === "7d" ? 7 : undefined,
+              format: (v) => {
+                return v.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                });
+              },
+            },
 
-          yAxis: { format: () => "" },
-        }}
-      >
-        {#snippet marks({ series, getAreaProps })}
-          <defs>
-            <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stop-color="var(--color-desktop)" stop-opacity={1.0} />
-              <stop offset="95%" stop-color="var(--color-desktop)" stop-opacity={0.1} />
-            </linearGradient>
-            <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stop-color="var(--color-mobile)" stop-opacity={0.8} />
-              <stop offset="95%" stop-color="var(--color-mobile)" stop-opacity={0.1} />
-            </linearGradient>
-          </defs>
-          <ChartClipPath
-            initialWidth={0}
-            motion={{
-              width: { type: "tween", duration: 1000, easing: cubicInOut },
-            }}
-          >
-            {#each series as s, i (s.key)}
-              <Area {...getAreaProps(s, i)} fill={s.key === "desktop" ? "url(#fillDesktop)" : "url(#fillMobile)"} />
-            {/each}
-          </ChartClipPath>
-        {/snippet}
-        {#snippet tooltip()}
-          <Chart.Tooltip
-            labelFormatter={(v: Date) => {
-              return v.toLocaleDateString("en-US", {
-                month: "long",
-              });
-            }}
-            indicator="line"
-          />
-        {/snippet}
-      </AreaChart>
-    </ChartContainer>
-  </Card.Content>
+            yAxis: { format: () => "" },
+          }}
+        >
+          {#snippet marks({ series, getAreaProps })}
+            <defs>
+              <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stop-color="var(--color-desktop)" stop-opacity={1.0} />
+                <stop offset="95%" stop-color="var(--color-desktop)" stop-opacity={0.1} />
+              </linearGradient>
+              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stop-color="var(--color-mobile)" stop-opacity={0.8} />
+                <stop offset="95%" stop-color="var(--color-mobile)" stop-opacity={0.1} />
+              </linearGradient>
+            </defs>
+            <ChartClipPath
+              initialWidth={0}
+              motion={{
+                width: { type: "tween", duration: 1000, easing: cubicInOut },
+              }}
+            >
+              {#each series as s, i (s.key)}
+                <Area {...getAreaProps(s, i)} fill={s.key === "desktop" ? "url(#fillDesktop)" : "url(#fillMobile)"} />
+              {/each}
+            </ChartClipPath>
+          {/snippet}
+          {#snippet tooltip()}
+            <Chart.Tooltip
+              labelFormatter={(v: Date) => {
+                return v.toLocaleDateString("en-US", {
+                  month: "long",
+                });
+              }}
+              indicator="line"
+            />
+          {/snippet}
+        </AreaChart>
+      </ChartContainer>
+    </Card.Content>
+  </svelte:boundary>
 </Card.Root>

@@ -3,7 +3,7 @@
   import type { NodeViewProps } from "@tiptap/core";
   import Audio from "@lucide/svelte/icons/audio-lines";
   import { buttonVariants } from "$lib/components/ui/button/button.svelte";
-  import { AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+  import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import FileDropZoneWrapper from "$lib/common-library/utils/components/file/FileDropZoneWrapper.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import MediaPlaceHolder from "$lib/common-library/integrations/components/edra-rich-text/components/MediaPlaceHolder.svelte";

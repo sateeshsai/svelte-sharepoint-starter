@@ -1,4 +1,4 @@
-import { SHAREPOINT_ENV } from "$lib/env/env";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import type { WebAppManifest } from "web-app-manifest";
 
 type DisplayOverride = "browser" | "fullscreen" | "minimal-ui" | "standalone" | "tabbed" | "window-controls-overlay";
@@ -22,49 +22,49 @@ export const MANIFEST_DATA: FixedWebAppManifest = {
     {
       purpose: "maskable",
       sizes: "1024x1024",
-      src: SHAREPOINT_ENV.paths.assets + "icons/" + "maskable_icon.png",
+      src: SHAREPOINT_CONFIG.paths.assets + "icons/" + "maskable_icon.png",
       type: "image/png",
     },
     {
       purpose: "maskable",
       sizes: "48x48",
-      src: SHAREPOINT_ENV.paths.assets + "icons/" + "maskable_icon_x48.png",
+      src: SHAREPOINT_CONFIG.paths.assets + "icons/" + "maskable_icon_x48.png",
       type: "image/png",
     },
     {
       purpose: "maskable",
       sizes: "72x72",
-      src: SHAREPOINT_ENV.paths.assets + "icons/" + "maskable_icon_x72.png",
+      src: SHAREPOINT_CONFIG.paths.assets + "icons/" + "maskable_icon_x72.png",
       type: "image/png",
     },
     {
       purpose: "maskable",
       sizes: "96x96",
-      src: SHAREPOINT_ENV.paths.assets + "icons/" + "maskable_icon_x96.png",
+      src: SHAREPOINT_CONFIG.paths.assets + "icons/" + "maskable_icon_x96.png",
       type: "image/png",
     },
     {
       purpose: "maskable",
       sizes: "128x128",
-      src: SHAREPOINT_ENV.paths.assets + "icons/" + "maskable_icon_x128.png",
+      src: SHAREPOINT_CONFIG.paths.assets + "icons/" + "maskable_icon_x128.png",
       type: "image/png",
     },
     {
       purpose: "maskable",
       sizes: "192x192",
-      src: SHAREPOINT_ENV.paths.assets + "icons/" + "maskable_icon_x192.png",
+      src: SHAREPOINT_CONFIG.paths.assets + "icons/" + "maskable_icon_x192.png",
       type: "image/png",
     },
     {
       purpose: "maskable",
       sizes: "384x384",
-      src: SHAREPOINT_ENV.paths.assets + "icons/" + "maskable_icon_x384.png",
+      src: SHAREPOINT_CONFIG.paths.assets + "icons/" + "maskable_icon_x384.png",
       type: "image/png",
     },
     {
       purpose: "maskable",
       sizes: "512x512",
-      src: SHAREPOINT_ENV.paths.assets + "icons/" + "maskable_icon_x512.png",
+      src: SHAREPOINT_CONFIG.paths.assets + "icons/" + "maskable_icon_x512.png",
       type: "image/png",
     },
 
@@ -72,26 +72,26 @@ export const MANIFEST_DATA: FixedWebAppManifest = {
     {
       purpose: "maskable",
       sizes: "180x180",
-      src: SHAREPOINT_ENV.paths.assets + "icons/" + "maskable_icon_x180.png",
+      src: SHAREPOINT_CONFIG.paths.assets + "icons/" + "maskable_icon_x180.png",
       type: "image/png",
     },
     {
       purpose: "maskable",
       sizes: "64x64",
-      src: SHAREPOINT_ENV.paths.assets + "icons/" + "maskable_icon_x64.png",
+      src: SHAREPOINT_CONFIG.paths.assets + "icons/" + "maskable_icon_x64.png",
       type: "image/png",
     },
     // Create this manually too. Unlike the above, no padding required - just transparent png, like favicon
     {
       purpose: "any",
       sizes: "512x512",
-      src: SHAREPOINT_ENV.paths.assets + "icons/" + "x512.png",
+      src: SHAREPOINT_CONFIG.paths.assets + "icons/" + "x512.png",
       type: "image/png",
     },
   ],
   screenshots: [
-    { src: SHAREPOINT_ENV.paths.assets + "screenshots/" + "551x979-1.png", sizes: "551x979" },
-    { src: SHAREPOINT_ENV.paths.assets + "screenshots/" + "2000x1073-1.png", sizes: "2000x1073", form_factor: "wide" },
+    { src: SHAREPOINT_CONFIG.paths.assets + "screenshots/" + "551x979-1.png", sizes: "551x979" },
+    { src: SHAREPOINT_CONFIG.paths.assets + "screenshots/" + "2000x1073-1.png", sizes: "2000x1073", form_factor: "wide" },
   ],
 };
 

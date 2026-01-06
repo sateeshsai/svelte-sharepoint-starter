@@ -1,17 +1,17 @@
-import type { AsyncLoadState } from "$lib/common-library/utils/functions/async.svelte";
+import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
 import { randomInt } from "$lib/common-library/utils/functions/number";
 import { randomIdString } from "$lib/common-library/utils/functions/string";
 import { getListItems } from "$lib/common-library/integrations/sharepoint-rest-api/get/getListItems";
-import { createSelectExapandQueries } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
+import { createSelectExpandQueries } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
 import type { Sharepoint_Get_Operations } from "$lib/common-library/integrations/sharepoint-rest-api/types";
 import { LOCAL_STORY_ITEMS } from "$lib/data/local-data";
 import { createNew_Story_ListItem } from "$lib/data/new-items.svelte";
 import type { Story_ListItem } from "$lib/data/types";
-import { SHAREPOINT_ENV } from "$lib/env/env";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
 
-export async function getStories(storiesLoadState: AsyncLoadState<Story_ListItem[]>, lastFetchedInPollTimeString?: string | undefined) {
-  const selectExpand = createSelectExapandQueries(createNew_Story_ListItem());
+export async function getStories(storiesLoadState: AsyncLoadState, lastFetchedInPollTimeString?: string | undefined, signal?: AbortSignal) {
+  const selectExpand = createSelectExpandQueries(createNew_Story_ListItem());
 
   const operations: Sharepoint_Get_Operations = [
     ["select", selectExpand.select],
@@ -39,12 +39,13 @@ export async function getStories(storiesLoadState: AsyncLoadState<Story_ListItem
       : [];
 
   const fetchResponse = await getListItems({
-    listName: SHAREPOINT_ENV.lists.Story.name,
+    listName: SHAREPOINT_CONFIG.lists.Story.name,
     dataToReturnInLocalMode: {
       value: lastFetchedInPollTimeString ? newStoriesToReturn_InPoll_InLocalMode : LOCAL_STORY_ITEMS,
     },
     operations: operations,
     logToConsole: false,
+    signal,
   });
 
   if ("error" in fetchResponse) {

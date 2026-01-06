@@ -1,6 +1,6 @@
 import type { Sharepoint_User, Sharepoint_User_Properties, Sharepoint_Lookup_DefaultProps } from "./types";
 
-export function createSelectExapandQueries(obj: Record<string, any>) {
+export function createSelectExpandQueries(obj: Record<string, any>) {
   if (typeof obj === "function") {
     obj = obj();
   }

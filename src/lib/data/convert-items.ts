@@ -14,7 +14,7 @@ export function convert_Story_ListItem_ToPost(storyListItem: Story_ListItem): St
 
 export function convert_File_ListItem_To_Post(fileListItem: File_ListItem): File_ListItem_Post_ForStory {
   return {
-    ParentId: fileListItem.Id,
+    ParentId: fileListItem.Parent.Id,
     Title: fileListItem.Title,
     Description: fileListItem.Description,
     ParentType: fileListItem.ParentType,

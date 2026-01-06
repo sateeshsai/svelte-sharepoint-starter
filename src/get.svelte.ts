@@ -1,16 +1,16 @@
-import type { AsyncLoadState } from "$lib/common-library/utils/functions/async.svelte";
+import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
 import { getCurrentUser } from "$lib/common-library/integrations/sharepoint-rest-api/get/getCurrentUser";
 import { getCurrentUserProperties } from "$lib/common-library/integrations/sharepoint-rest-api/get/getCurrentUserProperties";
 import { getListItems } from "$lib/common-library/integrations/sharepoint-rest-api/get/getListItems";
 import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/common-library/integrations/sharepoint-rest-api/local-data";
-import { global_State } from "$lib/data/global-state.svelte";
+import { setCurrentUser, setAccessRole, setUserProperties } from "$lib/data/global-state.svelte";
 import { LOCAL_USERS } from "$lib/data/local-data";
-import { SHAREPOINT_ENV } from "$lib/env/env";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
 
-export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState<true>) {
+export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) {
   const fetchResponse = await getCurrentUser({
-    siteCollectionUrl: SHAREPOINT_ENV.paths.site_collection,
+    siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
     dataToReturnInLocalMode: LOCAL_SHAREPOINT_USERS[0],
     logToConsole: false,
   });
@@ -24,13 +24,13 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState<t
   }
 
   //STORE IN GLOBAL STATE
-  global_State.user = fetchResponse;
+  setCurrentUser(fetchResponse);
 
   //FETCH USER ACCESS ROLE
   const userId = fetchResponse.Id!;
 
   const userAccessRoleFetchResponse = await getListItems({
-    listName: SHAREPOINT_ENV.lists.UsersInfo.name,
+    listName: SHAREPOINT_CONFIG.lists.UsersInfo.name,
     operations: [
       ["select", "User/Id,AccessRole"],
       ["expand", "User"],
@@ -48,7 +48,7 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState<t
   }
 
   //STORE IN GLOBAL STATE
-  global_State.AccessRole = userAccessRoleFetchResponse.value.AccessRole;
+  setAccessRole(userAccessRoleFetchResponse.value.AccessRole);
 
   //NOT WAITING FOR THIS DATA
   fetchAndSetCurrentUserProperties();
@@ -60,7 +60,7 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState<t
 async function fetchAndSetCurrentUserProperties() {
   //FETCH USER PROPERTIES
   const userPropertiesResponse = await getCurrentUserProperties({
-    siteCollectionUrl: SHAREPOINT_ENV.paths.site_collection,
+    siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
     dataToReturnInLocalMode: LOCAL_SHAREPOINT_USERS_PROPERTIES[0],
   });
 
@@ -72,5 +72,5 @@ async function fetchAndSetCurrentUserProperties() {
   }
 
   //STORE IN GLOBAL STATE
-  global_State.userProperties = userPropertiesResponse;
+  setUserProperties(userPropertiesResponse);
 }

@@ -18,6 +18,11 @@ export const NAVIGATION_MENU_ITEMS: { name: string; route: ReturnType<typeof p>;
     route: "/stories/new",
   },
   {
+    name: "Docs",
+    // route: p("/admin"),
+    route: "/docs",
+  },
+  {
     name: "Admin",
     // route: p("/admin"),
     route: "/admin",

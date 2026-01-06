@@ -1,7 +1,7 @@
 import { randomInt } from "$lib/common-library/utils/functions/number";
 import { capitalizeFirstLetter } from "$lib/common-library/utils/functions/string";
 import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
-import { SHAREPOINT_ENV } from "$lib/env/env";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
 import type { Sharepoint_Error_Formatted, Sharepoint_PostItem_SuccessResponse, Sharepoint_PostItem_SuccessResponse_WithPostedData, Sharepoint_PostItemResponse } from "../types";
@@ -14,11 +14,12 @@ export async function postListItem<DataToPost extends Record<string, any>, DataT
   listNameReplaced?: string;
   logToConsole?: boolean;
   dataToIncludeInResponse_InLocalMode?: DataToIncludeInResponseInLocalMode;
+  signal?: AbortSignal; // Optional abort signal for request cancellation
 }): Promise<Sharepoint_PostItem_SuccessResponse_WithPostedData<DataToPost, DataToIncludeInResponseInLocalMode> | Sharepoint_Error_Formatted> {
   if (options.logToConsole) console.log(options.dataToPost);
   if (!options.formDigest) options.formDigest = (await getFormDigestValue()) as string;
 
-  const request = new Request(`${options.siteCollectionUrl ?? SHAREPOINT_ENV.paths.site_collection}/_api/web/lists/GetByTitle('${options.listName}')/items`, {
+  const request = new Request(`${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/web/lists/GetByTitle('${options.listName}')/items`, {
     method: "POST",
     credentials: "same-origin", // or credentials: 'include'
     headers: new Headers({
@@ -50,7 +51,7 @@ export async function postListItem<DataToPost extends Record<string, any>, DataT
     });
   }
 
-  return fetch(request)
+  return fetch(request, { signal: options.signal ?? null })
     .then((response) => response.json())
     .then((data: Sharepoint_PostItemResponse<DataToPost, DataToIncludeInResponseInLocalMode>) => {
       if (options.logToConsole) console.log("FN: postListItem Response", data);
@@ -63,8 +64,13 @@ export async function postListItem<DataToPost extends Record<string, any>, DataT
     })
     .catch((error) => {
       if (options.logToConsole) console.log("FN: postListItem Error", error);
+      if (error instanceof Error && error.name === "AbortError") {
+        return {
+          error: "Request timed out or was cancelled. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+        };
+      }
       return {
-        error: "Error message: " + (error?.["odata.error"]?.message?.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+        error: "Network error occurred. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
       };
     });
 }

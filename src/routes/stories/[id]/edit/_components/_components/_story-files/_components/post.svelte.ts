@@ -1,4 +1,4 @@
-import type { AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { randomInt } from "$lib/common-library/utils/functions/number";
 import { randomIdString } from "$lib/common-library/utils/functions/string";
 import { getFormDigestValue } from "$lib/common-library/integrations/sharepoint-rest-api/get/getFormDigestValue";
@@ -11,7 +11,7 @@ import type {
   Sharepoint_UploadFile_SuccessResponse,
 } from "$lib/common-library/integrations/sharepoint-rest-api/types";
 import type { File_ListItem, File_ListItem_Post_ForStory } from "$lib/data/types";
-import { SHAREPOINT_ENV } from "$lib/env/env";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 
 export type FileDetailsPostSuccessResponses = Sharepoint_PostItem_SuccessResponse_WithPostedData<File_ListItem_Post_ForStory, {}>;
 
@@ -28,9 +28,9 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
   const fileUploadPromises: Promise<Sharepoint_Error_Formatted | Sharepoint_UploadFile_SuccessResponse>[] = [];
   files.forEach((file) => {
     const fileUploadPromise = readAnduploadFile({
-      siteCollectionUrl: SHAREPOINT_ENV.paths.site_collection,
-      serverRelativeUrl: SHAREPOINT_ENV.folders.StoryFiles.rel_path,
-      foldername: SHAREPOINT_ENV.folders.StoryFiles.name,
+      siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+      serverRelativeUrl: SHAREPOINT_CONFIG.folders.StoryFiles.rel_path,
+      foldername: SHAREPOINT_CONFIG.folders.StoryFiles.name,
       file: {
         name: randomIdString() + file.name,
         obj: file,
@@ -78,8 +78,8 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
     };
 
     const fileDetailsPostPromise = postListItem({
-      siteCollectionUrl: SHAREPOINT_ENV.paths.site_collection,
-      listName: SHAREPOINT_ENV.lists.Files.name,
+      siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+      listName: SHAREPOINT_CONFIG.lists.Files.name,
       formDigest: formDigestValue as string,
       dataToPost: fileDetailsToPost,
       dataToIncludeInResponse_InLocalMode: { Id: randomInt(), parentId: storyId },

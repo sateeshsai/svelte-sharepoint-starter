@@ -5,6 +5,7 @@
   import { BarChart, Highlight, type ChartContextValue } from "layerchart";
   import TrendingUpIcon from "@lucide/svelte/icons/trending-up";
   import { cubicInOut } from "svelte/easing";
+  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
 
   const chartData = [
     { month: "January", desktop: 186, mobile: 80 },
@@ -24,66 +25,71 @@
 </script>
 
 <Card.Root class="">
-  <Card.Header>
-    <Card.Title>Bar Chart (Stacked)</Card.Title>
-    <Card.Description>January - June 2024</Card.Description>
-  </Card.Header>
-  <Card.Content>
-    <Chart.Container config={chartConfig}>
-      <BarChart
-        bind:context
-        data={chartData}
-        xScale={scaleBand().padding(0.25)}
-        x="month"
-        axis="x"
-        rule={false}
-        series={[
-          {
-            key: "desktop",
-            label: "Desktop",
-            color: chartConfig.desktop.color,
-            props: { rounded: "bottom" },
-          },
-          {
-            key: "mobile",
-            label: "Mobile",
-            color: chartConfig.mobile.color,
-          },
-        ]}
-        seriesLayout="stack"
-        props={{
-          bars: {
-            stroke: "none",
-            initialY: context?.height,
-            initialHeight: 0,
-            motion: {
-              y: { type: "tween", duration: 500, easing: cubicInOut },
-              height: { type: "tween", duration: 500, easing: cubicInOut },
+  <svelte:boundary>
+    {#snippet failed(error: any, reset)}
+      <ErrorBoundaryMessage customError="Error rendering Bar chart." {error} {reset} />
+    {/snippet}
+    <Card.Header>
+      <Card.Title>Bar Chart (Stacked)</Card.Title>
+      <Card.Description>January - June 2024</Card.Description>
+    </Card.Header>
+    <Card.Content>
+      <Chart.Container config={chartConfig}>
+        <BarChart
+          bind:context
+          data={chartData}
+          xScale={scaleBand().padding(0.25)}
+          x="month"
+          axis="x"
+          rule={false}
+          series={[
+            {
+              key: "desktop",
+              label: "Desktop",
+              color: chartConfig.desktop.color,
+              props: { rounded: "bottom" },
             },
-          },
-          highlight: { area: false },
-          xAxis: { format: (d) => d.slice(0, 3) },
-        }}
-        legend
-      >
-        {#snippet belowMarks()}
-          <Highlight area={{ class: "fill-muted" }} />
-        {/snippet}
+            {
+              key: "mobile",
+              label: "Mobile",
+              color: chartConfig.mobile.color,
+            },
+          ]}
+          seriesLayout="stack"
+          props={{
+            bars: {
+              stroke: "none",
+              initialY: context?.height,
+              initialHeight: 0,
+              motion: {
+                y: { type: "tween", duration: 500, easing: cubicInOut },
+                height: { type: "tween", duration: 500, easing: cubicInOut },
+              },
+            },
+            highlight: { area: false },
+            xAxis: { format: (d) => d.slice(0, 3) },
+          }}
+          legend
+        >
+          {#snippet belowMarks()}
+            <Highlight area={{ class: "fill-muted" }} />
+          {/snippet}
 
-        {#snippet tooltip()}
-          <Chart.Tooltip />
-        {/snippet}
-      </BarChart>
-    </Chart.Container>
-  </Card.Content>
-  <Card.Footer>
-    <div class="flex w-full items-start gap-2 text-sm">
-      <div class="grid gap-2">
-        <div class="flex items-center gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUpIcon class="size-4" />
+          {#snippet tooltip()}
+            <Chart.Tooltip />
+          {/snippet}
+        </BarChart>
+      </Chart.Container>
+    </Card.Content>
+    <Card.Footer>
+      <div class="flex w-full items-start gap-2 text-sm">
+        <div class="grid gap-2">
+          <div class="flex items-center gap-2 leading-none font-medium">
+            Trending up by 5.2% this month <TrendingUpIcon class="size-4" />
+          </div>
+          <div class="text-muted-foreground flex items-center gap-2 leading-none">Showing total visitors for the last 6 months</div>
         </div>
-        <div class="text-muted-foreground flex items-center gap-2 leading-none">Showing total visitors for the last 6 months</div>
       </div>
-    </div>
-  </Card.Footer>
+    </Card.Footer>
+  </svelte:boundary>
 </Card.Root>

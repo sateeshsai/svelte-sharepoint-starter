@@ -1,3 +1,5 @@
+import { reportError } from "$lib/common-library/integrations/error-handling/report-error";
+
 export class AsyncSubmitState {
   initial = $state(true);
   attempted = $state(false);
@@ -6,9 +8,16 @@ export class AsyncSubmitState {
   error: string | undefined = $state("");
   message = $state("");
 
-  setError = (errorMessage: string) => {
+  setError = (errorMessage: string, context?: string) => {
     this.error = errorMessage;
+    this.attempted = true;
     this.#clearInProgress();
+    reportError({
+      context: context ?? "",
+      errorType: "Submit",
+      technicalMessage: errorMessage,
+      userMessage: errorMessage,
+    }).catch(() => {});
   };
 
   appendError = (errorMessage: string) => {
@@ -56,15 +65,21 @@ export class AsyncSubmitState {
   };
 }
 
-export class AsyncLoadState<ReturnedData> {
+export class AsyncLoadState {
   loading = $state(true);
   ready: boolean = $state(false);
   error: string | undefined = $state("");
 
-  setError = (errorMessage: string) => {
+  setError = (errorMessage: string, context?: string) => {
     this.error = errorMessage;
     this.ready = false;
     this.loading = false;
+    reportError({
+      context: context ?? "",
+      errorType: "Load",
+      technicalMessage: errorMessage,
+      userMessage: errorMessage,
+    }).catch(() => {});
   };
 
   appendError = (errorMessage: string) => {

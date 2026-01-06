@@ -13,6 +13,6 @@
   },
   "files": [],
   "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
-  "include": ["src/**/*.ts", "scripts/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "scripts/**/*.ts"],
   "exclude": ["src/lib/components/ui/**", "src/lib/common-library/integrations/components/edra-rich-text/**"]
 }

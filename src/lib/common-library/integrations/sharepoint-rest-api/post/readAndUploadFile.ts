@@ -1,4 +1,4 @@
-import { SHAREPOINT_ENV } from "$lib/env/env";
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { LOCAL_MODE } from "../../../utils/local-dev/modes";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
@@ -34,7 +34,7 @@ export async function readAnduploadFile(options: {
         const fileBuffer = e.target.result;
         let formDigestValue = await getFormDigestValue({});
         const request = new Request(
-          `${options.siteCollectionUrl ?? SHAREPOINT_ENV.paths.site_collection}/_api/web/GetFolderByServerRelativeUrl('${options.foldername}')/Files/add(url='${options.file.name}',overwrite=true)`,
+          `${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/web/GetFolderByServerRelativeUrl('${options.foldername}')/Files/add(url='${options.file.name}',overwrite=true)`,
           {
             method: "POST",
             credentials: "same-origin", // or credentials: 'include'
@@ -60,8 +60,13 @@ export async function readAnduploadFile(options: {
             })
             .catch((error) => {
               if (options.logToConsole) console.log("FN: readAnduploadFile Error", error);
+              if (error instanceof Error && error.name === "AbortError") {
+                return {
+                  error: "Request timed out or was cancelled. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+                };
+              }
               return {
-                error: "Error message: " + (error?.["odata.error"].message.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
+                error: "Network error occurred. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
               };
             })
         );

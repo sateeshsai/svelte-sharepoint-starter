@@ -3,7 +3,7 @@
 
   import Cropper from "cropperjs";
   import { tick } from "svelte";
-  import { AsyncSubmitState } from "$lib/common-library/utils/functions/async.svelte";
+  import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import type { Attachment } from "svelte/attachments";
   import Button from "$lib/components/ui/button/button.svelte";
   import { cn } from "$lib/utils";
