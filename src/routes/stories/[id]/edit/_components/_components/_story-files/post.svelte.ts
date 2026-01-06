@@ -1,21 +1,20 @@
 import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
-import { getFormDigestValue } from "$lib/common-library/integrations/sharepoint-rest-api/get/getFormDigestValue";
-import { deleteListItem } from "$lib/common-library/integrations/sharepoint-rest-api/delete/deleteListItem";
-import { updateListItem } from "$lib/common-library/integrations/sharepoint-rest-api/update/updateListItem";
 
 import type { File_ListItem_Post_ForStory } from "$lib/data/types";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
 import type { ReturnResolvedType } from "$lib/common-library/utils/types/util-types";
+import { getDataProvider } from "$lib/data/provider-factory";
 
 export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Partial<File_ListItem_Post_ForStory>, updateFileState: AsyncSubmitState) {
-  const updateResponse = await updateListItem({
+  const provider = getDataProvider();
+  const updateResponse = await provider.updateListItem({
     listName: SHAREPOINT_CONFIG.lists.Files.name,
     itemId: fileId,
-    dataToUpdate: fileDetailsToUpdate,
+    body: fileDetailsToUpdate,
   });
 
-  if ("error" in updateResponse) {
+  if (updateResponse && "error" in updateResponse) {
     updateFileState.setError("Error updating file's sort order. Error message: " + updateResponse.error);
     return;
   }
@@ -26,13 +25,14 @@ export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Parti
 
 export async function deleteStoryFile(fileId: number, deleteFileState: AsyncSubmitState) {
   deleteFileState.setInprogress();
-  const deleteFileResponse = await deleteListItem({
+  const provider = getDataProvider();
+  const deleteFileResponse = await provider.deleteListItem({
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
     listName: SHAREPOINT_CONFIG.lists.Files.name,
     itemId: fileId,
   });
 
-  if ("error" in deleteFileResponse) {
+  if (deleteFileResponse && "error" in deleteFileResponse) {
     deleteFileState.setError("Unable to delete file. Error message: " + deleteFileResponse.error);
     return;
   }

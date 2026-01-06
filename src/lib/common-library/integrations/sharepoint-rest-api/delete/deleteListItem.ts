@@ -1,7 +1,5 @@
-import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
-import { LOCAL_LIST_ITEM_UPDATE_SUCCESS_RESPONSE } from "../local-data";
 import type { Sharepoint_Error_Formatted, Sharepoint_UpdateItemResponse, Sharepoint_UpdateItem_DataResponse } from "../types";
 
 export async function deleteListItem(options: {
@@ -26,12 +24,6 @@ export async function deleteListItem(options: {
       "IF-MATCH": "*",
     }),
   });
-
-  if (LOCAL_MODE) {
-    return new Promise((res, rej) => {
-      setTimeout(() => res(LOCAL_LIST_ITEM_UPDATE_SUCCESS_RESPONSE), 200);
-    });
-  }
 
   return fetch(request)
     .then((response) => response.json())

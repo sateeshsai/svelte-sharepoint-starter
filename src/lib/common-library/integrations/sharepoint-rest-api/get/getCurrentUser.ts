@@ -1,4 +1,3 @@
-import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
 import { deduplicate } from "../helpers/deduplication";
@@ -7,18 +6,9 @@ import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_User } fr
 export function getCurrentUser<T extends Sharepoint_User>(options: {
   siteCollectionUrl?: string;
   logToConsole?: boolean;
-  dataToReturnInLocalMode: T;
   signal?: AbortSignal;
   deduplicationTtlMs?: number;
 }): Promise<T | Sharepoint_Error_Formatted> {
-  if (LOCAL_MODE) {
-    return new Promise((res, rej) => {
-      setTimeout(() => {
-        res(options.dataToReturnInLocalMode);
-      }, 400);
-    });
-  }
-
   const requestURL = `${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/web/currentuser`;
 
   if (options.logToConsole) console.log(requestURL);

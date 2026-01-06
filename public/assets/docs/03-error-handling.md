@@ -137,9 +137,9 @@ import { useAbortController } from "$lib/hooks/useAbortController.svelte";
 const { signal } = useAbortController();
 
 async function loadData() {
-  const result = await getListItems({
+  const provider = getDataProvider();
+  const result = await provider.getListItems({
     listName: "Stories",
-    dataToReturnInLocalMode: { value: LOCAL_STORY_ITEMS },
     signal, // Pass signal to all API calls
   });
 }
@@ -175,9 +175,9 @@ $effect(() => {
 async function loadStories() {
   loadState.setLoading();
   try {
-    const response = await getListItems({
+    const provider = getDataProvider();
+    const response = await provider.getListItems({
       listName: "Stories",
-      dataToReturnInLocalMode: { value: LOCAL_STORY_ITEMS },
       signal, // Auto-cancel on unmount
     });
     stories = response.value;

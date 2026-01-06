@@ -1,4 +1,3 @@
-import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
 import { deduplicate } from "../helpers/deduplication";
@@ -8,7 +7,6 @@ export function getListItems<T extends { value: Record<string, any> }>(options: 
   siteCollectionUrl?: string;
   listName: string;
   operations?: Sharepoint_Get_Operations;
-  dataToReturnInLocalMode: T; //To simulate API returning your data in local dev mode,
   logToConsole?: boolean;
   signal?: AbortSignal; // Optional abort signal for request cancellation
   deduplicationTtlMs?: number; // Optional TTL for deduplication cache (default: 30s)
@@ -37,14 +35,6 @@ export function getListItems<T extends { value: Record<string, any> }>(options: 
       useCredentials: "true",
     }),
   });
-
-  if (LOCAL_MODE) {
-    return new Promise((res, rej) => {
-      setTimeout(() => {
-        res(options.dataToReturnInLocalMode);
-      }, 300);
-    });
-  }
 
   // Use actual request URL as cache key - includes siteCollectionUrl, listName, and all operations
   return deduplicate(

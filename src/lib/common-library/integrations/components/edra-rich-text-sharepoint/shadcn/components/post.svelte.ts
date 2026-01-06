@@ -1,5 +1,5 @@
 import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
-import { readAnduploadFile } from "$lib/common-library/integrations/sharepoint-rest-api/post/readAndUploadFile";
+import { readAndUploadFile } from "$lib/common-library/integrations/sharepoint-rest-api/post/readAndUploadFile";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 
 export async function uploadFile(files: File[], fileUploadState: AsyncSubmitState) {
@@ -12,7 +12,7 @@ export async function uploadFile(files: File[], fileUploadState: AsyncSubmitStat
 
   const file = files?.[0]!;
 
-  const fileUploadPromise = await readAnduploadFile({
+  const fileUploadPromise = await readAndUploadFile({
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
     serverRelativeUrl: SHAREPOINT_CONFIG.folders.StoryFiles.rel_path,
     foldername: SHAREPOINT_CONFIG.folders.StoryFiles.name,

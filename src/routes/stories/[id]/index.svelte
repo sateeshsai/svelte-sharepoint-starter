@@ -10,8 +10,7 @@
   import PenLine from "@lucide/svelte/icons/pen-line";
   import { getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
-  import { getCurrentUserProperties } from "$lib/common-library/integrations/sharepoint-rest-api/get/getCurrentUserProperties";
-  import { LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/common-library/integrations/sharepoint-rest-api/local-data";
+  import { getDataProvider } from "$lib/data/provider-factory";
   import type { Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/types";
   import StoryFileGallery from "./_components/StoryFileGallery.svelte";
   import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
@@ -70,6 +69,25 @@
     }
   }
 
+  let authorProperties: Sharepoint_User_Properties | undefined = $state();
+
+  $effect(() => {
+    loadAuthorProperties(story?.Author.Title);
+  });
+
+  async function loadAuthorProperties(authorName: string | undefined) {
+    if (!authorName) return;
+
+    const provider = getDataProvider();
+    const response = await provider.getCurrentUserProperties({
+      siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+    });
+
+    if (!("error" in response)) {
+      authorProperties = response.value as Sharepoint_User_Properties;
+    }
+  }
+
   trackAnalytics();
 </script>
 
@@ -95,17 +113,11 @@
           <div>
             <h1 class="mt-4 mb-10" in:fly={{ x: -50 }}>{story.Title}</h1>
             <div class="flex gap-2 items-baseline my-4">
-              {#await getCurrentUserProperties( { siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection, dataToReturnInLocalMode: LOCAL_SHAREPOINT_USERS_PROPERTIES.find((u) => u.DisplayName === story?.Author.Title) as Sharepoint_User_Properties } )}
-                Loading...
-              {:then authorResponse}
-                {#if "error" in authorResponse}
-                  <p in:fade>{authorResponse.error}</p>
-                {:else}
-                  {@const authorFullname = getUserFirstLastNames(authorResponse)}
-                  <p class="my-0!"><a href="https://people.deloitte/profile/{authorResponse.Email.split('@')[0]}" target="_blank">{authorFullname?.first} {authorFullname?.last}</a></p>
-                  |
-                {/if}
-              {/await}
+              {#if authorProperties}
+                {@const authorFullname = getUserFirstLastNames(authorProperties)}
+                <p class="my-0!"><a href="https://people.deloitte/profile/{authorProperties.Email.split('@')[0]}" target="_blank">{authorFullname?.first} {authorFullname?.last}</a></p>
+                |
+              {/if}
               <time class="text-sm text-muted-foreground" datetime={new Date(story.Modified).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
                 >{new Date(story.Modified).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}</time
               >

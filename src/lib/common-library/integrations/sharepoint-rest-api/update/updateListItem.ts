@@ -1,9 +1,6 @@
-import { capitalizeFirstLetter } from "$lib/common-library/utils/functions/string";
-import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
-import { LOCAL_LIST_ITEM_UPDATE_SUCCESS_RESPONSE } from "../local-data";
 import type { Sharepoint_Error_Formatted, Sharepoint_UpdateItemResponse, Sharepoint_UpdateItem_DataResponse } from "../types";
 
 export async function updateListItem<T extends Record<string, any>>(options: {
@@ -38,12 +35,6 @@ export async function updateListItem<T extends Record<string, any>>(options: {
       ...options.dataToUpdate,
     }),
   });
-
-  if (LOCAL_MODE) {
-    return new Promise((res, rej) => {
-      setTimeout(() => res(LOCAL_LIST_ITEM_UPDATE_SUCCESS_RESPONSE), 200);
-    });
-  }
 
   return fetch(request)
     .then((response) => response.json())

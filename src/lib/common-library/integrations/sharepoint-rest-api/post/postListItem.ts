@@ -1,10 +1,7 @@
-import { randomInt } from "$lib/common-library/utils/functions/number";
-import { capitalizeFirstLetter } from "$lib/common-library/utils/functions/string";
-import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
-import type { Sharepoint_Error_Formatted, Sharepoint_PostItem_SuccessResponse, Sharepoint_PostItem_SuccessResponse_WithPostedData, Sharepoint_PostItemResponse } from "../types";
+import type { Sharepoint_Error_Formatted, Sharepoint_PostItem_SuccessResponse_WithPostedData, Sharepoint_PostItemResponse } from "../types";
 
 export async function postListItem<DataToPost extends Record<string, any>, DataToIncludeInResponseInLocalMode extends Record<string, any>>(options: {
   siteCollectionUrl?: string;
@@ -13,7 +10,6 @@ export async function postListItem<DataToPost extends Record<string, any>, DataT
   formDigest?: string;
   listNameReplaced?: string;
   logToConsole?: boolean;
-  dataToIncludeInResponse_InLocalMode?: DataToIncludeInResponseInLocalMode;
   signal?: AbortSignal; // Optional abort signal for request cancellation
 }): Promise<Sharepoint_PostItem_SuccessResponse_WithPostedData<DataToPost, DataToIncludeInResponseInLocalMode> | Sharepoint_Error_Formatted> {
   if (options.logToConsole) console.log(options.dataToPost);
@@ -36,20 +32,6 @@ export async function postListItem<DataToPost extends Record<string, any>, DataT
       ...options.dataToPost,
     }),
   });
-
-  if (LOCAL_MODE) {
-    return new Promise((res, rej) => {
-      setTimeout(
-        () =>
-          res({
-            Id: randomInt(),
-            ...options.dataToPost,
-            ...options.dataToIncludeInResponse_InLocalMode,
-          } as Sharepoint_PostItem_SuccessResponse & DataToPost & DataToIncludeInResponseInLocalMode),
-        200
-      );
-    });
-  }
 
   return fetch(request, { signal: options.signal ?? null })
     .then((response) => response.json())

@@ -1,10 +1,9 @@
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-import { LOCAL_MODE } from "../../../utils/local-dev/modes";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
 import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_UploadFile_SuccessResponse } from "../types";
 
-export async function readAnduploadFile(options: {
+export async function readAndUploadFile(options: {
   siteCollectionUrl?: string;
   serverRelativeUrl: string;
   foldername: string;
@@ -14,19 +13,6 @@ export async function readAnduploadFile(options: {
     obj: File;
   };
 }): Promise<Sharepoint_UploadFile_SuccessResponse | Sharepoint_Error_Formatted> {
-  if (LOCAL_MODE) {
-    return new Promise((res, rej) => {
-      setTimeout(
-        () =>
-          res({
-            Name: options.file.name,
-            ServerRelativeUrl: options.serverRelativeUrl + options.foldername + "/" + options.file.name,
-          } as Sharepoint_UploadFile_SuccessResponse),
-        3000
-      );
-    });
-  }
-
   return new Promise((resolve, reject) => {
     let reader = new FileReader();
     reader.onloadend = async (e) => {
@@ -50,7 +36,7 @@ export async function readAnduploadFile(options: {
           fetch(request)
             .then((response) => response.json())
             .then((data: Sharepoint_UploadFile_SuccessResponse | Sharepoint_Error | undefined) => {
-              if (options.logToConsole) console.log("FN: readAnduploadFile Response", data, options.file.name);
+              if (options.logToConsole) console.log("FN: readAndUploadFile Response", data, options.file.name);
               if (!data || "odata.error" in data) {
                 return {
                   error: "Error message: " + (data?.["odata.error"].message.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
@@ -59,7 +45,7 @@ export async function readAnduploadFile(options: {
               return data;
             })
             .catch((error) => {
-              if (options.logToConsole) console.log("FN: readAnduploadFile Error", error);
+              if (options.logToConsole) console.log("FN: readAndUploadFile Error", error);
               if (error instanceof Error && error.name === "AbortError") {
                 return {
                   error: "Request timed out or was cancelled. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,

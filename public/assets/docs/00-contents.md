@@ -84,18 +84,23 @@ export type Story_ListItem = z.infer<typeof StorySchema>;
 ### Fetching Data
 
 ```ts
-import { getListItems } from "$lib/common-library/integrations/sharepoint-rest-api/get/getListItems";
+import { getDataProvider } from "$lib/data/provider-factory";
 
-const response = await getListItems({
+// Get the provider (auto-switches between Mock and SharePoint based on LOCAL_MODE)
+const provider = getDataProvider();
+
+const response = await provider.getListItems({
   listName: "Stories",
   operations: [
     ["select", "Id,Title,Author/Id,Author/Title"],
     ["expand", "Author"],
     ["filter", "Active eq true"],
   ],
-  dataToReturnInLocalMode: { value: LOCAL_STORY_ITEMS }, // Use fake data offline
   signal: abortController.signal,
 });
+
+// localhost → MockDataProvider (instant mock data)
+// production → SharePointDataProvider (real SharePoint API)
 ```
 
 ### Async State Tracking
@@ -201,6 +206,8 @@ async function handleSubmit(event: SubmitEvent) {
 ### Loading Data with Error Handling
 
 ```ts
+import { getDataProvider } from "$lib/data/provider-factory";
+
 let stories: Story_ListItem[] | undefined = $state();
 const loadState = new AsyncLoadState();
 
@@ -211,9 +218,9 @@ $effect(() => {
 async function loadStories() {
   loadState.setLoading();
   try {
-    const response = await getListItems({
+    const provider = getDataProvider();
+    const response = await provider.getListItems({
       listName: "Stories",
-      dataToReturnInLocalMode: { value: LOCAL_STORY_ITEMS },
       signal,
     });
     stories = response.value;

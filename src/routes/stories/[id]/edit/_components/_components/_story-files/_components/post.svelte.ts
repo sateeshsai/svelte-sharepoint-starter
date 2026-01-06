@@ -1,9 +1,6 @@
 import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { randomInt } from "$lib/common-library/utils/functions/number";
 import { randomIdString } from "$lib/common-library/utils/functions/string";
-import { getFormDigestValue } from "$lib/common-library/integrations/sharepoint-rest-api/get/getFormDigestValue";
-import { postListItem } from "$lib/common-library/integrations/sharepoint-rest-api/post/postListItem";
-import { readAnduploadFile } from "$lib/common-library/integrations/sharepoint-rest-api/post/readAndUploadFile";
 import type {
   Sharepoint_Error_Formatted,
   Sharepoint_PostItem_SuccessResponse_WithPostedData,
@@ -12,6 +9,7 @@ import type {
 } from "$lib/common-library/integrations/sharepoint-rest-api/types";
 import type { File_ListItem, File_ListItem_Post_ForStory } from "$lib/data/types";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
+import { getDataProvider } from "$lib/data/provider-factory";
 
 export type FileDetailsPostSuccessResponses = Sharepoint_PostItem_SuccessResponse_WithPostedData<File_ListItem_Post_ForStory, {}>;
 
@@ -23,18 +21,18 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
     return;
   }
 
+  const provider = getDataProvider();
+
   // 1. UPLOAD FILES TO STORYFILES FOLDER
   //1.A. PREPARE PROMISES
-  const fileUploadPromises: Promise<Sharepoint_Error_Formatted | Sharepoint_UploadFile_SuccessResponse>[] = [];
+  const fileUploadPromises: Promise<Sharepoint_Error_Formatted | { Url: string }>[] = [];
   files.forEach((file) => {
-    const fileUploadPromise = readAnduploadFile({
+    const fileUploadPromise = provider.readAndUploadFile({
       siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
-      serverRelativeUrl: SHAREPOINT_CONFIG.folders.StoryFiles.rel_path,
-      foldername: SHAREPOINT_CONFIG.folders.StoryFiles.name,
-      file: {
-        name: randomIdString() + file.name,
-        obj: file,
-      },
+      listName: SHAREPOINT_CONFIG.lists.Files.name,
+      itemId: 0,
+      file: file,
+      folder: SHAREPOINT_CONFIG.folders.StoryFiles.name,
     });
 
     fileUploadPromises.push(fileUploadPromise);
@@ -42,12 +40,12 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
 
   const fileUploadResults = await Promise.allSettled(fileUploadPromises);
   const fileUploadErrors: string[] = [];
-  const fileUploadSuccessResponses: Sharepoint_UploadFile_SuccessResponse[] = [];
+  const fileUploadSuccessResponses: { Url: string }[] = [];
 
   // 1.B. VALIDATE RESPONSES
   fileUploadResults.forEach((fileUploadResult) => {
     if (fileUploadResult.status === "fulfilled") {
-      const fileUploadResponse = fileUploadResult.value as Sharepoint_Error_Formatted | Sharepoint_UploadFile_SuccessResponse;
+      const fileUploadResponse = fileUploadResult.value as Sharepoint_Error_Formatted | { Url: string };
       if ("error" in fileUploadResponse) {
         fileUploadErrors.push("File upload failed. Error message: " + fileUploadResponse.error);
       } else {
@@ -65,26 +63,23 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
   // 2. POST UPLOADED FILE DETAILS TO FILES LIST
   //2.A. PREPARE POST PROMISES
   const fileDetailsPromises: Promise<Sharepoint_PostItemResponse<File_ListItem_Post_ForStory, { Id: number }>>[] = [];
-  const formDigestValue = await getFormDigestValue();
   fileUploadSuccessResponses.forEach((fileUploadSuccessResponse, idx) => {
     console.log(fileUploadSuccessResponse);
 
     const fileDetailsToPost: File_ListItem_Post_ForStory = {
-      Title: fileUploadSuccessResponse.Name,
+      Title: fileUploadSuccessResponse.Url.split("/").pop() || "file",
       ParentId: storyId,
       Description: "",
       ParentType: "Story",
       FileOrder: Math.max(...storyFiles.map((f) => f.FileOrder), 0) + (idx + 1),
     };
 
-    const fileDetailsPostPromise = postListItem({
+    const fileDetailsPostPromise = provider.postListItem({
       siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
       listName: SHAREPOINT_CONFIG.lists.Files.name,
-      formDigest: formDigestValue as string,
-      dataToPost: fileDetailsToPost,
-      dataToIncludeInResponse_InLocalMode: { Id: randomInt(), parentId: storyId },
+      body: fileDetailsToPost,
     });
-    fileDetailsPromises.push(fileDetailsPostPromise);
+    fileDetailsPromises.push(fileDetailsPostPromise as any);
   });
 
   const fileDetailsPostResults = await Promise.allSettled(fileDetailsPromises);

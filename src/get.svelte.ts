@@ -1,17 +1,15 @@
 import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
-import { getCurrentUser } from "$lib/common-library/integrations/sharepoint-rest-api/get/getCurrentUser";
-import { getCurrentUserProperties } from "$lib/common-library/integrations/sharepoint-rest-api/get/getCurrentUserProperties";
-import { getListItems } from "$lib/common-library/integrations/sharepoint-rest-api/get/getListItems";
-import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/common-library/integrations/sharepoint-rest-api/local-data";
+import { getDataProvider } from "$lib/data/provider-factory";
 import { setCurrentUser, setAccessRole, setUserProperties } from "$lib/data/global-state.svelte";
-import { LOCAL_USERS } from "$lib/data/local-data";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
+import type { Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/types";
 
 export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) {
-  const fetchResponse = await getCurrentUser({
+  const provider = getDataProvider();
+
+  const fetchResponse = await provider.getCurrentUser({
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
-    dataToReturnInLocalMode: LOCAL_SHAREPOINT_USERS[0],
     logToConsole: false,
   });
 
@@ -29,14 +27,13 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) 
   //FETCH USER ACCESS ROLE
   const userId = fetchResponse.Id!;
 
-  const userAccessRoleFetchResponse = await getListItems({
+  const userAccessRoleFetchResponse = await provider.getListItems({
     listName: SHAREPOINT_CONFIG.lists.UsersInfo.name,
     operations: [
       ["select", "User/Id,AccessRole"],
       ["expand", "User"],
       ["filter", `User/Id eq ${userId}`],
     ],
-    dataToReturnInLocalMode: { value: LOCAL_USERS[0] },
   });
 
   if ("error" in userAccessRoleFetchResponse) {
@@ -59,9 +56,9 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) 
 
 async function fetchAndSetCurrentUserProperties() {
   //FETCH USER PROPERTIES
-  const userPropertiesResponse = await getCurrentUserProperties({
+  const provider = getDataProvider();
+  const userPropertiesResponse = await provider.getCurrentUserProperties({
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
-    dataToReturnInLocalMode: LOCAL_SHAREPOINT_USERS_PROPERTIES[0],
   });
 
   if ("error" in userPropertiesResponse) {
@@ -72,5 +69,5 @@ async function fetchAndSetCurrentUserProperties() {
   }
 
   //STORE IN GLOBAL STATE
-  setUserProperties(userPropertiesResponse);
+  setUserProperties(userPropertiesResponse.value as Sharepoint_User_Properties);
 }

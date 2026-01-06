@@ -36,9 +36,9 @@ $effect(() => {
 async function loadStories() {
   loadState.setLoading();
   try {
-    const data = await getListItems({
+    const provider = getDataProvider();
+    const data = await provider.getListItems({
       listName: "Stories",
-      dataToReturnInLocalMode: { value: LOCAL_STORY_ITEMS },
       signal,
     });
     stories = data.value;
@@ -179,8 +179,8 @@ export function resetGlobalState() {
 
   async function initializeUser() {
     try {
-      const user = await getCurrentUser({
-        dataToReturnInLocalMode: { value: LOCAL_SHAREPOINT_USERS[0] },
+      const provider = getDataProvider();
+      const user = await provider.getCurrentUser({
         signal,
       });
       setCurrentUser(user);

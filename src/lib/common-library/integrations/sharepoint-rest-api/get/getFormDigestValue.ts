@@ -1,5 +1,4 @@
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
 import { deduplicate } from "../helpers/deduplication";
 import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_FormDigestResponse } from "../types";
@@ -19,12 +18,6 @@ export async function getFormDigestValue(options?: {
       Accept: "application/json; odata=verbose",
     }),
   });
-
-  if (LOCAL_MODE) {
-    return new Promise((res, rej) => {
-      setTimeout(() => res(""), 200);
-    });
-  }
 
   return deduplicate(
     requestURL,
