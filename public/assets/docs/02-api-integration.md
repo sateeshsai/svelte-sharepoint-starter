@@ -17,7 +17,31 @@ keywords:
 
 SharePoint REST API, request deduplication, cancellation, and offline development through the **DataProvider pattern**.
 
-**See also:** [State Management](/docs/state) (AsyncLoadState patterns) | [Error Handling](/docs/errors) (error recovery)
+**See also:** [State Management](/docs/state) (AsyncLoadState patterns) | [Error Handling](/docs/errors) (error recovery) | [Architecture & Layers](/docs/architecture) (layer details) | [Config Validation](/docs/config) (configuration validation)
+
+---
+
+## Initialization
+
+The DataProvider is initialized automatically at app startup in `src/main.ts`:
+
+```ts
+import { initializeDataProviders } from "./lib/data/provider-factory";
+
+// Call before mounting the app
+// Note: Config is validated automatically during initialization
+initializeDataProviders();
+```
+
+This function:
+
+1. **Validates the SharePoint configuration** using Zod schema - catches typos and missing fields
+2. **Registers both MockDataProvider** (for LOCAL_MODE) and **SharePointDataProvider** (for production) into the common-library registry
+3. **Injects config into providers** via constructor (no global imports)
+
+After initialization, `getDataProvider()` is safe to call from anywhere in the app.
+
+**Config Validation:** If your `src/lib/env/sharepoint-config.ts` has invalid fields, an error boundary will display a helpful message with debugging steps.
 
 ---
 
@@ -31,6 +55,7 @@ Instead of calling REST functions directly, the app uses a **DataProvider** abst
 - Automatic LOCAL_MODE/production switching
 - No conditional logic scattered in UI code
 - Easy to test with mock implementations
+- Config validated at startup (fails fast with clear errors)
 
 ---
 
@@ -272,7 +297,7 @@ const response = await provider.getListItems({
    - Simulates network delays (300-500ms)
    - For polling, simulates creating new items (30% chance per poll)
 
-2. **SharePointDataProvider** (`$lib/common-library/integrations/sharepoint-rest-api/sharepoint-data-provider.ts`)
+2. **SharePointDataProvider** (`$lib/common-library/integrations/sharepoint-rest-api/providers/sharepoint-data-provider.ts`)
    - Real implementation wrapping existing REST functions
    - Makes actual HTTP requests to SharePoint
 
@@ -280,7 +305,7 @@ const response = await provider.getListItems({
 
 ```ts
 import { LOCAL_STORY_ITEMS, LOCAL_ENGAGEMENTS, LOCAL_FILES, LOCAL_USERS } from "$lib/data/local-data";
-import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/common-library/integrations/sharepoint-rest-api/local-data";
+import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/common-library/integrations/sharepoint-rest-api/data/local-data";
 ```
 
 **Benefits:**
@@ -355,3 +380,20 @@ async function loadItems() {
 - Ignore error states
 - Mix API logic with component rendering
 - Use `dataToReturnInLocalMode` (not supported anymore)
+
+---
+
+## Architecture
+
+**DataProvider Pattern Details:** See [Architecture & Layers](/docs/architecture)
+
+**Locations:**
+
+- **Interface:** `src/lib/common-library/integrations/sharepoint-rest-api/providers/data-provider.ts`
+- **Real API:** `src/lib/common-library/integrations/sharepoint-rest-api/providers/sharepoint-data-provider.ts`
+- **Mock Base:** `src/lib/common-library/integrations/sharepoint-rest-api/providers/base-mock-data-provider.ts`
+- **App Mock:** `src/lib/data/mock-data-provider.ts` (extends base, provides project data)
+- **Factory (Registry):** `src/lib/common-library/integrations/sharepoint-rest-api/providers/provider-registry.ts`
+- **Factory (Wrapper):** `src/lib/data/provider-factory.ts` (app orchestration & initialization)
+
+**Key Principle:** Common-library provides reusable interfaces, base classes, and provider registry. App layer provides concrete implementations (MockDataProvider) and orchestration (initialization, config). This enables true portability: copy `common-library/` to another project with minimal changes.

@@ -2,7 +2,7 @@ import type z from "zod";
 import type { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "./local-data";
 import { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "./schemas";
 
-import { ACCESS_ROLES } from "./const";
+import { ACCESS_ROLES } from "../constants/const";
 export type AccessRole = (typeof ACCESS_ROLES)[number];
 
 export type Sharepoint_User_Properties = (typeof LOCAL_SHAREPOINT_USERS_PROPERTIES)[0];

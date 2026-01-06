@@ -1,4 +1,4 @@
-import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User } from "$lib/common-library/integrations/sharepoint-rest-api/types";
+import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User } from "../data/types";
 
 /**
  * DataProvider interface - abstracts data operations from implementation

@@ -1,6 +1,9 @@
 import { reportError } from "$lib/common-library/integrations/error-handling/report-error";
+import type { SharePointConfig } from "$lib/common-library/integrations/sharepoint-rest-api/config";
+import { getContext } from "svelte";
 
 export class AsyncSubmitState {
+  #config: SharePointConfig;
   initial = $state(true);
   attempted = $state(false);
   inProgress = $state(false);
@@ -8,11 +11,15 @@ export class AsyncSubmitState {
   error: string | undefined = $state("");
   message = $state("");
 
+  constructor() {
+    this.#config = getContext<SharePointConfig>("sharePointConfig");
+  }
+
   setError = (errorMessage: string, context?: string) => {
     this.error = errorMessage;
     this.attempted = true;
     this.#clearInProgress();
-    reportError({
+    reportError(this.#config, {
       context: context ?? "",
       errorType: "Submit",
       technicalMessage: errorMessage,
@@ -66,15 +73,20 @@ export class AsyncSubmitState {
 }
 
 export class AsyncLoadState {
+  #config: SharePointConfig;
   loading = $state(true);
   ready: boolean = $state(false);
   error: string | undefined = $state("");
+
+  constructor() {
+    this.#config = getContext<SharePointConfig>("sharePointConfig");
+  }
 
   setError = (errorMessage: string, context?: string) => {
     this.error = errorMessage;
     this.ready = false;
     this.loading = false;
-    reportError({
+    reportError(this.#config, {
       context: context ?? "",
       errorType: "Load",
       technicalMessage: errorMessage,

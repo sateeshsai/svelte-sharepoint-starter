@@ -1,4 +1,4 @@
-import type { AccessRole, Sharepoint_User, Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/types";
+import type { AccessRole, Sharepoint_User, Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
 
 export const global_State: { user: undefined | Sharepoint_User; AccessRole: AccessRole; userProperties: undefined | Sharepoint_User_Properties } = $state({
   user: undefined,

@@ -271,7 +271,7 @@ type WithElementRef&lt;T, U extends HTMLElement = HTMLElement&gt; = T & {
 
 ## SharePoint Helper Utilities
 
-Located in `src/lib/common-library/integrations/sharepoint-rest-api/helpers/`
+Located in `src/lib/common-library/integrations/sharepoint-rest-api/utilities/`
 
 ### `getUserFirstLastNames()`
 
@@ -280,7 +280,7 @@ Parse SharePoint user properties to extract first and last names.
 ```ts
 getUserFirstLastNames(userProps: Sharepoint_User_Properties): { first: string; last: string }
 
-import { getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
+import { getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
 
 const names = getUserFirstLastNames(currentUserProps);
 console.log(names.first); // "John"
@@ -326,7 +326,7 @@ Polling utility with retry logic. Returns stop function.
 ```ts
 poll(callback: () => Promise&lt;void&gt;, interval: number): () => void
 
-import { poll } from "$lib/common-library/integrations/sharepoint-rest-api/helpers/poll";
+import { poll } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
 
 const stopPolling = poll(async () => {
   const stories = await getStories();

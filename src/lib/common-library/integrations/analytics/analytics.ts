@@ -1,11 +1,12 @@
 import { randomIdString } from "../../utils/functions/string";
-import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-import { postListItem } from "../sharepoint-rest-api/post/postListItem";
+import { postListItem } from "../sharepoint-rest-api/rest-functions/post/postListItem";
 import type { AnalyticsEntry_ListItem_Post } from "./types";
+import type { SharePointConfig } from "../sharepoint-rest-api/config";
 import { AnalyticsEntryPostSchema } from "./schemas";
-import { getFormDigestValue } from "../sharepoint-rest-api/get/getFormDigestValue";
-import { updateListItem } from "../sharepoint-rest-api/update/updateListItem";
+import { updateListItem } from "../sharepoint-rest-api/rest-functions/update/updateListItem";
 import { onMount } from "svelte";
+import { getContext } from "svelte";
+import { LOCAL_MODE } from "../../utils/local-dev/modes";
 
 let sessionId = randomIdString();
 
@@ -17,17 +18,23 @@ let sessionId = randomIdString();
 
 let postedAnalyticsEntryId: number;
 let route: string;
+let cachedConfig: SharePointConfig;
+
 export async function trackAnalytics(Data?: StringifiedObject) {
+  if (LOCAL_MODE) return; // Skip analytics in local development mode
+
+  cachedConfig = cachedConfig ?? getContext<SharePointConfig>("sharePointConfig");
+  const config = cachedConfig;
   async function postAnalyticsEntry() {
     let newAnalyticsEntry: AnalyticsEntry_ListItem_Post = {
-      Title: SHAREPOINT_CONFIG.info.version,
+      Title: config.info.version,
       SessionId: sessionId,
       Route: window.location.hash,
       Data: stringifyKVObject(Data ?? {}),
     };
     const validationResult = AnalyticsEntryPostSchema.safeParse(newAnalyticsEntry);
     if (validationResult.success) {
-      const postResponse = await postListItem({ listName: SHAREPOINT_CONFIG.lists.Analytics.name, dataToPost: newAnalyticsEntry });
+      const postResponse = await postListItem({ listName: config.lists.Analytics.name, dataToPost: newAnalyticsEntry });
       if ("error" in postResponse) {
         console.log("Error posting Analytics entry.", postResponse);
         return;
@@ -45,12 +52,15 @@ export async function trackAnalytics(Data?: StringifiedObject) {
 }
 
 export async function untrackAnalytics() {
+  if (LOCAL_MODE || !postedAnalyticsEntryId) return; // Skip analytics in local development mode
+
+  const config = cachedConfig;
   console.log(route, "END");
   //Not really updating any info. Updating only so that we can use the Modified property as user leaving a page.
   const postResponse = await updateListItem({
-    listName: SHAREPOINT_CONFIG.lists.Analytics.name,
+    listName: config.lists.Analytics.name,
     itemId: postedAnalyticsEntryId,
-    dataToUpdate: { Title: SHAREPOINT_CONFIG.info.version },
+    dataToUpdate: { Title: config.info.version },
   });
 
   if ("error" in postResponse) {

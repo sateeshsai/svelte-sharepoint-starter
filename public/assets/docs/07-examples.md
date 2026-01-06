@@ -90,7 +90,7 @@ Learn by exploring production-ready implementations. Each example demonstrates p
   import { getStories } from "./get.svelte";
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
-  import { poll } from "$lib/common-library/integrations/sharepoint-rest-api/helpers/poll";
+  import { poll } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
 
   const { signal } = useAbortController(); // Auto-cancel on unmount
   let storiesLoadState = new AsyncLoadState();

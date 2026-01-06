@@ -1,6 +1,6 @@
 import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
-import { createSelectExpandQueries } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
-import type { Sharepoint_Get_Operations } from "$lib/common-library/integrations/sharepoint-rest-api/types";
+import { createSelectExpandQueries } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
+import type { Sharepoint_Get_Operations } from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
 import { createNew_Story_ListItem } from "$lib/data/new-items.svelte";
 import type { Story_ListItem } from "$lib/data/types";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";

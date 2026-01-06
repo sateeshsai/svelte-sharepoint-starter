@@ -1,7 +1,7 @@
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
+import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../../constants/const";
 import { deduplicate } from "../helpers/deduplication";
-import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_Get_Operations } from "../types";
+import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_Get_Operations } from "../../data/types";
 
 export function getListItems<T extends { value: Record<string, any> }>(options: {
   siteCollectionUrl?: string;

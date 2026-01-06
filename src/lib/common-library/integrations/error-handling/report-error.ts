@@ -1,13 +1,16 @@
-import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-import { postListItem } from "$lib/common-library/integrations/sharepoint-rest-api/post/postListItem";
+import { postListItem } from "$lib/common-library/integrations/sharepoint-rest-api/rest-functions/post/postListItem";
 import type { ErrorReport_ListItem_Post } from "$lib/common-library/integrations/error-handling/error-types";
+import type { SharePointConfig } from "../sharepoint-rest-api/config";
 import { ERROR_TYPES } from "./error-schemas";
 
 /**
  * Report an error to the ErrorReports list in SharePoint
  * This is non-blocking - if reporting fails, it will be silently ignored to prevent cascading errors
  */
-export async function reportError(params: { context?: string; errorType: string; technicalMessage: string; userMessage?: string; signal?: AbortSignal; logToConsole?: boolean }): Promise<void> {
+export async function reportError(
+  config: SharePointConfig,
+  params: { context?: string; errorType: string; technicalMessage: string; userMessage?: string; signal?: AbortSignal; logToConsole?: boolean }
+): Promise<void> {
   try {
     const routeUrl = window?.location.href ?? "";
 
@@ -28,7 +31,7 @@ export async function reportError(params: { context?: string; errorType: string;
       return;
     }
 
-    await postListItem({ dataToPost: errorReportToPost, listName: SHAREPOINT_CONFIG.lists.ErrorReports.name });
+    await postListItem({ dataToPost: errorReportToPost, listName: config.lists.ErrorReports.name });
   } catch (err) {
     // Silently fail - don't let error reporting break the app
     console.error("[ERROR REPORT FAILED]", err);

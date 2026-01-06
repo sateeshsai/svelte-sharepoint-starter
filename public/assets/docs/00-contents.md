@@ -39,13 +39,15 @@ A production-ready meta-framework starter built with **Svelte 5**, **Vite**, and
 1. **[Error Handling & Recovery](/docs/errors)** - Multi-layered error handling, boundaries, and reporting
 2. **[State Management](/docs/state)** - Reactive state, async loading, and form submission
 3. **[API Integration](/docs/api)** - SharePoint REST API with deduplication & cancellation
-4. **[Analytics Tracking](/docs/analytics)** - Track user journeys and page visits
+4. **[Architecture & Layers](/docs/architecture)** - Code organization, layer separation, DataProvider pattern
+5. **[Config Validation](/docs/config)** - Runtime config validation with Zod and error boundaries
+6. **[Analytics Tracking](/docs/analytics)** - Track user journeys and page visits
 
 ### Guides
 
-5. **[Utilities Reference](/docs/utils)** - String, file, temporal, object utilities
-6. **[Components & UI](/docs/components)** - Component library and styling
-7. **[Working Examples](/docs/examples)** - Real-world implementations in codebase
+7. **[Utilities Reference](/docs/utils)** - String, file, temporal, object utilities
+8. **[Components & UI](/docs/components)** - Component library and styling
+9. **[Working Examples](/docs/examples)** - Real-world implementations in codebase
 
 ---
 

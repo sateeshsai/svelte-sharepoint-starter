@@ -3,7 +3,7 @@ import { getDataProvider } from "$lib/data/provider-factory";
 import { setCurrentUser, setAccessRole, setUserProperties } from "$lib/data/global-state.svelte";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
-import type { Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/types";
+import type { Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
 
 export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) {
   const provider = getDataProvider();

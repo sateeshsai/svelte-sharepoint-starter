@@ -1,6 +1,6 @@
 <script lang="ts">
   import Carousel_Stories from "./_components/Carousel_Stories.svelte";
-  import { getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
+  import { getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
   import { cn } from "$lib/utils";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";

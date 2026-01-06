@@ -2,7 +2,7 @@
   import { Router } from "sv-router";
   import { cn } from "$lib/utils";
   import { navigating } from "$lib/common-library/integrations/router/router-helpers.svelte";
-  import { onMount } from "svelte";
+  import { onMount, setContext } from "svelte";
   import { ModeWatcher } from "mode-watcher";
   import { getAndStoreCurrentUserInfo } from "./get.svelte";
   import { Toaster } from "svelte-sonner";
@@ -13,6 +13,11 @@
   import TailwindViewportHelper from "$lib/common-library/utils/components/ui-utils/TailwindViewportHelper.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ConfigErrorBoundary from "./_components/ConfigErrorBoundary.svelte";
+  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
+
+  // Provide config to all child components via Svelte context
+  setContext("sharePointConfig", SHAREPOINT_CONFIG);
 
   onMount(() => {
     loadData();
@@ -25,35 +30,37 @@
   }
 </script>
 
-<svelte:boundary>
-  {#snippet failed(error: any, reset)}
-    <ErrorBoundaryMessage customError="Error rendering site." {error} {reset} />
-  {/snippet}
-  <!-- MOSTLY META AND UTIL UI ELEMENTS -->
-  <div class={cn("fixed  top-0 left-0  h-1 w-full origin-left bg-dgreen-bright transition-discrete duration-1000", navigating.beforeload ? " scale-x-100" : "scale-x-0 ")}></div>
-  <ModeWatcher />
-  <TailwindViewportHelper />
-  <Head />
-  <Toaster richColors closeButton position="top-right" />
+<ConfigErrorBoundary>
+  <svelte:boundary>
+    {#snippet failed(error: any, reset)}
+      <ErrorBoundaryMessage customError="Error rendering site." {error} {reset} />
+    {/snippet}
+    <!-- MOSTLY META AND UTIL UI ELEMENTS -->
+    <div class={cn("fixed  top-0 left-0  h-1 w-full origin-left bg-dgreen-bright transition-discrete duration-1000", navigating.beforeload ? " scale-x-100" : "scale-x-0 ")}></div>
+    <ModeWatcher />
+    <TailwindViewportHelper />
+    <Head />
+    <Toaster richColors closeButton position="top-right" />
 
-  <!-- PAGE -->
-  <div class="grainy-gradient fixed top-0 left-[50%] w-full h-full -z-10 max-w-screen-4xl translate-x-[-50%]"></div>
-  <div class="min-h-screen grid max-w-screen-4xl mx-auto">
-    {#if initialDataLoadState?.loading}
-      <StatusMessage type="loading" message="Loading..." />
-    {:else if initialDataLoadState?.ready}
-      <div class="innerBody grid grid-rows-[auto_1fr_auto] h-full">
-        <Header />
-        <Router base="#" />
-        <Footer />
-      </div>
-    {/if}
+    <!-- PAGE -->
+    <div class="grainy-gradient fixed top-0 left-[50%] w-full h-full -z-10 max-w-screen-4xl translate-x-[-50%]"></div>
+    <div class="min-h-screen grid max-w-screen-4xl mx-auto">
+      {#if initialDataLoadState?.loading}
+        <StatusMessage type="loading" message="Loading..." />
+      {:else if initialDataLoadState?.ready}
+        <div class="innerBody grid grid-rows-[auto_1fr_auto] h-full">
+          <Header />
+          <Router base="#" />
+          <Footer />
+        </div>
+      {/if}
 
-    {#if initialDataLoadState?.error}
-      <StatusMessage type="error" message={initialDataLoadState.error} />
-    {/if}
-  </div>
-</svelte:boundary>
+      {#if initialDataLoadState?.error}
+        <StatusMessage type="error" message={initialDataLoadState.error} />
+      {/if}
+    </div>
+  </svelte:boundary>
+</ConfigErrorBoundary>
 
 <style>
   :global(.dark .grainy-gradient) {

@@ -1,6 +1,6 @@
-import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/const";
+import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/constants/const";
 import { getDataProvider } from "$lib/data/provider-factory";
-import { createSelectExpandQueries } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
+import { createSelectExpandQueries } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
 import { createNew_Story_ListItem } from "$lib/data/new-items.svelte";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { createNew_File_ListItem } from "$lib/data/new-items.svelte";

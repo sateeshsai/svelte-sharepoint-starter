@@ -1,6 +1,6 @@
-import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
+import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../../constants/const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
-import type { Sharepoint_Error_Formatted, Sharepoint_UpdateItemResponse, Sharepoint_UpdateItem_DataResponse } from "../types";
+import type { Sharepoint_Error_Formatted, Sharepoint_UpdateItemResponse, Sharepoint_UpdateItem_DataResponse } from "../../data/types";
 
 export async function deleteListItem(options: {
   siteCollectionUrl: string;

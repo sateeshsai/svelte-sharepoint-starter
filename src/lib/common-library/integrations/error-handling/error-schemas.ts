@@ -1,7 +1,7 @@
 // ERROR REPORT
 
 import z from "zod";
-import { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "../sharepoint-rest-api/schemas";
+import { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "../sharepoint-rest-api/data/schemas";
 
 export const ERROR_TYPES = ["Network", "Auth", "Validation", "Render", "Load", "Submit", "Other"] as const;
 export const ErrorReportSchema = z.strictObject({

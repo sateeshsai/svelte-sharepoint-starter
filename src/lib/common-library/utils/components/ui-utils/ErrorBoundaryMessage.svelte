@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/const";
+  import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/constants/const";
   import { reportError } from "$lib/common-library/integrations/error-handling/report-error";
   import Button from "$lib/components/ui/button/button.svelte";
-  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { cn } from "$lib/utils";
   import type { Snippet } from "svelte";
+  import { getContext } from "svelte";
+  import type { SharePointConfig } from "$lib/common-library/integrations/sharepoint-rest-api/config";
 
   let {
     error,
@@ -28,9 +29,11 @@
 
   const errorString = $derived(typeof error === "string" ? error : typeof error === "object" ? JSON.stringify(error) : "Unknown boundary error.");
 
+  const config = getContext<SharePointConfig>("sharePointConfig");
+
   $effect(() => {
     if (error) {
-      reportError({
+      reportError(config, {
         context: "ErrorBoundary",
         errorType: "render",
         technicalMessage: errorString,
@@ -41,9 +44,9 @@
 
   const errorReportEmail_Mailto_Link = $derived(
     "mailto:" +
-      SHAREPOINT_CONFIG.info.emails.support.email +
+      config.info.emails.support.email +
       "?subject=" +
-      SHAREPOINT_CONFIG.info.emails.support.subject +
+      config.info.emails.support.subject +
       "&body=" +
       "Site URL: " +
       window.location.href +
@@ -52,9 +55,9 @@
       +customError +
       "%0D%0A" +
       errorString +
-      SHAREPOINT_CONFIG.info.emails.support.body +
-      ((SHAREPOINT_CONFIG.info.emails.support.cc.length ? "&cc=" + SHAREPOINT_CONFIG.info.emails.support.cc.join(",") : "") +
-        (SHAREPOINT_CONFIG.info.emails.support.bcc.length ? "&bcc=" + SHAREPOINT_CONFIG.info.emails.support.bcc.join(",") : ""))
+      config.info.emails.support.body +
+      ((config.info.emails.support.cc.length ? "&cc=" + config.info.emails.support.cc.join(",") : "") +
+        (config.info.emails.support.bcc.length ? "&bcc=" + config.info.emails.support.bcc.join(",") : ""))
   );
 </script>
 

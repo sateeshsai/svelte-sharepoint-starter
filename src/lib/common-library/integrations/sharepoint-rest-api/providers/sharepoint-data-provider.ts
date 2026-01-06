@@ -1,19 +1,27 @@
-import type { DataProvider } from "$lib/data/data-provider";
-import { getListItems as getListItemsAPI } from "./get/getListItems";
-import { getCurrentUser as getCurrentUserAPI } from "./get/getCurrentUser";
-import { getCurrentUserProperties as getCurrentUserPropertiesAPI } from "./get/getCurrentUserProperties";
-import { getFormDigestValue as getFormDigestValueAPI } from "./get/getFormDigestValue";
-import { postListItem as postListItemAPI } from "./post/postListItem";
-import { readAndUploadFile as readAndUploadFileAPI } from "./post/readAndUploadFile";
-import { updateListItem as updateListItemAPI } from "./update/updateListItem";
-import { deleteListItem as deleteListItemAPI } from "./delete/deleteListItem";
-import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User } from "./types";
+import type { DataProvider } from "./data-provider";
+import type { SharePointConfig } from "../config";
+import { getListItems as getListItemsAPI } from "../rest-functions/get/getListItems";
+import { getCurrentUser as getCurrentUserAPI } from "../rest-functions/get/getCurrentUser";
+import { getCurrentUserProperties as getCurrentUserPropertiesAPI } from "../rest-functions/get/getCurrentUserProperties";
+import { getFormDigestValue as getFormDigestValueAPI } from "../rest-functions/get/getFormDigestValue";
+import { postListItem as postListItemAPI } from "../rest-functions/post/postListItem";
+import { readAndUploadFile as readAndUploadFileAPI } from "../rest-functions/post/readAndUploadFile";
+import { updateListItem as updateListItemAPI } from "../rest-functions/update/updateListItem";
+import { deleteListItem as deleteListItemAPI } from "../rest-functions/delete/deleteListItem";
+import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User } from "../data/types";
 
 /**
  * SharePointDataProvider - implements DataProvider interface using real SharePoint REST API
  * Makes actual HTTP requests to SharePoint lists and operations
+ * Config is injected via constructor for use as defaults in all methods
  */
 export class SharePointDataProvider implements DataProvider {
+  protected config: SharePointConfig;
+
+  constructor(config: SharePointConfig) {
+    this.config = config;
+  }
+
   async getListItems<T extends { value: Record<string, any> }>(options: {
     siteCollectionUrl?: string;
     listName: string;

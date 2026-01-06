@@ -15,7 +15,7 @@
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { fly } from "svelte/transition";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
-  import { poll } from "$lib/common-library/integrations/sharepoint-rest-api/helpers/poll";
+  import { poll } from "$lib/common-library/integrations/sharepoint-rest-api/rest-functions/helpers/poll";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
 

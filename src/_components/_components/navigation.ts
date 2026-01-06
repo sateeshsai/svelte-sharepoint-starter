@@ -1,4 +1,4 @@
-import type { AccessRole } from "$lib/common-library/integrations/sharepoint-rest-api/types";
+import type { AccessRole } from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
 import { p, type Routes } from "sv-router/generated";
 
 export const NAVIGATION_MENU_ITEMS: { name: string; route: ReturnType<typeof p>; accessRole?: AccessRole }[] = [

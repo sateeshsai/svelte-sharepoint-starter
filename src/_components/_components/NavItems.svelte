@@ -1,7 +1,7 @@
 <script lang="ts">
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { NAVIGATION_MENU_ITEMS } from "./navigation";
-  import { getPictureUrl, getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
+  import { getPictureUrl, getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
   let { sheetIsOpen = $bindable() }: { sheetIsOpen: boolean } = $props();
   import * as Avatar from "$lib/components/ui/avatar/index.js";
   import LightDarkIcon from "$lib/common-library/utils/components/icons/LightDark_Icon.svelte";

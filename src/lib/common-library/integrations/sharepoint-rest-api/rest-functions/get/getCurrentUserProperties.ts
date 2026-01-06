@@ -1,7 +1,7 @@
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../const";
+import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../../constants/const";
 import { deduplicate } from "../helpers/deduplication";
-import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_User_Properties } from "../types";
+import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_User_Properties } from "../../data/types";
 
 export function getCurrentUserProperties<T extends Sharepoint_User_Properties>(options: {
   siteCollectionUrl?: string;

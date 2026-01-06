@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { z } from "zod";
-import { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema, SharepointTitleProps_Schema } from "../sharepoint-rest-api/schemas";
+import { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema, SharepointTitleProps_Schema } from "../sharepoint-rest-api/data/schemas";
 
 // ANALYTICS ENTRY
 export const AnalyticsEntrySchema = z.strictObject({

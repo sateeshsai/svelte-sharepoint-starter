@@ -6,7 +6,7 @@ import type {
   Sharepoint_PostItem_SuccessResponse_WithPostedData,
   Sharepoint_PostItemResponse,
   Sharepoint_UploadFile_SuccessResponse,
-} from "$lib/common-library/integrations/sharepoint-rest-api/types";
+} from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
 import type { File_ListItem, File_ListItem_Post_ForStory } from "$lib/data/types";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { getDataProvider } from "$lib/data/provider-factory";

@@ -8,10 +8,10 @@
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { global_State } from "$lib/data/global-state.svelte";
   import PenLine from "@lucide/svelte/icons/pen-line";
-  import { getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/helpers";
+  import { getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
   import { getDataProvider } from "$lib/data/provider-factory";
-  import type { Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/types";
+  import type { Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
   import StoryFileGallery from "./_components/StoryFileGallery.svelte";
   import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";

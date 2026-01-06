@@ -1,5 +1,5 @@
 import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
-import { readAndUploadFile } from "$lib/common-library/integrations/sharepoint-rest-api/post/readAndUploadFile";
+import { readAndUploadFile } from "$lib/common-library/integrations/sharepoint-rest-api/rest-functions/post/readAndUploadFile";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 
 export async function uploadFile(files: File[], fileUploadState: AsyncSubmitState) {
