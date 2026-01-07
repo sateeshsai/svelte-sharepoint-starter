@@ -32,8 +32,12 @@ export class SharePointDataProvider implements DataProvider {
     logToConsole?: boolean;
     signal?: AbortSignal;
     deduplicationTtlMs?: number;
+    cacheResponse?: boolean;
   }): Promise<T | Sharepoint_Error_Formatted> {
-    return getListItemsAPI(options);
+    return getListItemsAPI({
+      ...options,
+      siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
+    });
   }
 
   async getCurrentUser<T extends Sharepoint_User>(options: {
@@ -42,7 +46,10 @@ export class SharePointDataProvider implements DataProvider {
     signal?: AbortSignal;
     deduplicationTtlMs?: number;
   }): Promise<T | Sharepoint_Error_Formatted> {
-    return getCurrentUserAPI(options);
+    return getCurrentUserAPI({
+      ...options,
+      siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
+    });
   }
 
   async getCurrentUserProperties(options: {
@@ -51,7 +58,10 @@ export class SharePointDataProvider implements DataProvider {
     signal?: AbortSignal;
     deduplicationTtlMs?: number;
   }): Promise<{ value: Record<string, any> } | Sharepoint_Error_Formatted> {
-    const result = await getCurrentUserPropertiesAPI(options);
+    const result = await getCurrentUserPropertiesAPI({
+      ...options,
+      siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
+    });
     if ("error" in result) {
       return result;
     }
@@ -59,7 +69,10 @@ export class SharePointDataProvider implements DataProvider {
   }
 
   async getFormDigestValue(options: { siteCollectionUrl?: string; logToConsole?: boolean; signal?: AbortSignal }): Promise<string | Sharepoint_Error_Formatted> {
-    return getFormDigestValueAPI(options);
+    return getFormDigestValueAPI({
+      ...options,
+      siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
+    });
   }
 
   async postListItem<T extends Record<string, any>>(options: {
@@ -70,7 +83,7 @@ export class SharePointDataProvider implements DataProvider {
     signal?: AbortSignal;
   }): Promise<T | Sharepoint_Error_Formatted> {
     return postListItemAPI({
-      siteCollectionUrl: options.siteCollectionUrl,
+      siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
       listName: options.listName,
       dataToPost: options.body,
       logToConsole: options.logToConsole,
@@ -88,7 +101,7 @@ export class SharePointDataProvider implements DataProvider {
     signal?: AbortSignal;
   }): Promise<{ Url: string } | Sharepoint_Error_Formatted> {
     return readAndUploadFileAPI({
-      siteCollectionUrl: options.siteCollectionUrl,
+      siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
       serverRelativeUrl: "",
       foldername: options.folder || "Shared Documents",
       logToConsole: options.logToConsole,
@@ -108,7 +121,7 @@ export class SharePointDataProvider implements DataProvider {
     signal?: AbortSignal;
   }): Promise<void | Sharepoint_Error_Formatted> {
     const result = await updateListItemAPI({
-      siteCollectionUrl: options.siteCollectionUrl,
+      siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
       listName: options.listName,
       itemId: options.itemId,
       dataToUpdate: options.body,
@@ -119,7 +132,7 @@ export class SharePointDataProvider implements DataProvider {
 
   async deleteListItem(options: { siteCollectionUrl?: string; listName: string; itemId: number; logToConsole?: boolean; signal?: AbortSignal }): Promise<void | Sharepoint_Error_Formatted> {
     const result = await deleteListItemAPI({
-      siteCollectionUrl: options.siteCollectionUrl || "",
+      siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
       listName: options.listName,
       itemId: options.itemId,
       logToConsole: options.logToConsole,

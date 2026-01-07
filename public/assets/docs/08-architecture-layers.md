@@ -150,11 +150,11 @@ Extends `BaseMockDataProvider` and provides project-specific data mapping:
 
 ```typescript
 import { SHAREPOINT_CONFIG, type AppSharePointConfig } from "$lib/env/sharepoint-config";
+import { BaseMockDataProvider } from "$lib/common-library/integrations";
 
 /**
  * Type-safe mock data mapping
  * TypeScript enforces an entry for EVERY list defined in SHAREPOINT_CONFIG
- * Adding a new list to config without adding mock data here will cause a compile error
  */
 type ListNames = AppSharePointConfig["lists"][keyof AppSharePointConfig["lists"]]["name"];
 type MockDataMap = Record<ListNames, any[]>;
@@ -162,7 +162,6 @@ type MockDataMap = Record<ListNames, any[]>;
 const MOCK_DATA_BY_LIST_NAME: MockDataMap = {
   [SHAREPOINT_CONFIG.lists.Story.name]: LOCAL_STORY_ITEMS,
   [SHAREPOINT_CONFIG.lists.Engagements.name]: LOCAL_ENGAGEMENTS,
-  [SHAREPOINT_CONFIG.lists.StoryFiles.name]: LOCAL_FILES,
   // ... TypeScript enforces ALL lists have entries
 };
 
@@ -172,6 +171,12 @@ export class MockDataProvider extends BaseMockDataProvider {
   }
 }
 ```
+
+**Isolation Maintained:** common-library NEVER imports from `$lib/env` or `$lib/data`. Config flows via:
+
+1. App.svelte → `setContext("sharePointConfig", SHAREPOINT_CONFIG)`
+2. Common-library components → `getContext("sharePointConfig")`
+3. Providers → receive config via constructor
 
 ---
 

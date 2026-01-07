@@ -29,23 +29,25 @@ Track user journeys and page visits with automatic analytics collection. Each pa
 
 ```
 User visits page
-├─ trackAnalytics() called
+├─ trackAnalytics() called (per-component closure state)
 ├─ Entry created in Analytics list
 ├─ Stores: Route, Session ID, Version, Custom Data
 │
 User stays on page for X seconds
 │
 User navigates away
-├─ untrackAnalytics() called
+├─ Component unmounts, cleanup runs
 ├─ Entry updated (Modified timestamp = leave time)
 └─ Created - Modified = time spent on page
 ```
+
+**Note:** Each component that calls `trackAnalytics()` gets its own tracking state - multiple pages can track independently without interference.
 
 ---
 
 ## Session Management
 
-Each browser session gets unique ID:
+Each browser session gets unique ID (shared across all page visits):
 
 ```ts
 let sessionId = randomIdString(); // e.g., "a7f3k8m2"
@@ -58,20 +60,22 @@ let sessionId = randomIdString(); // e.g., "a7f3k8m2"
 
 ## Basic Usage
 
-Call at top level of page component **only once per page**:
+Call at top level of page component to track that specific route:
 
 ```svelte
 <!-- src/routes/stories/index.svelte -->
 <script>
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
 
-  trackAnalytics();  // Called once at script level
+  trackAnalytics();  // Track this specific page
 </script>
 
 <main>
   <!-- Page content -->
 </main>
 ```
+
+**Per-Component Tracking:** Each component gets independent tracking - if you navigate from Stories to Admin, both create separate entries without conflicts.
 
 ---
 

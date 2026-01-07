@@ -1,10 +1,9 @@
-import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../../constants/const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
 import type { Sharepoint_Error_Formatted, Sharepoint_PostItem_SuccessResponse_WithPostedData, Sharepoint_PostItemResponse } from "../../data/types";
 
 export async function postListItem<DataToPost extends Record<string, any>, DataToIncludeInResponseInLocalMode extends Record<string, any>>(options: {
-  siteCollectionUrl?: string;
+  siteCollectionUrl: string;
   listName: string;
   dataToPost: DataToPost;
   formDigest?: string;
@@ -13,9 +12,9 @@ export async function postListItem<DataToPost extends Record<string, any>, DataT
   signal?: AbortSignal; // Optional abort signal for request cancellation
 }): Promise<Sharepoint_PostItem_SuccessResponse_WithPostedData<DataToPost, DataToIncludeInResponseInLocalMode> | Sharepoint_Error_Formatted> {
   if (options.logToConsole) console.log(options.dataToPost);
-  if (!options.formDigest) options.formDigest = (await getFormDigestValue()) as string;
+  if (!options.formDigest) options.formDigest = (await getFormDigestValue({ siteCollectionUrl: options.siteCollectionUrl })) as string;
 
-  const request = new Request(`${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/web/lists/GetByTitle('${options.listName}')/items`, {
+  const request = new Request(`${options.siteCollectionUrl}/_api/web/lists/GetByTitle('${options.listName}')/items`, {
     method: "POST",
     credentials: "same-origin", // or credentials: 'include'
     headers: new Headers({

@@ -1,15 +1,15 @@
-import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../../constants/const";
 import { deduplicate } from "../helpers/deduplication";
 import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_Get_Operations } from "../../data/types";
 
 export function getListItems<T extends { value: Record<string, any> }>(options: {
-  siteCollectionUrl?: string;
+  siteCollectionUrl: string;
   listName: string;
   operations?: Sharepoint_Get_Operations;
   logToConsole?: boolean;
   signal?: AbortSignal; // Optional abort signal for request cancellation
   deduplicationTtlMs?: number; // Optional TTL for deduplication cache (default: 30s)
+  cacheResponse?: boolean; // Whether to cache the response (default: true)
 }): Promise<T | Sharepoint_Error_Formatted> {
   let queryString = "?";
 
@@ -23,7 +23,7 @@ export function getListItems<T extends { value: Record<string, any> }>(options: 
     });
   }
 
-  const requestURL = `${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/web/lists/GetByTitle('${options.listName}')/items${queryString}`;
+  const requestURL = `${options.siteCollectionUrl}/_api/web/lists/GetByTitle('${options.listName}')/items${queryString}`;
   if (options.logToConsole) console.log(requestURL);
   const fetchRequest = new Request(requestURL, {
     method: "GET",
@@ -37,6 +37,7 @@ export function getListItems<T extends { value: Record<string, any> }>(options: 
   });
 
   // Use actual request URL as cache key - includes siteCollectionUrl, listName, and all operations
+  const shouldCache = options.cacheResponse ?? true;
   return deduplicate(
     requestURL,
     () =>
@@ -63,7 +64,7 @@ export function getListItems<T extends { value: Record<string, any> }>(options: 
           };
         }),
     {
-      ttlMs: options.deduplicationTtlMs ?? 30000, // 30 second default TTL
+      ttlMs: shouldCache ? options.deduplicationTtlMs ?? 30000 : 0, // No cache when cacheResponse=false
       clearOnError: true, // Clear cache on error to allow retries
     }
   );

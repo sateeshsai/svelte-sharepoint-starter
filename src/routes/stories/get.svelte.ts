@@ -6,7 +6,12 @@ import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
-export async function getStories(storiesLoadState: AsyncLoadState, lastFetchedInPollTimeString?: string | undefined, signal?: AbortSignal): Promise<Story_ListItem[] | undefined> {
+export async function getStories(
+  storiesLoadState: AsyncLoadState,
+  lastFetchedInPollTimeString?: string | undefined,
+  signal?: AbortSignal,
+  cacheResponse: boolean = true
+): Promise<Story_ListItem[] | undefined> {
   const selectExpand = createSelectExpandQueries(createNew_Story_ListItem());
 
   const operations: Sharepoint_Get_Operations = [
@@ -26,6 +31,7 @@ export async function getStories(storiesLoadState: AsyncLoadState, lastFetchedIn
     operations: operations,
     logToConsole: false,
     signal,
+    cacheResponse,
   });
 
   if ("error" in fetchResponse) {

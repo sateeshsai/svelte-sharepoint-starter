@@ -9,7 +9,7 @@ export function getCurrentUser<T extends Sharepoint_User>(options: {
   signal?: AbortSignal;
   deduplicationTtlMs?: number;
 }): Promise<T | Sharepoint_Error_Formatted> {
-  const requestURL = `${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/web/currentuser`;
+  const requestURL = `${options.siteCollectionUrl}/_api/web/currentuser`;
 
   if (options.logToConsole) console.log(requestURL);
 

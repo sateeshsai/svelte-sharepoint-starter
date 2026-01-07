@@ -1,7 +1,6 @@
 import { getDataProvider as getProviderFromRegistry, registerProviders as registerProvidersInRegistry } from "$lib/common-library/integrations/sharepoint-rest-api/providers/provider-registry";
 import { SharePointDataProvider } from "$lib/common-library/integrations/sharepoint-rest-api/providers/sharepoint-data-provider";
-import { validateSharePointConfig, type SharePointConfig } from "$lib/common-library/integrations/sharepoint-rest-api/config";
-import { MockDataProvider } from "./mock-data-provider";
+import { validateSharePointConfig } from "$lib/common-library/integrations/sharepoint-rest-api/config";
 import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import type { DataProvider } from "$lib/common-library/integrations/sharepoint-rest-api/providers/data-provider";
@@ -14,19 +13,34 @@ import type { DataProvider } from "$lib/common-library/integrations/sharepoint-r
  *
  * This function:
  * 1. Validates SharePoint configuration at runtime
- * 2. Creates app-layer MockDataProvider with config
+ * 2. Creates app-layer MockDataProvider with config (only in development)
  * 3. Creates SharePointDataProvider with config
  * 4. Registers both into the common-library registry
  * 5. Enables automatic LOCAL_MODE switching
  *
  * Config is injected here, so individual API calls don't need to pass siteCollectionUrl
  * Throws descriptive error if config is invalid
+ *
+ * NOTE: In production builds, MockDataProvider and local-data.ts are excluded via
+ * dynamic import and tree-shaking, significantly reducing bundle size.
  */
-export function initializeDataProviders(): void {
+export async function initializeDataProviders(): Promise<void> {
   // Validate config at startup - catches typos and missing required fields
   const validConfig = validateSharePointConfig(SHAREPOINT_CONFIG);
 
-  registerProvidersInRegistry(new MockDataProvider(validConfig), new SharePointDataProvider(validConfig));
+  // Use build-time check (import.meta.env.DEV) to exclude mock data from production builds
+  // Tree-shaking will completely remove MockDataProvider and local-data.ts from prod bundle
+  let mockProvider: DataProvider;
+  if (import.meta.env.DEV) {
+    // Development: dynamically import mock data (won't be in production bundle)
+    const { MockDataProvider } = await import("./mock-data-provider");
+    mockProvider = new MockDataProvider(validConfig);
+  } else {
+    // Production: use SharePointDataProvider for both (LOCAL_MODE is always false anyway)
+    mockProvider = new SharePointDataProvider(validConfig);
+  }
+
+  registerProvidersInRegistry(mockProvider, new SharePointDataProvider(validConfig));
 }
 
 /**
@@ -44,16 +58,22 @@ export function getDataProvider(): DataProvider {
  * @param mock - Custom MockDataProvider implementation
  * @param real - Custom SharePointDataProvider implementation
  */
-export function setDataProvider(mock: DataProvider | null, real: DataProvider | null): void {
+export async function setDataProvider(mock: DataProvider | null, real: DataProvider | null): Promise<void> {
   const validatedConfig = validateSharePointConfig(SHAREPOINT_CONFIG);
   if (mock !== null || real !== null) {
-    registerProvidersInRegistry(mock || new MockDataProvider(validatedConfig), real || new SharePointDataProvider(validatedConfig));
+    // In test scenarios, we might need MockDataProvider
+    let mockProvider = mock;
+    if (mock === null && LOCAL_MODE) {
+      const { MockDataProvider } = await import("./mock-data-provider");
+      mockProvider = new MockDataProvider(validatedConfig);
+    }
+    registerProvidersInRegistry(mockProvider || new SharePointDataProvider(validatedConfig), real || new SharePointDataProvider(validatedConfig));
   }
 }
 
 /**
  * Reset to default providers (useful in tests)
  */
-export function resetDataProvider(): void {
-  initializeDataProviders();
+export async function resetDataProvider(): Promise<void> {
+  await initializeDataProviders();
 }

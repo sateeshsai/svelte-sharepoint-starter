@@ -22,6 +22,8 @@ export interface DataProvider {
     logToConsole?: boolean;
     signal?: AbortSignal;
     deduplicationTtlMs?: number;
+    /** Whether to cache the response (default: true). Set to false for polling contexts. */
+    cacheResponse?: boolean;
     /** Override mock response for LOCAL_MODE testing - ignored in production */
     mockResponse?: T;
   }): Promise<T | Sharepoint_Error_Formatted>;

@@ -1,10 +1,9 @@
-import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../../constants/const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
 import type { Sharepoint_Error_Formatted, Sharepoint_UpdateItemResponse, Sharepoint_UpdateItem_DataResponse } from "../../data/types";
 
 export async function updateListItem<T extends Record<string, any>>(options: {
-  siteCollectionUrl?: string;
+  siteCollectionUrl: string;
   listName: string;
   dataToUpdate: T;
   itemId: number;
@@ -13,9 +12,9 @@ export async function updateListItem<T extends Record<string, any>>(options: {
   logToConsole?: boolean;
 }): Promise<Sharepoint_Error_Formatted | Sharepoint_UpdateItem_DataResponse> {
   if (options.logToConsole) console.log(options.dataToUpdate);
-  if (!options.formDigest) options.formDigest = (await getFormDigestValue()) as string;
+  if (!options.formDigest) options.formDigest = (await getFormDigestValue({ siteCollectionUrl: options.siteCollectionUrl })) as string;
 
-  const request = new Request(`${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/web/lists/GetByTitle('${options.listName}')/items(${options.itemId})`, {
+  const request = new Request(`${options.siteCollectionUrl}/_api/web/lists/GetByTitle('${options.listName}')/items(${options.itemId})`, {
     method: "POST",
     credentials: "same-origin", // or credentials: 'include'
     //@ts-ignore

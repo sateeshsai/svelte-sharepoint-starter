@@ -16,6 +16,7 @@
   import { fly } from "svelte/transition";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
+  import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 
   const { signal } = useAbortController();
 
@@ -32,20 +33,24 @@
   async function loadStories() {
     let lastFetchTimeString: string | undefined;
 
-    //Poll for new stories every n seconds
+    //Poll for new stories every n seconds (2s local, 10s SharePoint)
+    const pollInterval = LOCAL_MODE ? 2000 : 10000;
+
     stopPolling = poll(async () => {
-      const storiesFromDB = await getStories(storiesLoadState, lastFetchTimeString, signal);
-      lastFetchTimeString = new Date().toISOString();
+      const currentFetchTimeString = new Date().toISOString();
+      const storiesFromDB = await getStories(storiesLoadState, lastFetchTimeString, signal, false);
+      lastFetchTimeString = currentFetchTimeString;
       console.log(storiesFromDB);
 
-      // Stop polling if fetch failed or no data returned
-      if (!storiesFromDB || storiesLoadState.error) {
+      // Stop polling only if fetch failed (storiesFromDB is undefined on error)
+      // Empty arrays [] are valid responses and keep polling active
+      if (storiesFromDB === undefined || storiesLoadState.error) {
         stopPolling();
         return;
       }
 
       stories = stories ? [...stories, ...storiesFromDB] : storiesFromDB;
-    }, 2000);
+    }, pollInterval);
   }
 
   let storiesToShow = $derived(

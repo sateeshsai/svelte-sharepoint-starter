@@ -5,7 +5,6 @@
 
 import { reportError, type SharePointConfig } from "$lib/common-library/integrations";
 import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/async";
-import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { getContext } from "svelte";
 
 /**
@@ -13,12 +12,16 @@ import { getContext } from "svelte";
  * Automatically reports errors to SharePoint ErrorReports list
  */
 export class SharePointAsyncSubmitState extends AsyncSubmitState {
+  #config: SharePointConfig | null = null;
+
   /**
    * Override setError to include SharePoint error reporting
    */
   override setError(errorMessage: string, context?: string) {
     super.setError(errorMessage);
-    reportError(SHAREPOINT_CONFIG, {
+    // Lazy load config from context on first error
+    this.#config = this.#config ?? getContext<SharePointConfig>("sharePointConfig");
+    reportError(this.#config, {
       context: context ?? "",
       errorType: "Submit",
       technicalMessage: errorMessage,

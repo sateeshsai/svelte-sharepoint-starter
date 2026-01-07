@@ -1,10 +1,9 @@
-import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../../constants/const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
 import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_UploadFile_SuccessResponse } from "../../data/types";
 
 export async function readAndUploadFile(options: {
-  siteCollectionUrl?: string;
+  siteCollectionUrl: string;
   serverRelativeUrl: string;
   foldername: string;
   logToConsole?: boolean;
@@ -18,20 +17,17 @@ export async function readAndUploadFile(options: {
     reader.onloadend = async (e) => {
       if (e.target?.readyState == FileReader.DONE) {
         const fileBuffer = e.target.result;
-        let formDigestValue = await getFormDigestValue({});
-        const request = new Request(
-          `${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/web/GetFolderByServerRelativeUrl('${options.foldername}')/Files/add(url='${options.file.name}',overwrite=true)`,
-          {
-            method: "POST",
-            credentials: "same-origin", // or credentials: 'include'
-            // @ts-ignore
-            headers: new Headers({
-              Accept: "application/json;odata=nometadata",
-              "X-RequestDigest": formDigestValue,
-            }),
-            body: fileBuffer,
-          }
-        );
+        let formDigestValue = await getFormDigestValue({ siteCollectionUrl: options.siteCollectionUrl });
+        const request = new Request(`${options.siteCollectionUrl}/_api/web/GetFolderByServerRelativeUrl('${options.foldername}')/Files/add(url='${options.file.name}',overwrite=true)`, {
+          method: "POST",
+          credentials: "same-origin", // or credentials: 'include'
+          // @ts-ignore
+          headers: new Headers({
+            Accept: "application/json;odata=nometadata",
+            "X-RequestDigest": formDigestValue,
+          }),
+          body: fileBuffer,
+        });
         resolve(
           fetch(request)
             .then((response) => response.json())

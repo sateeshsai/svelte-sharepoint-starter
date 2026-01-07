@@ -9,7 +9,7 @@ export function getCurrentUserProperties<T extends Sharepoint_User_Properties>(o
   signal?: AbortSignal;
   deduplicationTtlMs?: number;
 }): Promise<T | Sharepoint_Error_Formatted> {
-  const requestURL = `${options.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/SP.UserProfiles.PeopleManager/GetMyProperties`;
+  const requestURL = `${options.siteCollectionUrl}/_api/SP.UserProfiles.PeopleManager/GetMyProperties`;
 
   if (options.logToConsole) console.log(requestURL);
 

@@ -149,17 +149,17 @@ const picUrl = getPictureUrl(userProps.value);
 
 ---
 
-## Request Deduplication
+## Request Deduplication & Caching
 
-Automatic caching of simultaneous identical requests. Same request within cache TTL returns cached promise.
+Automatic caching of identical requests to reduce API load and improve performance.
 
 **How it works:**
 
 ```
 Request 1: getListItems({...}) → Hits API, caches promise
-Request 2: getListItems({...}) → Same params, returns cached promise
+Request 2: getListItems({...}) → Same params within TTL, returns cached promise
 Request 3: getListItems({...}) → Within TTL, returns cache
-Request 4: getListItems({...}) → After TTL, hits API again
+Request 4: getListItems({...}) → After TTL expires, hits API again
 ```
 
 **Default TTLs:**
@@ -167,7 +167,14 @@ Request 4: getListItems({...}) → After TTL, hits API again
 - getListItems - 30 seconds
 - getCurrentUser - 60 seconds
 - getCurrentUserProperties - 60 seconds
-- getFormDigestValue - 30 seconds
+- getFormDigestValue - 25 minutes (long-lived digest token)
+
+**Automatic Cache Cleanup:**
+
+- Runs every 5 minutes automatically
+- Removes entries older than their TTL
+- Prevents memory leaks in long-running sessions
+- Logs cleanup activity to console
 
 **Cache Key:** Full request URL including all query parameters
 
@@ -178,16 +185,42 @@ Request 4: getListItems({...}) → After TTL, hits API again
 - Improves perceived performance
 - Transparent to calling code (no changes needed)
 
-**In Practice:**
+---
+
+### Disabling Cache for Polling
+
+For live updates and polling scenarios, you can disable caching:
 
 ```ts
-// Home page
-const stories = await getListItems({ listName: "Stories", ... });
+const provider = getDataProvider();
 
-// Meanwhile, Stories page calls
-const stories = await getListItems({ listName: "Stories", ... });
-// Same request within 30s → returns cached promise!
+// Regular fetch - cached for 30s
+const stories = await provider.getListItems({
+  listName: "Stories",
+  operations: [["select", "Id,Title"]],
+  cacheResponse: true, // default
+});
+
+// Polling - no cache, always fresh data
+const newStories = await provider.getListItems({
+  listName: "Stories",
+  operations: [["filter", `Created ge '${lastPollTime}'`]],
+  cacheResponse: false, // ← Skip cache
+});
 ```
+
+**When to use `cacheResponse: false`:**
+
+- ✅ Polling for live updates
+- ✅ After POST/UPDATE/DELETE operations
+- ✅ User-triggered refresh actions
+
+**When to keep default `cacheResponse: true`:**
+
+- ✅ Initial page load
+- ✅ Dropdown options (rarely change)
+- ✅ User profile data
+- ✅ Configuration data
 
 ---
 

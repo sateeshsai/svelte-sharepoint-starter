@@ -1,12 +1,14 @@
 <script lang="ts">
   import "@khmyznikov/pwa-install";
-  import { onMount } from "svelte";
-  const siteRootPath = SHAREPOINT_CONFIG.paths.page;
+  import { getContext, onMount } from "svelte";
+  import type { SharePointConfig } from "../sharepoint-rest-api/config";
   //@ts-ignore
   // import System from "svelte-system-info";
   import { MANIFEST_DATA } from "./manifest";
-  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
+
+  const config = getContext<SharePointConfig>("sharePointConfig");
+  const siteRootPath = config.paths.page;
 
   if ("serviceWorker" in navigator) {
     if (navigator.serviceWorker.controller) {

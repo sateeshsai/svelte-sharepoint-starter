@@ -8,30 +8,39 @@ import { onMount } from "svelte";
 import { getContext } from "svelte";
 import { LOCAL_MODE } from "../../utils/local-dev/modes";
 
+// Module-level: shared across all components in the browser session
 let sessionId = randomIdString();
 
-//USAGE
-//Just call the trackAnalytics() at the top level in your component
-//Each Entry's Created will be the page visit start and Modified will be leaving the page.
-//Author is the user
-//Pass any arbitrary data as stringified object to Data property - See usage example at the bottom
-
-let postedAnalyticsEntryId: number;
-let route: string;
-let cachedConfig: SharePointConfig;
-
+/**
+ * Track analytics for a component/page
+ * Creates an entry when component mounts and updates it when unmounting
+ * Each component that calls this gets its own independent tracking state
+ *
+ * USAGE:
+ * Call trackAnalytics() at the top level in your component (only on routes you want to track)
+ * Each Entry's Created = page visit start, Modified = page leave time
+ *
+ * @param Data - Optional stringified object with arbitrary tracking data
+ * @example
+ * trackAnalytics(); // Basic tracking
+ * trackAnalytics(stringifyKVObject({ userId: "123", action: "view" })); // With data
+ */
 export async function trackAnalytics(Data?: StringifiedObject) {
   if (LOCAL_MODE) return; // Skip analytics in local development mode
 
-  cachedConfig = cachedConfig ?? getContext<SharePointConfig>("sharePointConfig");
-  const config = cachedConfig;
+  // Per-component closure state - each component gets its own
+  const config = getContext<SharePointConfig>("sharePointConfig");
+  let postedAnalyticsEntryId: number | undefined;
+  let route: string;
+
   async function postAnalyticsEntry() {
-    let newAnalyticsEntry: AnalyticsEntry_ListItem_Post = {
+    const newAnalyticsEntry: AnalyticsEntry_ListItem_Post = {
       Title: config.info.version,
-      SessionId: sessionId,
+      SessionId: sessionId, // Shared across session
       Route: window.location.hash,
       Data: stringifyKVObject(Data ?? {}),
     };
+
     const validationResult = AnalyticsEntryPostSchema.safeParse(newAnalyticsEntry);
     if (validationResult.success) {
       const postResponse = await postListItem({ listName: config.lists.Analytics.name, dataToPost: newAnalyticsEntry });
@@ -39,33 +48,32 @@ export async function trackAnalytics(Data?: StringifiedObject) {
         console.log("Error posting Analytics entry.", postResponse);
         return;
       }
-      postedAnalyticsEntryId = postResponse.Id;
+      postedAnalyticsEntryId = postResponse.Id; // Store THIS component's entry ID
       route = window.location.hash;
+    }
+  }
+
+  async function cleanup() {
+    if (!postedAnalyticsEntryId) return; // No entry to update
+
+    console.log(route, "END");
+    // Update entry to mark leave time (uses Modified timestamp)
+    const postResponse = await updateListItem({
+      listName: config.lists.Analytics.name,
+      itemId: postedAnalyticsEntryId,
+      dataToUpdate: { Title: config.info.version },
+    });
+
+    if ("error" in postResponse) {
+      console.log("Error updating Analytics entry.", postedAnalyticsEntryId, postResponse);
     }
   }
 
   onMount(() => {
     console.log(window.location.hash, "START");
     postAnalyticsEntry();
-    return () => untrackAnalytics();
+    return cleanup;
   });
-}
-
-export async function untrackAnalytics() {
-  if (LOCAL_MODE || !postedAnalyticsEntryId) return; // Skip analytics in local development mode
-
-  const config = cachedConfig;
-  console.log(route, "END");
-  //Not really updating any info. Updating only so that we can use the Modified property as user leaving a page.
-  const postResponse = await updateListItem({
-    listName: config.lists.Analytics.name,
-    itemId: postedAnalyticsEntryId,
-    dataToUpdate: { Title: config.info.version },
-  });
-
-  if ("error" in postResponse) {
-    console.log("Error updating Analytics entry.", postedAnalyticsEntryId, postResponse);
-  }
 }
 
 type StringifiedObject = string & { readonly __stringifiedObject: true };

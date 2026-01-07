@@ -10,7 +10,7 @@ export async function deleteListItem(options: {
   listNameReplaced?: string;
   logToConsole?: boolean;
 }): Promise<Sharepoint_Error_Formatted | Sharepoint_UpdateItem_DataResponse> {
-  if (!options.formDigest) options.formDigest = (await getFormDigestValue()) as string;
+  if (!options.formDigest) options.formDigest = (await getFormDigestValue({ siteCollectionUrl: options.siteCollectionUrl })) as string;
 
   const request = new Request(`${options.siteCollectionUrl}/_api/web/lists/GetByTitle('${options.listName}')/items(${options.itemId})`, {
     method: "POST",

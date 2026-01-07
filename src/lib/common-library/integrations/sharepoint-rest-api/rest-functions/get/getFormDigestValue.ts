@@ -9,7 +9,7 @@ export async function getFormDigestValue(options?: {
   signal?: AbortSignal;
   deduplicationTtlMs?: number;
 }): Promise<string | Sharepoint_Error_Formatted> {
-  const requestURL = `${options?.siteCollectionUrl ?? SHAREPOINT_CONFIG.paths.site_collection}/_api/contextinfo`;
+  const requestURL = `${options.siteCollectionUrl}/_api/contextinfo`;
 
   const request = new Request(requestURL, {
     method: "POST",

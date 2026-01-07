@@ -331,6 +331,7 @@ export abstract class BaseMockDataProvider implements DataProvider {
     logToConsole?: boolean;
     signal?: AbortSignal;
     deduplicationTtlMs?: number;
+    cacheResponse?: boolean;
     mockResponse?: T;
   }): Promise<T | Sharepoint_Error_Formatted> {
     await this.simulateDelay(300);

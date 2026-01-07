@@ -1,20 +1,22 @@
 # To-Do
 
-## Features:
+## Unrelated
 
 - IDEA - Proposal designer - voice and prompt based.
 - Designer workshop
 
+## Features:
+
+- Page utilities make it more robust
+- Engagements
+
 ## Fixes
 
-- Caching too much in poll
-- Robust implementation of fetchListItems operations.
 - JS Doc comments consistency
 - Add report button to StatusMessage type error
 
 ### Docs
 
--- Linking to assets
 -- Pwa
 -- intersection observer in examples section
 -- Covert docs page to .md and render using mdsvex
@@ -39,14 +41,18 @@
 ## Features
 
 - Error boundaries
-- Polling
+- Polling with cache control (2s local, 10s SharePoint)
 - Analytics
+- **Comprehensive mock data** (12 stories, 15 engagements, 21 files covering edge cases)
 - Mock data persistence (session store for CRUD operations)
 - Type-safe mock data mappings
 - mockResponse escape hatch for LOCAL_MODE testing
+- **Build-time exclusion** of mock data (~50KB removed from production bundles)
 
 ## Examples
 
 - Intersection observer
   -- Line
   -- Transitions on enter viewport
+
+## Fixes

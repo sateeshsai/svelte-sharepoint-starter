@@ -16,5 +16,10 @@ export default defineConfig({
             "sv-router/generated": path.resolve("./.routes/generated"),
         },
     },
-    build: { assetsInlineLimit: Number.POSITIVE_INFINITY },
+    build: {
+        assetsInlineLimit: Number.POSITIVE_INFINITY,
+        // Tree-shaking will automatically exclude local-data.ts and mock-data-provider.ts
+        // from production builds since they're only imported when LOCAL_MODE === true
+        // (which is always false in production)
+    },
 });

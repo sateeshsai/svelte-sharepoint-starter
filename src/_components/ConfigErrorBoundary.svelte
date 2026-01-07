@@ -5,17 +5,20 @@
   let isInitialized = false;
 
   // Initialize providers and catch config errors
-  try {
-    initializeDataProviders();
-    isInitialized = true;
-  } catch (error) {
-    if (error instanceof Error) {
-      configError = error.message;
-    } else {
-      configError = "Unknown configuration error occurred";
+  // Async to support dynamic import of mock data in development
+  (async () => {
+    try {
+      await initializeDataProviders();
+      isInitialized = true;
+    } catch (error) {
+      if (error instanceof Error) {
+        configError = error.message;
+      } else {
+        configError = "Unknown configuration error occurred";
+      }
+      console.error("Config initialization failed:", error);
     }
-    console.error("Config initialization failed:", error);
-  }
+  })();
 </script>
 
 {#if configError}
