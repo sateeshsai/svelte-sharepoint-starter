@@ -419,67 +419,104 @@ Instead of importing `SHAREPOINT_CONFIG` directly in library components, pass it
 
 **Example: EdraEditor File Upload**
 
-App layer provides `sharepointFileUploadOptions` to the editor:
+App layer provides file upload handler via Svelte context:
 
 ```svelte
 <!-- src/routes/stories/[id]/edit/_components/_content/EditStoryContent.svelte -->
 <script>
-  import { EdraEditor } from "$lib/common-library/integrations/components/edra-rich-text/shadcn";
+  import { EdraEditor, EDRA_FILE_UPLOAD_KEY, type EdraFileUploadContext } from "$lib/common-library/integrations/components/edra-rich-text/shadcn";
+  import { setContext } from "svelte";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
+  import { getDataProvider } from "$lib/data/data-providers/provider-factory";
+
+  // Provide file upload context for the rich text editor placeholders
+  setContext<EdraFileUploadContext>(EDRA_FILE_UPLOAD_KEY, {
+    upload: async (file, state) => {
+      state.setInprogress();
+
+      const provider = getDataProvider();
+      const response = await provider.readAndUploadFile({
+        siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+        listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
+        itemId: 0,
+        file: file,
+        folder: SHAREPOINT_CONFIG.folders.StoryFiles.name,
+      });
+
+      if ("error" in response) {
+        state.setError("Upload failed: " + response.error);
+        return { error: response.error };
+      }
+
+      state.setSuccess();
+      return { url: file.name };
+    },
+  });
 </script>
 
-<EdraEditor
-  bind:editor
-  {content}
-  sharepointFileUploadOptions={{
-    siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
-    serverRelativeUrl: SHAREPOINT_CONFIG.folders.StoryFiles.rel_path,
-    folderName: SHAREPOINT_CONFIG.folders.StoryFiles.name,
-  }}
-/>
+<EdraEditor bind:editor {content} {onUpdate} />
 ```
 
 How it works internally:
 
 1. **App layer** imports `SHAREPOINT_CONFIG` (app-specific)
-2. **App layer** constructs `FileUploadOptions` object
-3. **App layer** passes to `EdraEditor` prop
-4. **EdraEditor** sets in context via `setContext("sharepointFileUploadOptions", options)`
-5. **Placeholder components** (ImagePlaceholder, AudioPlaceholder, VideoPlaceholder) retrieve via `getContext<FileUploadOptions>("sharepointFileUploadOptions")`
-6. **Placeholder components** pass to `uploadFile()` function
+2. **App layer** creates upload handler function with app-specific logic
+3. **App layer** sets context via `setContext<EdraFileUploadContext>(EDRA_FILE_UPLOAD_KEY, { upload })`
+4. **Placeholder components** (ImagePlaceholder, AudioPlaceholder, VideoPlaceholder) retrieve via `getContext<EdraFileUploadContext>(EDRA_FILE_UPLOAD_KEY)`
+5. **Placeholder components** call `uploadContext.upload(file, state)` and handle the result
+6. **Fallback behavior**: If no context is provided, placeholders use blob URLs (dev mode) or prompt for URL
 
 **Benefits:**
 
 - ✅ Library components don't import app config
 - ✅ Components are truly reusable across projects
-- ✅ Type-safe: `FileUploadOptions` interface ensures correct structure
-- ✅ Flexible: Different callers can provide different configurations
+- ✅ Type-safe: `EdraFileUploadContext` interface ensures correct structure
+- ✅ Flexible: Different callers can provide different upload implementations
+- ✅ Graceful fallback: Works without context in dev mode
 
 ### Pattern for New Components
 
-When creating library components that need configuration:
+When creating library components that need app-specific behavior:
 
-1. **Define configuration interface** (in common-library)
+1. **Define context interface and symbol key** (in common-library)
    ```typescript
-   export interface MyComponentOptions {
-     siteUrl: string;
-     folderPath: string;
+   // common-library/my-component/context.ts
+   export interface MyComponentContext {
+     doSomething: (input: Input) => Promise<Output>;
    }
+   export const MY_COMPONENT_KEY = Symbol("my-component");
    ```
 
-2. **Accept as prop** (in component)
+2. **Use getContext in child components** (in common-library)
    ```svelte
-   let { myOptions } = $props();
+   <script>
+     import { getContext } from "svelte";
+     import { MY_COMPONENT_KEY, type MyComponentContext } from "./context";
+
+     const ctx = getContext<MyComponentContext | undefined>(MY_COMPONENT_KEY);
+
+     // Always handle the case where context is not provided
+     if (!ctx) {
+       // Fallback behavior
+     }
+   </script>
    ```
 
-3. **Set in context if needed** (for child components)
+3. **Set context from app layer** (caller provides implementation)
    ```svelte
-   setContext("myOptions", myOptions);
-   ```
+   <script>
+     import { setContext } from "svelte";
+     import { MY_COMPONENT_KEY, type MyComponentContext } from "$lib/common-library/my-component/context";
 
-4. **Use from app layer** (caller provides config)
-   ```svelte
-   <MyComponent myOptions={{ siteUrl: SHAREPOINT_CONFIG.paths.site_collection, ... }} />
+     setContext<MyComponentContext>(MY_COMPONENT_KEY, {
+       doSomething: async (input) => {
+         // App-specific implementation
+         return result;
+       },
+     });
+   </script>
+
+   <MyComponent />
    ```
 
 ---
