@@ -31,7 +31,7 @@ export async function getStories(
 
   const provider = getDataProvider();
 
-  const fetchResponse = await provider.getListItems({
+  const fetchResponse = await provider.getListItems<{ value: Story_ListItem[] }>({
     listName: SHAREPOINT_CONFIG.lists.Story.name,
     operations: operations,
     logToConsole: false,
@@ -49,5 +49,5 @@ export async function getStories(
   }
 
   storiesLoadState.setReady();
-  return fetchResponse.value as Story_ListItem[];
+  return fetchResponse.value;
 }

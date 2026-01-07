@@ -11,7 +11,7 @@ export async function getStory(storyId: number, storyLoadState: AsyncLoadState, 
   console.log("[getStory] fetching storyId=", storyId);
   const selectExpand = createSelectExpandQueries(createNew_Story_ListItem);
   const provider = getDataProvider();
-  const fetchResponse = await provider.getListItems({
+  const fetchResponse = await provider.getListItems<{ value: Story_ListItem[] }>({
     listName: SHAREPOINT_CONFIG.lists.Story.name,
     operations: [
       ["select", selectExpand.select],
@@ -43,7 +43,7 @@ export async function getStory(storyId: number, storyLoadState: AsyncLoadState, 
 export async function getStoryFiles(storyId: number, storyFilesLoadState: AsyncLoadState, signal?: AbortSignal) {
   const selectExpand = createSelectExpandQueries(createNew_File_ListItem({ ParentId: storyId, ParentType: "Story" }));
   const provider = getDataProvider();
-  const storyFilesResponse = await provider.getListItems({
+  const storyFilesResponse = await provider.getListItems<{ value: File_ListItem[] }>({
     listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
     operations: [
       ["select", selectExpand.select],
@@ -61,5 +61,5 @@ export async function getStoryFiles(storyId: number, storyFilesLoadState: AsyncL
 
   storyFilesLoadState.setReady();
 
-  return storyFilesResponse.value as File_ListItem[];
+  return storyFilesResponse.value;
 }

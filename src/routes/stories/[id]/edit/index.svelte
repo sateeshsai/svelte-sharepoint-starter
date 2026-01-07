@@ -3,7 +3,7 @@
   import type { Story_ListItem } from "$lib/data/types";
   import { navigate } from "sv-router/generated";
   import { route } from "sv-router/generated";
-  import { global_State } from "$lib/data/global-state.svelte";
+  import { canEditItem } from "$lib/data/global-state.svelte";
   import { getStory } from "../get.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
@@ -20,7 +20,7 @@
 
   let storyLoadState = new SharePointAsyncLoadState();
   let story: Story_ListItem | undefined = $state();
-  let userCanEdit = $derived(global_State.AccessRole === "Admin" || story?.Author?.Id === global_State.user?.Id);
+  let currentUserCanEdit = $derived(canEditItem(story?.Author?.Id));
 
   // Use $effect instead of onMount to react to storyId changes during navigation
   $effect(() => {
@@ -42,7 +42,7 @@
     story = await getStory(+story_Id, storyLoadState);
     console.log("[edit/index.svelte] story loaded=", story);
 
-    if (story && !userCanEdit) {
+    if (story && !currentUserCanEdit) {
       navigate("/stories/:id", {
         params: {
           id: String(story?.Id),
@@ -63,7 +63,7 @@
       {/snippet}
       {#if storyLoadState?.loading}
         <StatusMessage type="loading" message="Validating access..." />
-      {:else if story && userCanEdit}
+      {:else if story && currentUserCanEdit}
         <StoryEditor bind:story />
       {/if}
 

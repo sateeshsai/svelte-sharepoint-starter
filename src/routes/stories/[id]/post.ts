@@ -1,6 +1,5 @@
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/constants/const";
-import { convert_Story_ListItem_ToPost } from "$lib/data/convert-items";
-import { createNew_Story_ListItem } from "$lib/data/new-items.svelte";
+import { createNew_Story_Post } from "$lib/data/new-items.svelte";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { navigate } from "sv-router/generated";
 import type { Story_ListItem } from "$lib/data/types";
@@ -13,7 +12,7 @@ import { getDataProvider } from "$lib/data/data-providers/provider-factory";
  * On success, redirects to /stories/:id/edit with the new story ID.
  */
 export async function postNewStory(newStoryState: AsyncSubmitState) {
-  const newStoryToPost = convert_Story_ListItem_ToPost(createNew_Story_ListItem());
+  const newStoryToPost = createNew_Story_Post();
   const provider = getDataProvider();
   const postNewStoryResponse = await provider.postListItem({
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,

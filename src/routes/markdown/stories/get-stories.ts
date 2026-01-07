@@ -67,7 +67,6 @@ export async function getStories(): Promise<StoryMarkdown[]> {
           Created: new Date().toISOString(),
           Modified: new Date().toISOString(),
           Author: { Id: 0, Title: "Markdown Author" },
-          Engagements: [],
           Files: metadata.Files || [],
         };
       })

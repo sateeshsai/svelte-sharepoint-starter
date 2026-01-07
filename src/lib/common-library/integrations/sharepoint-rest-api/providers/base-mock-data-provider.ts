@@ -377,7 +377,6 @@ export abstract class BaseMockDataProvider implements DataProvider {
           Created: new Date().toISOString(),
           Modified: new Date().toISOString(),
           Author: { Id: 1, Title: "Modukuru, Sateeshsai" },
-          Engagements: [],
           Tags: "live,polling,test",
           CoverFileName: "1.avif",
           ActiveStatus: "Active",

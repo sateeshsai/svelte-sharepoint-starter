@@ -6,7 +6,7 @@
   import { postNewStory } from "./post";
   import type { File_ListItem, Story_ListItem } from "$lib/data/types";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-  import { global_State } from "$lib/data/global-state.svelte";
+  import { canEditItem } from "$lib/data/global-state.svelte";
   import PenLine from "@lucide/svelte/icons/pen-line";
   import { getUserFirstLastNames, type Sharepoint_User_Properties, SharePointAsyncLoadState, SharePointAsyncSubmitState } from "$lib/common-library/integrations";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
@@ -27,7 +27,7 @@
 
   let storyLoadState = new SharePointAsyncLoadState();
   let story: Story_ListItem | undefined = $state();
-  let userCanEdit = $derived(global_State.AccessRole === "Admin" || story?.Author?.Id === global_State.user?.Id);
+  let currentUserCanEdit = $derived(canEditItem(story?.Author?.Id));
 
   $effect(() => {
     loadData();
@@ -122,7 +122,7 @@
               >
             </div>
           </div>
-          {#if userCanEdit}
+          {#if currentUserCanEdit}
             <a
               title="Edit story"
               class="text-muted-foreground rounded border border-muted-foreground aspect-square w-7 grid place-items-center"

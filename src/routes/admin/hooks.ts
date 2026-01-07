@@ -10,7 +10,7 @@ import { navigate } from "sv-router/generated";
  */
 export default {
   beforeLoad() {
-    if (global_State.AccessRole !== "Admin") {
+    if (global_State.accessRole !== "Admin") {
       navigate("/", {
         replace: true,
       });
