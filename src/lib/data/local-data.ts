@@ -6,6 +6,12 @@ import type { ErrorReportListSchema } from "$lib/common-library/integrations/err
 export type Analytics_ListItem = z.infer<typeof AnalyticsEntryListSchema>;
 export type ErrorReport_ListItem = z.infer<typeof ErrorReportListSchema>;
 
+// Helper to create dates relative to now for realistic polling testing
+const now = new Date();
+const minutesAgo = (mins: number) => new Date(now.getTime() - mins * 60 * 1000).toISOString();
+const hoursAgo = (hours: number) => new Date(now.getTime() - hours * 60 * 60 * 1000).toISOString();
+const daysAgo = (days: number) => new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
+
 export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
   {
     Id: 1,
@@ -13,8 +19,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Introduction: "A journey through cosmic wonder and discovery. From across the vast expanse of space, a signal reached Earth with a simple yet profound invitation.",
     Content:
       '<h1>Beyond the Stars</h1><p>On a night when the stars aligned in a way that happens once every thousand years, something extraordinary occurred.</p><h2>The Signal</h2><p>From across the vast expanse of space, a signal reached Earth. It wasn\'t an invasion or a warning—it was an invitation.</p><p>Scientists worked frantically to decode the message. When they finally succeeded, the words were simple yet profound:</p><blockquote>"We have been waiting for you. The universe is vast, but never lonely. Come join us among the stars."</blockquote><h2>The Decision</h2><p>Humanity faced a choice that would define its future. Would they answer the call? Would they leave the safety of their world and venture into the unknown?</p><img src="./assets/images/3.avif" alt="Space station orbiting Earth" /><h2>The Journey Begins</h2><p>A ship was built. The finest minds and bravest souls volunteered. As they lifted off from Earth\'s surface, watched by billions below, a new chapter in human history began.</p><p>The stars were no longer just distant points of light—they were destinations.</p><p>And somewhere in the cosmos, others waited patiently for new friends to arrive.</p>',
-    Created: new Date("2024-03-15").toISOString(),
-    Modified: new Date("2024-03-20").toISOString(),
+    Created: daysAgo(5),
+    Modified: daysAgo(5),
     Author: {
       Id: 1,
       Title: "Modukuru, Sateeshsai",
@@ -49,8 +55,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Introduction: "A story about adventure in the high peaks where the air is thin and the world stretches endlessly below.",
     Content:
       '<h1>The Mountain\'s Tale</h1><p>High above the clouds, where the air is thin and the world stretches endlessly below, there stood an ancient mountain. For millennia, it had watched civilizations rise and fall, empires crumble and new ones emerge.</p><h2>The First Ascent</h2><p>It was a crisp morning when the first climbers arrived at the base of the mountain. Armed with nothing but determination and rope, they began their journey upward.</p><img src="./assets/images/1.avif" alt="Mountain peak at sunrise" /><p>The path was treacherous. Every step required careful planning, every handhold a test of strength and will. Yet something drove them forward—a desire to reach the summit, to touch the sky.</p><h2>The View from Above</h2><p>When they finally reached the top, tears streamed down their faces. Below them lay the entire world—forests stretching to the horizon, rivers like silver threads, towns scattered like children\'s toys.</p><blockquote>"In this moment," one of them whispered, "I understand what it means to truly see."</blockquote><p>The mountain had witnessed another chapter of human courage added to its eternal story.</p>',
-    Created: new Date("2023-12-05").toISOString(),
-    Modified: new Date("2024-01-10").toISOString(),
+    Created: daysAgo(6),
+    Modified: daysAgo(6),
     Author: {
       Id: 3,
       Title: "Gupta, Tripti",
@@ -66,8 +72,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Title: "Minimum Title",
     Introduction: "Testing minimum length requirements for UI validation and display across various screen sizes.",
     Content: "<h2>Short Story Test</h2><p>This is deliberately minimal content to test how the UI handles edge cases with very short stories.</p>",
-    Created: new Date("2025-01-01").toISOString(),
-    Modified: new Date("2025-01-02").toISOString(),
+    Created: daysAgo(3),
+    Modified: daysAgo(3),
     Author: {
       Id: 1,
       Title: "Modukuru, Sateeshsai",
@@ -83,8 +89,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Title: "A Draft Story That Is Currently Being Written and Edited",
     Introduction: "This story is still being written and hasn't been published yet. It tests the draft workflow and how unpublished content appears in admin interfaces.",
     Content: "<h1>Draft in Progress</h1><p>This content is incomplete. More paragraphs will be added.</p><h2>Placeholder Section</h2><p>To be written...</p>",
-    Created: new Date("2025-01-05").toISOString(),
-    Modified: new Date("2025-01-06").toISOString(),
+    Created: hoursAgo(24),
+    Modified: hoursAgo(12),
     Author: {
       Id: 2,
       Title: "Mooring, James",
@@ -100,8 +106,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Title: "Inactive Story for Testing",
     Introduction: "This story has been marked as inactive. Testing how the system handles inactive content that shouldn't appear in public views.",
     Content: "<h2>Old Content</h2><p>This story was popular once but has been archived. It should not appear in regular story lists.</p>",
-    Created: new Date("2022-05-15").toISOString(),
-    Modified: new Date("2022-05-16").toISOString(),
+    Created: daysAgo(100),
+    Modified: daysAgo(100),
     Author: {
       Id: 3,
       Title: "Gupta, Tripti",
@@ -119,8 +125,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
       "An exploration of how technology reshapes business landscapes. This comprehensive guide examines the challenges, opportunities, and strategies for successful digital transformation initiatives.",
     Content:
       '<h1>The Art of Digital Transformation</h1><p>In today\'s rapidly evolving business environment, digital transformation has become not just an option, but a necessity for survival and growth.</p><h2>Understanding the Landscape</h2><p>Digital transformation encompasses far more than simply adopting new technologies. It represents a fundamental shift in how organizations operate, deliver value to customers, and compete in their markets.</p><img src="./assets/images/7.avif" alt="Digital transformation concept" /><h3>Key Components</h3><ul><li><strong>Technology Infrastructure:</strong> Cloud computing, APIs, microservices</li><li><strong>Data Strategy:</strong> Analytics, AI/ML integration, real-time insights</li><li><strong>Cultural Change:</strong> Agile methodologies, continuous learning, innovation mindset</li><li><strong>Customer Experience:</strong> Omnichannel engagement, personalization, self-service</li></ul><h2>The Journey</h2><p>Successful transformation requires careful planning, strong leadership, and commitment across all levels of the organization. It\'s not a destination but an ongoing journey of adaptation and improvement.</p><blockquote>"The companies that thrive in the digital age are those that view transformation not as a project with an endpoint, but as a continuous evolution of capabilities and mindset."</blockquote><h2>Overcoming Challenges</h2><p>Organizations often face resistance to change, legacy system constraints, skill gaps, and competing priorities. Addressing these challenges requires:</p><ol><li>Clear vision and communication from leadership</li><li>Investment in training and talent development</li><li>Incremental, measurable progress with quick wins</li><li>Strong partnerships with technology providers</li><li>Focus on business outcomes, not just technology adoption</li></ol><p>The path forward demands courage, creativity, and commitment. Those who embrace this journey position themselves for success in an increasingly digital future.</p>',
-    Created: new Date("2024-09-20").toISOString(),
-    Modified: new Date("2024-10-05").toISOString(),
+    Created: hoursAgo(48),
+    Modified: hoursAgo(36),
     Author: {
       Id: 1,
       Title: "Modukuru, Sateeshsai",
@@ -136,8 +142,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Title: "Empty Tags Story",
     Introduction: "Testing how the application handles stories with no tags assigned. This is important for validating filtering and search functionality.",
     Content: "<h2>No Tags</h2><p>This story intentionally has an empty tag string to test edge cases in the tag filtering system.</p>",
-    Created: new Date("2024-11-15").toISOString(),
-    Modified: new Date("2024-11-15").toISOString(),
+    Created: daysAgo(2),
+    Modified: daysAgo(2),
     Author: {
       Id: 3,
       Title: "Gupta, Tripti",
@@ -155,8 +161,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
       "A comprehensive test of rich text capabilities including multiple images, various heading levels, lists, blockquotes, and complex HTML structures to validate the editor and viewer.",
     Content:
       '<h1>Rich Media Showcase</h1><p>This story demonstrates the full capabilities of the rich text editor and how content renders across different devices and screen sizes.</p><h2>Visual Elements</h2><img src="./assets/images/9.avif" alt="First image" /><p>Images are crucial for storytelling. They break up text, provide visual interest, and can convey information that words alone cannot.</p><h3>Subsection Example</h3><p>Here we explore deeper into the topic with additional detail and supporting information.</p><img src="./assets/images/10.avif" alt="Second image" /><h2>Lists and Structure</h2><h3>Unordered List</h3><ul><li>First bullet point with important information</li><li>Second point explaining key concepts</li><li>Third point with additional context<ul><li>Nested bullet point</li><li>Another nested item</li></ul></li><li>Final top-level point</li></ul><h3>Ordered List</h3><ol><li>Step one in the process</li><li>Step two follows naturally</li><li>Step three completes the sequence</li></ol><img src="./assets/images/11.avif" alt="Third image" /><h2>Quotes and Emphasis</h2><blockquote>"Complex formatting tests the limits of our rendering engine and ensures we can handle real-world content creation needs."</blockquote><p><strong>Bold text</strong> and <em>italic text</em> help emphasize important points within paragraphs.</p><h2>Conclusion</h2><p>This comprehensive example ensures our system can handle varied, rich content that users might create in production environments.</p><img src="./assets/images/12.avif" alt="Final image" />',
-    Created: new Date("2024-08-10").toISOString(),
-    Modified: new Date("2024-08-25").toISOString(),
+    Created: hoursAgo(12),
+    Modified: hoursAgo(8),
     Author: {
       Id: 2,
       Title: "Mooring, James",
@@ -172,8 +178,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Title: "Very Recent Story",
     Introduction: "Published just moments ago to test sorting by date and ensuring the most recent content appears correctly in feeds and lists.",
     Content: "<h2>Fresh Content</h2><p>This story was created very recently and should appear at the top of date-sorted lists.</p>",
-    Created: new Date().toISOString(),
-    Modified: new Date().toISOString(),
+    Created: minutesAgo(5),
+    Modified: minutesAgo(5),
     Author: {
       Id: 1,
       Title: "Modukuru, Sateeshsai",
@@ -190,8 +196,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Introduction: "Testing the display of stories with modification dates much newer than creation dates, simulating collaborative editing scenarios.",
     Content:
       "<h2>Collaborative Work</h2><p>This story was originally created months ago but has been recently edited by multiple team members.</p><p>The modification date should be significantly different from the creation date.</p>",
-    Created: new Date("2023-06-01").toISOString(),
-    Modified: new Date().toISOString(),
+    Created: daysAgo(30),
+    Modified: hoursAgo(2),
     Author: {
       Id: 3,
       Title: "Gupta, Tripti",
@@ -208,8 +214,8 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Introduction: "Testing how the system handles special characters, Unicode symbols, emojis 😊, punctuation marks, and other non-standard text that might cause encoding or display issues.",
     Content:
       '<h2>Special Characters Test</h2><p>This story contains various special characters: &amp; &lt; &gt; " \' to test HTML encoding.</p><h3>Unicode Symbols</h3><p>Mathematical symbols: ∑ ∏ ∫ ∂ √ ∞</p><p>Currency: $ € £ ¥ ₹</p><p>Arrows: → ← ↑ ↓ ⇒ ⇐</p><h3>Emojis</h3><p>😀 😃 😄 😁 🚀 🌟 ⭐ 💡 🎯 🏆 🎨 🎭 🎪</p><h3>Punctuation</h3><p>Em dash—en dash–ellipsis... quotes "smart" and \'other\' varieties.</p><blockquote>"Testing quotes with special chars: &lt;tag&gt; &amp; symbols!"</blockquote>',
-    Created: new Date("2024-07-20").toISOString(),
-    Modified: new Date("2024-07-21").toISOString(),
+    Created: hoursAgo(6),
+    Modified: hoursAgo(4),
     Author: {
       Id: 2,
       Title: "Mooring, James",

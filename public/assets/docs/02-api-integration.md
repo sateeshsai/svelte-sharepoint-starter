@@ -224,6 +224,86 @@ const newStories = await provider.getListItems({
 
 ---
 
+## Live Polling for Updates
+
+Poll for new items created after a specific timestamp using the `Created >= filter` pattern.
+
+### Polling Implementation
+
+```ts
+import { poll } from "$lib/common-library/integrations";
+import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
+
+async function loadStories() {
+  let lastFetchTimeString: string | undefined;
+
+  // Environment-aware intervals: 2s local, 10s SharePoint
+  const pollInterval = LOCAL_MODE ? 2000 : 10000;
+
+  stopPolling = poll(async () => {
+    // Capture timestamp BEFORE fetch to avoid missing items
+    const currentFetchTimeString = new Date().toISOString();
+    
+    const provider = getDataProvider();
+    const response = await provider.getListItems({
+      listName: "Stories",
+      operations: [
+        ["select", "Id,Title,Created"],
+        ["filter", `Created ge '${lastFetchTimeString}'`], // Only new items
+      ],
+      cacheResponse: false, // ← Critical: bypass cache for fresh data
+      signal,
+    });
+
+    if (response.error || !response.value) {
+      stopPolling();
+      return;
+    }
+
+    // Update timestamp AFTER successful fetch
+    lastFetchTimeString = currentFetchTimeString;
+    
+    // Append new items
+    stories = [...stories, ...response.value];
+  }, pollInterval);
+}
+```
+
+### Key Concepts
+
+**1. Timestamp Management**
+- Capture `currentFetchTimeString` **before** the fetch
+- Use `lastFetchTimeString` (from previous poll) in the filter
+- Update `lastFetchTimeString` **after** successful fetch
+- This prevents missing items created during the fetch window
+
+**2. Cache Bypass**
+- Always set `cacheResponse: false` for polling
+- Ensures fresh data on every poll (not cached results)
+
+**3. Environment-Aware Intervals**
+- LOCAL_MODE: 2 seconds (faster for development testing)
+- SharePoint: 10 seconds (reduces server load)
+
+**4. Cleanup**
+- Return `stopPolling()` from `onMount()` for automatic cleanup
+
+### LOCAL_MODE Simulation
+
+In development (`LOCAL_MODE = true`), the `MockDataProvider` simulates new entries being created:
+
+- **Frequency:** Randomly 0-2 new stories per poll
+- **Trigger:** Only when `cacheResponse: false` and `Created >= filter` present
+- **Persistence:** New items added to session storage, persist until page reload
+- **Purpose:** Test live update UI without manual data creation
+
+**Production Behavior:**
+- Simulation only runs in LOCAL_MODE
+- On SharePoint, polls fetch real items from the actual list
+- Filter `Created >= timestamp` gets items created after last poll
+
+---
+
 ## Request Cancellation
 
 Automatically cancel in-flight requests when components unmount or users navigate. This prevents common errors when components unmount before async operations complete (see [Error Handling](/docs/errors)).

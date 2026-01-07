@@ -78,7 +78,8 @@ Learn by exploring production-ready implementations. Each example demonstrates p
 
 - **Data Loading** - [AsyncLoadState](/docs/state) for tracking loading/ready/error states
 - **Request Cancellation** - [useAbortController](/docs/api) for cleanup on unmount
-- **Polling** - Continuous polling with `poll()` utility
+- **Live Polling** - Continuous polling with `poll()` utility and `cacheResponse: false`
+- **Environment-Aware Intervals** - 2s in LOCAL_MODE, 10s on SharePoint
 - **Filtering** - Dynamic filter UI with multiple criteria
 - **[Error Handling](/docs/errors)** - Status messages and error boundaries
 - **Type-Safe Routing** - p() function for links
@@ -88,12 +89,13 @@ Learn by exploring production-ready implementations. Each example demonstrates p
 ```svelte
 <script lang="ts">
   import { getStories } from "./get.svelte";
-  import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+  import { SharePointAsyncLoadState } from "$lib/common-library/integrations";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
-  import { poll } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
+  import { poll } from "$lib/common-library/integrations";
+  import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 
   const { signal } = useAbortController(); // Auto-cancel on unmount
-  let storiesLoadState = new AsyncLoadState();
+  let storiesLoadState = new SharePointAsyncLoadState();
 
   onMount(() => {
     loadStories();
@@ -103,22 +105,30 @@ Learn by exploring production-ready implementations. Each example demonstrates p
   async function loadStories() {
     let lastFetchTimeString: string | undefined;
 
-    // Poll every 2 seconds for new stories
+    // Environment-aware polling: 2s local, 10s SharePoint
+    const pollInterval = LOCAL_MODE ? 2000 : 10000;
+
     stopPolling = poll(async () => {
+      // Capture timestamp BEFORE fetch to avoid missing items
+      const currentFetchTimeString = new Date().toISOString();
+      
+      // Pass cacheResponse: false to bypass deduplication cache
       const storiesFromDB = await getStories(
         storiesLoadState,
         lastFetchTimeString,
-        signal
+        signal,
+        false // cacheResponse: false for polling
       );
-      lastFetchTimeString = new Date().toISOString();
 
-      if (!storiesFromDB || storiesLoadState.error) {
+      if (storiesFromDB === undefined || storiesLoadState.error) {
         stopPolling();
         return;
       }
 
+      // Update timestamp AFTER successful fetch
+      lastFetchTimeString = currentFetchTimeString;
       stories = stories ? [...stories, ...storiesFromDB] : storiesFromDB;
-    }, 2000);
+    }, pollInterval);
   }
 
   // Dynamic derived filtering
@@ -150,9 +160,11 @@ Learn by exploring production-ready implementations. Each example demonstrates p
 
 ### What to Learn
 
-- AsyncLoadState lifecycle management
+- SharePointAsyncLoadState for loading states with automatic error reporting
 - useAbortController hook for request cleanup
-- Polling pattern with interval
+- Polling pattern with `cacheResponse: false` to bypass cache
+- Timestamp management (capture before, update after fetch)
+- Environment-aware intervals (LOCAL_MODE detection)
 - Dynamic filtering with derived values
 - Reactive data updates
 

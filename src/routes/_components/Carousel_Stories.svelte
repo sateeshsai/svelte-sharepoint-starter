@@ -65,7 +65,9 @@
               <Card.Content class="p-0">
                 <!-- <span class="text-4xl font-semibold">{i + 1}</span> -->
                 <a href={p("/stories/:id", { params: { id: String(story.Id) } })} class="bg-cover grid content-end h-96" style="background-image:url(./assets/StoryFiles/{story.CoverFileName})">
-                  <p class="pt-12 bg-linear-to-b from-transparent to-black/60 flex flex-col items-center justify-end p-6 text-lg font-bold text-white">{story.Title}</p>
+                  <div class="pt-12 bg-linear-to-b from-transparent to-black/60 flex flex-col items-center justify-end p-8 text-lg font-bold text-white truncate">
+                    <p class="max-w-[90%] truncate text-ellipsis">{story.Title}</p>
+                  </div>
                 </a>
               </Card.Content>
             </Card.Root>

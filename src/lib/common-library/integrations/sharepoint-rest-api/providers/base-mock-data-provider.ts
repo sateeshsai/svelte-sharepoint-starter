@@ -2,6 +2,7 @@ import type { DataProvider } from "./data-provider";
 import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User } from "../data/types";
 import type { SharePointConfig } from "../config";
 import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "../data/local-data";
+import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 
 /**
  * BaseMockDataProvider - abstract base class with reusable mock data logic
@@ -25,6 +26,11 @@ export abstract class BaseMockDataProvider implements DataProvider {
    * Counter for generating unique IDs per list
    */
   private idCounters: Map<string, number> = new Map();
+
+  /**
+   * Counter for simulated new entries in LOCAL_MODE
+   */
+  private simulatedEntryCount: Map<string, number> = new Map();
 
   constructor(config: SharePointConfig) {
     this.config = config;
@@ -348,8 +354,47 @@ export abstract class BaseMockDataProvider implements DataProvider {
     let mockData = [...this.getSessionData(options.listName)]; // Clone to avoid mutation during filtering
     console.log(`[MockDataProvider] getListItems ${options.listName}, sessionItems=${mockData.length}, ids=[${mockData.map((i) => i.Id).join(",")}]`);
 
-    // Apply operations in the order they are passed (respects caller's intent)
+    // Simulate new entries being created during polling for testing live updates
+    // Only for Story list, when cacheResponse is false (polling scenario), and with a Created >= filter
     const operations = options.operations;
+    const hasCreatedFilter = operations && typeof operations !== "string" && operations.some(([op, value]) => op === "filter" && typeof value === "string" && /Created\s+ge\s+/.test(value));
+
+    if (LOCAL_MODE && hasCreatedFilter && options.cacheResponse === false && options.listName === this.config.lists.Story?.name) {
+      const currentCount = this.simulatedEntryCount.get(options.listName) || 0;
+
+      // Randomly create 1 or 2 new entries per poll (50% chance for each)
+      const numNewEntries = Math.random() > 0.5 ? (Math.random() > 0.5 ? 2 : 1) : 0;
+
+      for (let i = 0; i < numNewEntries; i++) {
+        const entryNum = currentCount + i + 1;
+        console.log(`[MockDataProvider] Simulating new story entry #${entryNum}`);
+
+        const newStory = {
+          Id: this.getNextId(options.listName),
+          Title: `Live Update Story #${entryNum}`,
+          Introduction: `This story was dynamically created during polling to test live updates. Created at ${new Date().toLocaleTimeString()}`,
+          Content: `<h2>Live Update Test</h2><p>This story appeared dynamically during polling at ${new Date().toLocaleTimeString()} to demonstrate the live update feature.</p>`,
+          Created: new Date().toISOString(),
+          Modified: new Date().toISOString(),
+          Author: { Id: 1, Title: "Modukuru, Sateeshsai" },
+          Engagements: [],
+          Tags: "live,polling,test",
+          CoverFileName: "1.avif",
+          ActiveStatus: "Active",
+          PublishStatus: "Published",
+        };
+
+        // Add to session store so it persists (will be picked up on next poll)
+        const sessionData = this.getSessionData(options.listName);
+        sessionData.push(newStory);
+      }
+
+      if (numNewEntries > 0) {
+        this.simulatedEntryCount.set(options.listName, currentCount + numNewEntries);
+      }
+    }
+
+    // Apply operations in the order they are passed (respects caller's intent)
     if (operations && typeof operations !== "string") {
       for (const [op, value] of operations) {
         switch (op) {

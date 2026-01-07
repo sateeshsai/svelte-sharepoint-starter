@@ -37,9 +37,9 @@
     const pollInterval = LOCAL_MODE ? 2000 : 10000;
 
     stopPolling = poll(async () => {
+      // Capture timestamp BEFORE fetch to avoid missing items created during the fetch
       const currentFetchTimeString = new Date().toISOString();
       const storiesFromDB = await getStories(storiesLoadState, lastFetchTimeString, signal, false);
-      lastFetchTimeString = currentFetchTimeString;
       console.log(storiesFromDB);
 
       // Stop polling only if fetch failed (storiesFromDB is undefined on error)
@@ -49,6 +49,9 @@
         return;
       }
 
+      // Update timestamp AFTER successful fetch, BEFORE adding to array
+      // This ensures next poll gets items created after this timestamp
+      lastFetchTimeString = currentFetchTimeString;
       stories = stories ? [...stories, ...storiesFromDB] : storiesFromDB;
     }, pollInterval);
   }

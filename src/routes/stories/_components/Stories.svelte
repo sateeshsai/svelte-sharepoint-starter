@@ -30,8 +30,8 @@
       >
         <div class="storyThumbnail rounded bg-center bg-cover h-36 w-36" style="background-image:{`url(${'./assets/StoryFiles/' + story.CoverFileName})`}"></div>
         <div class="storyInfo grid gap-2 content-start">
-          <p class="font-bold">{story.Title}</p>
-          <p class="text-sm">{story.Introduction}</p>
+          <p class="font-bold line-clamp-2">{story.Title}</p>
+          <p class="text-sm line-clamp-3">{story.Introduction}</p>
         </div>
       </a>
     {/each}
