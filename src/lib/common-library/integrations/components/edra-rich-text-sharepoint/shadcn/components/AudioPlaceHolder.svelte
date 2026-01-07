@@ -5,29 +5,43 @@
   import { buttonVariants } from "$lib/components/ui/button/button.svelte";
   import { SharePointAsyncSubmitState } from "$lib/common-library/integrations/error-handling";
   import FileDropZoneWrapper from "$lib/common-library/utils/components/file/FileDropZoneWrapper.svelte";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import MediaPlaceHolder from "$lib/common-library/integrations/components/edra-rich-text/components/MediaPlaceHolder.svelte";
-  import { uploadFile } from "./post.svelte";
   import { randomIdString } from "$lib/common-library/utils/functions/string";
-  // TODO: Decouple this from app-specific config. Use props or context instead.
-  // import { sharepointUploadOptions_Story } from "$lib/data/sharepoint-upload-options.svelte";
+  import { getContext } from "svelte";
+  import { EDRA_FILE_UPLOAD_KEY, type EdraFileUploadContext } from "../../../edra-rich-text/context";
 
   const { editor }: NodeViewProps = $props();
+  const uploadContext = getContext<EdraFileUploadContext | undefined>(EDRA_FILE_UPLOAD_KEY);
 
   const fileUploadState = new SharePointAsyncSubmitState();
 
   async function addFile(files: File[]) {
-    // @ts-expect-error
-    await uploadFile(files, fileUploadState, {});
-
-    if (fileUploadState.success) {
-      const file = files?.[0]!;
-      const fileUrl = LOCAL_MODE ? URL.createObjectURL(file) : file.name;
-      if (fileUrl) {
-        editor.chain().focus().setAudio(fileUrl).run();
-        fileUploadState.resetForm();
-      }
+    const file = files?.[0];
+    if (!file) {
+      fileUploadState.setError("No file selected.");
+      return;
     }
+
+    if (!uploadContext) {
+      // Fallback: use local blob URL in dev mode, otherwise prompt for URL
+      if (LOCAL_MODE) {
+        const fileUrl = URL.createObjectURL(file);
+        editor.chain().focus().setAudio(fileUrl).run();
+      } else {
+        handleClick();
+      }
+      return;
+    }
+
+    const result = await uploadContext.upload(file, fileUploadState);
+
+    if ("error" in result) {
+      fileUploadState.setError(result.error);
+      return;
+    }
+
+    editor.chain().focus().setAudio(result.url).run();
+    fileUploadState.resetForm();
   }
 
   function handleClick() {
