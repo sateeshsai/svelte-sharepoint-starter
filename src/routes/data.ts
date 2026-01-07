@@ -1,7 +1,4 @@
-/**
- * App-specific marketing content
- * Features and messaging unique to this Svelte starter project
- */
+/** App-specific marketing content for the starter project */
 export const FRAMEWORK_FEATURES = [
   "Built for hosting on SharePoint 2013 on-prem",
   "Sensible patterns and robust type system with 100% type coverage",

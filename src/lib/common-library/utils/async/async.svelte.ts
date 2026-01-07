@@ -1,6 +1,7 @@
 /**
- * Pure async state management utility - framework and integration agnostic
- * No dependencies on SharePoint or error reporting
+ * Framework-agnostic async state management for form submissions
+ * Tracks initial, in-progress, success, and error states
+ * Use for POST/PUT/DELETE operations
  */
 
 export class AsyncSubmitState {
@@ -62,6 +63,11 @@ export class AsyncSubmitState {
   }
 }
 
+/**
+ * Framework-agnostic async state management for data loading
+ * Tracks loading, ready, and error states
+ * Use for GET operations
+ */
 export class AsyncLoadState {
   loading = $state(true);
   ready: boolean = $state(false);

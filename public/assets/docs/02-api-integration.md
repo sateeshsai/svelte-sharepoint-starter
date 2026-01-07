@@ -243,7 +243,7 @@ async function loadStories() {
   stopPolling = poll(async () => {
     // Capture timestamp BEFORE fetch to avoid missing items
     const currentFetchTimeString = new Date().toISOString();
-    
+
     const provider = getDataProvider();
     const response = await provider.getListItems({
       listName: "Stories",
@@ -262,7 +262,7 @@ async function loadStories() {
 
     // Update timestamp AFTER successful fetch
     lastFetchTimeString = currentFetchTimeString;
-    
+
     // Append new items
     stories = [...stories, ...response.value];
   }, pollInterval);
@@ -272,20 +272,24 @@ async function loadStories() {
 ### Key Concepts
 
 **1. Timestamp Management**
+
 - Capture `currentFetchTimeString` **before** the fetch
 - Use `lastFetchTimeString` (from previous poll) in the filter
 - Update `lastFetchTimeString` **after** successful fetch
 - This prevents missing items created during the fetch window
 
 **2. Cache Bypass**
+
 - Always set `cacheResponse: false` for polling
 - Ensures fresh data on every poll (not cached results)
 
 **3. Environment-Aware Intervals**
+
 - LOCAL_MODE: 2 seconds (faster for development testing)
 - SharePoint: 10 seconds (reduces server load)
 
 **4. Cleanup**
+
 - Return `stopPolling()` from `onMount()` for automatic cleanup
 
 ### LOCAL_MODE Simulation
@@ -298,6 +302,7 @@ In development (`LOCAL_MODE = true`), the `MockDataProvider` simulates new entri
 - **Purpose:** Test live update UI without manual data creation
 
 **Production Behavior:**
+
 - Simulation only runs in LOCAL_MODE
 - On SharePoint, polls fetch real items from the actual list
 - Filter `Created >= timestamp` gets items created after last poll

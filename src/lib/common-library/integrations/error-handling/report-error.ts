@@ -4,8 +4,8 @@ import type { SharePointConfig } from "../sharepoint-rest-api/config";
 import { ERROR_TYPES } from "./error-schemas";
 
 /**
- * Report an error to the ErrorReports list in SharePoint
- * This is non-blocking - if reporting fails, it will be silently ignored to prevent cascading errors
+ * Report error to SharePoint ErrorReports list
+ * Non-blocking - silently fails to prevent cascading errors
  */
 export async function reportError(
   config: SharePointConfig,
@@ -31,7 +31,7 @@ export async function reportError(
       return;
     }
 
-    await postListItem({ dataToPost: errorReportToPost, listName: config.lists.ErrorReports.name });
+    await postListItem({ siteCollectionUrl: config.paths.site_collection, dataToPost: errorReportToPost, listName: config.lists.ErrorReports.name });
   } catch (err) {
     // Silently fail - don't let error reporting break the app
     console.error("[ERROR REPORT FAILED]", err);

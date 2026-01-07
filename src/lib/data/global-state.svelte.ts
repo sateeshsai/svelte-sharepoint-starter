@@ -7,8 +7,7 @@ export const global_State: { user: undefined | Sharepoint_User; AccessRole: Acce
 });
 
 /**
- * Set current user in global state
- * Validates that user data is valid before setting
+ * Set current user - validates data before setting
  */
 export function setCurrentUser(user: Sharepoint_User | undefined): void {
   if (user !== undefined && (!user.Id || !user.LoginName)) {
@@ -19,8 +18,7 @@ export function setCurrentUser(user: Sharepoint_User | undefined): void {
 }
 
 /**
- * Set user access role in global state
- * Validates that role is a valid AccessRole type
+ * Set user access role - validates role type
  */
 export function setAccessRole(role: AccessRole): void {
   if (!role) {
@@ -31,8 +29,7 @@ export function setAccessRole(role: AccessRole): void {
 }
 
 /**
- * Set user properties in global state
- * Validates that properties are valid before setting
+ * Set user properties - validates data before setting
  */
 export function setUserProperties(properties: Sharepoint_User_Properties | undefined): void {
   if (properties !== undefined && !properties.AccountName) {
@@ -42,9 +39,7 @@ export function setUserProperties(properties: Sharepoint_User_Properties | undef
   global_State.userProperties = properties;
 }
 
-/**
- * Reset all global state (for logout or cleanup)
- */
+/** Reset all global state (for logout or cleanup) */
 export function resetGlobalState(): void {
   global_State.user = undefined;
   global_State.AccessRole = null;

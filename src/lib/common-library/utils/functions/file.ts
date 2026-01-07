@@ -1,3 +1,4 @@
+/** Convert File object to ArrayBuffer for SharePoint upload */
 export async function fileToArrayBuffer(file: File): Promise<ArrayBuffer | null> {
   console.log(file);
   return new Promise((resolve, reject) => {
@@ -20,6 +21,7 @@ export async function fileToArrayBuffer(file: File): Promise<ArrayBuffer | null>
   });
 }
 
+/** Convert data URI to File object (useful for cropped images) */
 export function dataUriToFile(dataurl: string, filename: string) {
   console.log(dataurl);
   // Split the data URL into the mime type part and the data part

@@ -2,7 +2,7 @@
 
 ## Unrelated
 
-- IDEA - Proposal designer - voice and prompt based.
+- IDEA - Proposal designer - voice and prompt based. Git-like branching and version control.
 - Designer workshop
 
 ## Features:

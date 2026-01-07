@@ -76,7 +76,7 @@ export interface DataProvider {
   }): Promise<T | Sharepoint_Error_Formatted>;
 
   /**
-   * Upload and attach a file to a list item
+   * Upload a file to a folder
    * @param options - Configuration including listName, item ID, and file data
    * @param options.mockResponse - Optional override response for LOCAL_MODE testing
    * @returns Promise resolving to file data or error

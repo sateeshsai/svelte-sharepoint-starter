@@ -90,12 +90,9 @@ export async function getDocs(docsloadState: AsyncLoadState): Promise<DocSection
 }
 
 /**
- * Renders a documentation section to HTML
- * Fetches the markdown file and converts to HTML, removing frontmatter
- *
- * @param section - The DocSection to render
- * @param loadState - AsyncLoadState instance to manage loading/error states
- * @returns Rendered HTML content, or undefined on error
+ * Render documentation section to HTML
+ * Fetches markdown file and converts to HTML, removing frontmatter
+ * @returns HTML content or undefined on error
  */
 export async function renderDocSection(section: DocSection, loadState: AsyncLoadState): Promise<string | undefined> {
   try {

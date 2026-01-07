@@ -1,38 +1,21 @@
 import type { DataProvider } from "./data-provider";
 
 /**
- * ProviderRegistry - manages DataProvider implementations for common-library
+ * Provider registry for managing DataProvider implementations
  *
- * App layer registers implementations at startup:
- * - registerProviders(mockImpl, realImpl)
- *
- * Common-library calls getDataProvider(localMode) to get the appropriate implementation
- *
- * This pattern:
- * ✅ Keeps common-library free of app-layer imports
- * ✅ Enables portability across projects
- * ✅ Supports testing with custom implementations
+ * Pattern keeps common-library free of app-layer imports:
+ * - App layer calls registerProviders(mock, real) at startup
+ * - Common-library calls getDataProvider(localMode) as needed
+ * - Enables portability and testing with custom implementations
  */
 
 let mockDataProvider: DataProvider | null = null;
 let realDataProvider: DataProvider | null = null;
 
 /**
- * Register DataProvider implementations
- * Call this once at app startup (in main.ts or equivalent)
- *
- * @param mock - MockDataProvider instance for LOCAL_MODE
- * @param real - SharePointDataProvider instance for production
- *
+ * Register DataProvider implementations at app startup
  * @example
- * import { MockDataProvider } from "$lib/data/mock-data-provider";
- * import { SharePointDataProvider } from "$lib/common-library/.../sharepoint-data-provider";
- * import { registerProviders } from "$lib/common-library/.../provider-registry";
- *
- * registerProviders(
- *   new MockDataProvider(),
- *   new SharePointDataProvider()
- * );
+ * registerProviders(new MockDataProvider(), new SharePointDataProvider());
  */
 export function registerProviders(mock: DataProvider, real: DataProvider): void {
   mockDataProvider = mock;
@@ -40,17 +23,9 @@ export function registerProviders(mock: DataProvider, real: DataProvider): void 
 }
 
 /**
- * Get the appropriate DataProvider implementation
- *
- * Must call registerProviders() first at app startup
- *
- * @param localMode - true to use mock provider, false for real API
- * @returns DataProvider instance
- * @throws Error if providers not registered
- *
- * @example
- * const provider = getDataProvider(LOCAL_MODE);
- * const stories = await provider.getListItems({ listName: "Stories" });
+ * Get DataProvider implementation based on mode
+ * @param localMode - true for mock, false for real SharePoint API
+ * @throws Error if registerProviders() not called first
  */
 export function getDataProvider(localMode: boolean): DataProvider {
   if (!mockDataProvider || !realDataProvider) {
@@ -59,19 +34,13 @@ export function getDataProvider(localMode: boolean): DataProvider {
   return localMode ? mockDataProvider : realDataProvider;
 }
 
-/**
- * Override a specific implementation (mainly for testing)
- * @param mock - Custom mock provider or null to reset
- * @param real - Custom real provider or null to reset
- */
+/** Override providers (for testing) */
 export function setProviders(mock: DataProvider | null, real: DataProvider | null): void {
   if (mock !== null) mockDataProvider = mock;
   if (real !== null) realDataProvider = real;
 }
 
-/**
- * Reset to uninitialized state (for testing)
- */
+/** Reset to uninitialized state (for testing) */
 export function resetProviders(): void {
   mockDataProvider = null;
   realDataProvider = null;

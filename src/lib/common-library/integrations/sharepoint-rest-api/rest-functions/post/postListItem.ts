@@ -2,6 +2,11 @@ import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../../constants/const";
 import { getFormDigestValue } from "../get/getFormDigestValue";
 import type { Sharepoint_Error_Formatted, Sharepoint_PostItem_SuccessResponse_WithPostedData, Sharepoint_PostItemResponse } from "../../data/types";
 
+/**
+ * Create new item in SharePoint list
+ * Automatically fetches form digest if not provided
+ * Returns posted data with SharePoint-generated fields (Id, Created, etc.)
+ */
 export async function postListItem<DataToPost extends Record<string, any>, DataToIncludeInResponseInLocalMode extends Record<string, any>>(options: {
   siteCollectionUrl: string;
   listName: string;

@@ -23,6 +23,7 @@ export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Parti
   return updateResponse;
 }
 
+/** Deletes file metadata from Files list (does not delete the actual document library file). */
 export async function deleteStoryFile(fileId: number, deleteFileState: AsyncSubmitState) {
   deleteFileState.setInprogress();
   const provider = getDataProvider();

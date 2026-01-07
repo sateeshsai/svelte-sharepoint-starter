@@ -4,14 +4,10 @@ const ROOT_FOLDER_PATH_RELATIVE_TO_SITE_COLLECTION_URL = "pages/builder-test/"; 
 
 /**
  * URL Parsing Logic
- * Extracts SharePoint domain, site collection, and path information from window.location
+ * Extracts SharePoint domain, site collection, and path from window.location
+ * Calculated once on app boot - DO NOT MODIFY unless you understand the URL structure
  *
- * DO NOT MODIFY these variables unless you understand the URL structure
- * Only calculated once on app boot
- *
- * PRODUCTION ASSUMPTION:
- * - window.location.href must contain "/sites/" for SharePoint site collection detection
- * - If this assumption fails in production, the app will not initialize correctly
+ * PRODUCTION REQUIREMENT: window.location.href must contain "/sites/" for proper detection
  */
 
 // Guard: Check if we can access window (SSR safety)
@@ -40,8 +36,7 @@ const _ROOT_FOLDER_URL = LOCAL_MODE ? _PAGE_URL : _SHAREPOINT_SITECOLLECTION_URL
 const _ASSETS_FOLDER_URL = _ROOT_FOLDER_URL + "assets/";
 
 /**
- * SharePoint path configuration
- * Contains all derived paths based on current page URL
+ * SharePoint paths derived from current page URL
  * Calculated once on app boot
  */
 export const SHAREPOINT_PATHS = {
@@ -53,15 +48,9 @@ export const SHAREPOINT_PATHS = {
 } as const;
 
 /**
- * Helper function to extract relative path for folders
- * Used in folder configuration
- *
- * ASSUMES:
- * - folderUrl is a full SharePoint URL containing the site collection URL
- * - If assumption fails, returns empty string
- *
- * @param folderUrl - Full SharePoint folder URL
- * @returns Relative path from site collection, or empty string if extraction fails
+ * Extract relative path from full SharePoint folder URL
+ * Used in folder configuration - returns empty string if extraction fails
+ * @param folderUrl - Full SharePoint folder URL containing site collection URL
  */
 export function getFolderRelativePath(folderUrl: string): string {
   if (!folderUrl) {

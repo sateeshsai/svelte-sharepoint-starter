@@ -5,29 +5,12 @@ import { ErrorReportListSchema, ErrorReportPostSchema } from "$lib/common-librar
 import { SHAREPOINT_PATHS, getFolderRelativePath } from "./sharepoint-paths";
 import type { SharePointConfig } from "$lib/common-library/integrations";
 
-// export type SharepointListNames = "Story" | "Engagements" | "Files" | "UsersInfo" | "Analytics" | "ErrorReports";
-// export type SharepointFolderNames = "StoryFiles";
-
-// export interface SharepointList {
-//   name: string;
-//   schemas: {
-//     list: ZodObject;
-//     post: ZodObject;
-//   };
-// }
-
-// export interface SharepointFolder {
-//   name: string;
-//   rel_path: string;
-// }
-
 /**
- * Static SharePoint configuration
- * Contains list definitions with their validation schemas and folder configurations
+ * SharePoint configuration with list definitions and validation schemas
  * Uses runtime paths from sharepoint-paths.ts
  *
- * Uses `satisfies` to validate against SharePointConfig while preserving literal types
- * for better autocomplete (e.g., lists.Story instead of lists[string])
+ * Note: Uses `satisfies` to validate config while preserving literal types
+ * for better autocomplete (e.g., lists.Story vs lists[string])
  */
 export const SHAREPOINT_CONFIG = {
   info: {
@@ -97,6 +80,6 @@ export const SHAREPOINT_CONFIG = {
 
 /**
  * Type of the app's SharePoint configuration
- * Preserves literal types for lists, folders keys for better autocomplete
+ * Preserves literal types for better autocomplete
  */
 export type AppSharePointConfig = typeof SHAREPOINT_CONFIG;

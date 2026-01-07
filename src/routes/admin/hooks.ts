@@ -4,6 +4,10 @@ import { global_State } from "$lib/data/global-state.svelte";
 import type { Hooks } from "sv-router";
 import { navigate } from "sv-router/generated";
 
+/**
+ * Admin route guard - redirects non-admin users to home.
+ * Implements router lifecycle hooks for access control.
+ */
 export default {
   beforeLoad() {
     if (global_State.AccessRole !== "Admin") {

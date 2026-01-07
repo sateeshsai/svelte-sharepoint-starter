@@ -11,7 +11,7 @@ import {
 } from "$lib/data/schemas";
 import type z from "zod";
 
-//Type definitions derived from ./schemas.ts where applicable
+/** Type definitions derived from schemas */
 export type Story_ListItem = z.infer<typeof StoryListSchema>;
 export type Story_ListItem_Post = z.infer<typeof StoryPostSchema>;
 

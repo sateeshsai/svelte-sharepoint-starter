@@ -2,6 +2,13 @@ import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "../../constants/const";
 import { deduplicate } from "../helpers/deduplication";
 import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_Get_Operations } from "../../data/types";
 
+/**
+ * Fetch items from SharePoint list with OData operations
+ * Uses deduplication to prevent redundant simultaneous requests
+ * @param operations - Array of [operation, value] tuples or query string
+ * @param cacheResponse - Whether to cache (default: true, set false for real-time data)
+ * @param deduplicationTtlMs - Cache TTL in milliseconds (default: 30s)
+ */
 export function getListItems<T extends { value: Record<string, any> }>(options: {
   siteCollectionUrl: string;
   listName: string;

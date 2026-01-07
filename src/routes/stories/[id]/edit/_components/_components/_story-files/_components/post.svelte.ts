@@ -11,7 +11,7 @@ import type { File_ListItem, File_ListItem_Post_ForStory } from "$lib/data/types
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
-/** Response from postListItem - flat data with odata=nometadata */
+/** Response from postListItem */
 export type FileDetailsPostSuccessResponse = File_ListItem_Post_ForStory & {
   Id: number;
   Created: string;
@@ -20,6 +20,11 @@ export type FileDetailsPostSuccessResponse = File_ListItem_Post_ForStory & {
   Parent?: { Id: number; Title: string };
 };
 
+/**
+ * Uploads story files in two phases:
+ * 1. Uploads files to StoryFiles document library
+ * 2. Creates list items in Files list to track metadata
+ */
 export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[], storyId: number, fileUploadState: AsyncSubmitState) {
   fileUploadState.setInprogress();
 

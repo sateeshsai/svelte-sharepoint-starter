@@ -1,17 +1,12 @@
 import { onDestroy } from "svelte";
 
 /**
- * Svelte hook for managing AbortController lifecycle
- * Automatically aborts pending requests on component unmount
- *
+ * Manage AbortController lifecycle in Svelte components
+ * Automatically aborts pending requests on unmount
  * @returns Object with signal for fetch calls and abort function
- *
  * @example
  * const { signal, abort } = useAbortController();
- *
- * // Use signal in fetch calls
- * const response = await fetch(url, { signal });
- *
+ * await fetch(url, { signal });
  * // Cleanup happens automatically on unmount
  */
 export function useAbortController() {

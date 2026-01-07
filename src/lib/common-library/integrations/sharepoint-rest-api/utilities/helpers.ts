@@ -1,5 +1,10 @@
 import type { Sharepoint_User, Sharepoint_User_Properties, Sharepoint_Lookup_DefaultProps } from "../data/types";
 
+/**
+ * Generate $select and $expand OData parameters from object structure
+ * Detects lookup fields (objects) and adds appropriate expand clauses
+ * Field names truncated to 32 chars (SharePoint internal name limit)
+ */
 export function createSelectExpandQueries(obj: Record<string, any>) {
   if (typeof obj === "function") {
     obj = obj();
@@ -22,10 +27,12 @@ export function createSelectExpandQueries(obj: Record<string, any>) {
   };
 }
 
+/** Get profile picture URL from Deloitte's internal API */
 export function getPictureUrl(emailAdress: string) {
   return `https://horizonbolt.deloitte.com/api/empdetails?profilepic&emailId=${emailAdress}`;
 }
 
+/** Extract first and last name from SharePoint user profile properties */
 export function getUserFirstLastNames(user: Sharepoint_User_Properties): { first: string; last: string } {
   const firstName = user.UserProfileProperties.find((p) => p.Key === "FirstName");
   const lastName = user.UserProfileProperties.find((p) => p.Key === "LastName");

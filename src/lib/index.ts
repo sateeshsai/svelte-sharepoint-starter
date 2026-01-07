@@ -1,1 +1,1 @@
-// place files you want to import through the `$lib` alias in this folder.
+/** Library exports - place shared utilities and components here for $lib imports */

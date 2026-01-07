@@ -1,1 +1,1 @@
-// put conts here
+// App-specific constants (currently empty)

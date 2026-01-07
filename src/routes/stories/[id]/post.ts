@@ -8,6 +8,10 @@ import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.sve
 import type { ReturnResolvedType } from "$lib/common-library/utils/types/util-types";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
+/**
+ * Creates a new story and navigates to its edit page.
+ * On success, redirects to /stories/:id/edit with the new story ID.
+ */
 export async function postNewStory(newStoryState: AsyncSubmitState) {
   const newStoryToPost = convert_Story_ListItem_ToPost(createNew_Story_ListItem());
   const provider = getDataProvider();
@@ -25,7 +29,6 @@ export async function postNewStory(newStoryState: AsyncSubmitState) {
     return;
   }
 
-  // odata=nometadata returns flat data, Id is directly on response
   const newId = postNewStoryResponse.Id;
   if (!newId) {
     newStoryState.setError("Story created but no Id returned");

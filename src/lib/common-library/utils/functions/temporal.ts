@@ -1,15 +1,18 @@
+/** Standard date format: January 1, 2025 */
 export const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "long",
   day: "numeric",
 } as const;
 
+/** Short date format: Jan 1, 2025 */
 export const DATE_OPTIONS_SHORT: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "short",
   day: "numeric",
 } as const;
 
+/** Format ISO date string to readable format */
 export function formatDate(dateISOString: string | null, formatType?: "short" | "long") {
   if (!dateISOString) return;
   const date = new Date(dateISOString);
@@ -20,6 +23,7 @@ export function formatDate(dateISOString: string | null, formatType?: "short" | 
   return formattedDateString;
 }
 
+/** Convert milliseconds to HH:MM or HH:MM:SS format */
 export function getHoursMinutesFromMilliSeconds(timeInMiliseconds: number, showSeconds?: boolean) {
   const hours = Math.floor(timeInMiliseconds / 1000 / 60 / 60);
   const minutes = Math.floor((timeInMiliseconds / 1000 / 60 / 60 - hours) * 60);

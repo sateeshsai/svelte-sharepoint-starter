@@ -17,7 +17,6 @@
     //3. LOCAL MODE UPDATE - Add new files to local state
     if (fileDetailsPostSuccessResponses) {
       fileDetailsPostSuccessResponses.forEach((data) => {
-        // postListItem returns flat data (odata=nometadata format)
         const fileDetails_ListItem: File_ListItem = {
           Id: data.Id,
           Author: data.Author,

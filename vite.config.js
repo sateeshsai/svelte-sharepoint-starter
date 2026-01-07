@@ -19,7 +19,7 @@ export default defineConfig({
     build: {
         assetsInlineLimit: Number.POSITIVE_INFINITY,
         // Tree-shaking will automatically exclude local-data.ts and mock-data-provider.ts
-        // from production builds since they're only imported when LOCAL_MODE === true
-        // (which is always false in production)
+        // from production builds since they're only imported when import.meta.env.DEV === true
+        // (which is false in production builds)
     },
 });

@@ -1,7 +1,8 @@
-// To create new objects
+/** Factory functions for creating new list items with default values */
 
 import type { File_ListItem, File_ListItem_Post_ForStory, Story_ListItem } from "$lib/data/types";
 
+/** Create Story list item with default values (useful for forms and select/expand queries) */
 export function createNew_Story_ListItem(): Story_ListItem {
   const story: Story_ListItem = {
     Id: 1,
@@ -23,6 +24,7 @@ export function createNew_Story_ListItem(): Story_ListItem {
   return story;
 }
 
+/** Create File list item with default values for story attachments */
 export function createNew_File_ListItem(options: { ParentId: number; ParentType: File_ListItem_Post_ForStory["ParentType"] }): File_ListItem {
   const file: File_ListItem = {
     Id: 1,

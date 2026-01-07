@@ -1,6 +1,6 @@
 /**
  * SharePoint-integrated async state classes
- * Extends pure utilities with error reporting to SharePoint
+ * Extends pure utilities with automatic error reporting to SharePoint
  */
 
 import { reportError, type SharePointConfig } from "$lib/common-library/integrations";
@@ -8,15 +8,12 @@ import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/asyn
 import { getContext } from "svelte";
 
 /**
- * AsyncSubmitState with integrated SharePoint error reporting
- * Automatically reports errors to SharePoint ErrorReports list
+ * AsyncSubmitState with automatic SharePoint error reporting
  */
 export class SharePointAsyncSubmitState extends AsyncSubmitState {
   #config: SharePointConfig | null = null;
 
-  /**
-   * Override setError to include SharePoint error reporting
-   */
+  /** Override setError to include SharePoint error reporting */
   override setError(errorMessage: string, context?: string) {
     super.setError(errorMessage);
     // Lazy load config from context on first error
@@ -31,8 +28,7 @@ export class SharePointAsyncSubmitState extends AsyncSubmitState {
 }
 
 /**
- * AsyncLoadState with integrated SharePoint error reporting
- * Automatically reports errors to SharePoint ErrorReports list
+ * AsyncLoadState with automatic SharePoint error reporting
  */
 export class SharePointAsyncLoadState extends AsyncLoadState {
   #config: SharePointConfig;
@@ -42,9 +38,7 @@ export class SharePointAsyncLoadState extends AsyncLoadState {
     this.#config = getContext<SharePointConfig>("sharePointConfig");
   }
 
-  /**
-   * Override setError to include SharePoint error reporting
-   */
+  /** Override setError to include SharePoint error reporting */
   override setError(errorMessage: string, context?: string) {
     super.setError(errorMessage);
     reportError(this.#config, {

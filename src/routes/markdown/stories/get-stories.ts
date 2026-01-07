@@ -8,6 +8,7 @@ export type StoryMarkdown = Story_ListItem & {
   Files?: File_ListItem[];
 };
 
+/** Parses YAML frontmatter from markdown file. */
 async function extractFrontmatter(markdown: string): Promise<Record<string, any>> {
   const match = markdown.match(/^---\n([\s\S]*?)\n---/);
   if (!match) return {};
@@ -20,10 +21,15 @@ async function extractFrontmatter(markdown: string): Promise<Record<string, any>
   }
 }
 
+/** Strips YAML frontmatter from markdown content. */
 function extractContent(markdown: string): string {
   return markdown.replace(/^---\n[\s\S]*?\n---\n/, "");
 }
 
+/**
+ * Loads all stories from markdown files in /public/assets/StoryFiles/markdown/.
+ * Reads stories.md index file to discover story slugs, then fetches and parses each markdown file.
+ */
 export async function getStories(): Promise<StoryMarkdown[]> {
   try {
     // Fetch the stories index

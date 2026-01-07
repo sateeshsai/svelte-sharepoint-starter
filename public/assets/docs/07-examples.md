@@ -111,7 +111,7 @@ Learn by exploring production-ready implementations. Each example demonstrates p
     stopPolling = poll(async () => {
       // Capture timestamp BEFORE fetch to avoid missing items
       const currentFetchTimeString = new Date().toISOString();
-      
+
       // Pass cacheResponse: false to bypass deduplication cache
       const storiesFromDB = await getStories(
         storiesLoadState,

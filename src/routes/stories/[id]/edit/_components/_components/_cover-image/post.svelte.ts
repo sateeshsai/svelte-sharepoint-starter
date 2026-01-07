@@ -3,6 +3,7 @@ import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { readAndUploadFile } from "$lib/common-library/integrations";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 
+/** Converts cropped data URI to file and uploads to StoryFiles folder. */
 export async function uploadCroppedImage(dataUri: string, file: File, fileUploadState: AsyncSubmitState) {
   fileUploadState.setInprogress();
   const fileToUpload = await dataUriToFile(dataUri, file?.name as string);

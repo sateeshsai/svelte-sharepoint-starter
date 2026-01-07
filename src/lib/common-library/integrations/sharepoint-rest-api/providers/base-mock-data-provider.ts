@@ -566,7 +566,6 @@ export abstract class BaseMockDataProvider implements DataProvider {
       });
     }
 
-    // Return flat data (odata=nometadata format - no {d:...} wrapper)
     return newItem as unknown as T;
   }
 

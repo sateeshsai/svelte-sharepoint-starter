@@ -12,18 +12,16 @@ import { LOCAL_MODE } from "../../utils/local-dev/modes";
 let sessionId = randomIdString();
 
 /**
- * Track analytics for a component/page
- * Creates an entry when component mounts and updates it when unmounting
- * Each component that calls this gets its own independent tracking state
+ * Track page visit analytics
+ * Creates entry on mount, updates on unmount with leave time
+ * Each component gets independent tracking state
  *
- * USAGE:
- * Call trackAnalytics() at the top level in your component (only on routes you want to track)
- * Each Entry's Created = page visit start, Modified = page leave time
+ * USAGE: Call at route top level for pages you want to track
+ * Entry Created = visit start, Modified = leave time
  *
- * @param Data - Optional stringified object with arbitrary tracking data
- * @example
- * trackAnalytics(); // Basic tracking
- * trackAnalytics(stringifyKVObject({ userId: "123", action: "view" })); // With data
+ * @param Data - Optional stringified object with tracking data
+ * @example trackAnalytics(); // Basic tracking
+ * @example trackAnalytics(stringifyKVObject({ userId: "123" })); // With data
  */
 export async function trackAnalytics(Data?: StringifiedObject) {
   if (LOCAL_MODE) return; // Skip analytics in local development mode
@@ -43,7 +41,7 @@ export async function trackAnalytics(Data?: StringifiedObject) {
 
     const validationResult = AnalyticsEntryPostSchema.safeParse(newAnalyticsEntry);
     if (validationResult.success) {
-      const postResponse = await postListItem({ listName: config.lists.Analytics.name, dataToPost: newAnalyticsEntry });
+      const postResponse = await postListItem({ siteCollectionUrl: config.paths.site_collection, listName: config.lists.Analytics.name, dataToPost: newAnalyticsEntry });
       if ("error" in postResponse) {
         console.log("Error posting Analytics entry.", postResponse);
         return;
@@ -59,6 +57,7 @@ export async function trackAnalytics(Data?: StringifiedObject) {
     console.log(route, "END");
     // Update entry to mark leave time (uses Modified timestamp)
     const postResponse = await updateListItem({
+      siteCollectionUrl: config.paths.site_collection,
       listName: config.lists.Analytics.name,
       itemId: postedAnalyticsEntryId,
       dataToUpdate: { Title: config.info.version },
@@ -78,9 +77,12 @@ export async function trackAnalytics(Data?: StringifiedObject) {
 
 type StringifiedObject = string & { readonly __stringifiedObject: true };
 
+/** Convert object to stringified format for analytics data */
 export function stringifyKVObject(obj: Record<string, any>): StringifiedObject {
   return JSON.stringify(obj) as StringifiedObject;
 }
+
+/** Parse stringified analytics data back to object */
 export function parseStringifiedKV(data: StringifiedObject): Record<string, any> {
   return JSON.parse(data);
 }

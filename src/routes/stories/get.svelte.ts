@@ -6,6 +6,11 @@ import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
+/**
+ * Fetch stories from SharePoint/mock data
+ * Supports incremental polling with lastFetchedInPollTimeString filter
+ * @param cacheResponse - Set false for real-time polling
+ */
 export async function getStories(
   storiesLoadState: AsyncLoadState,
   lastFetchedInPollTimeString?: string | undefined,

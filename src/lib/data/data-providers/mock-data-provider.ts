@@ -4,8 +4,8 @@ import { SHAREPOINT_CONFIG, type AppSharePointConfig } from "$lib/env/sharepoint
 
 /**
  * Type-safe mock data mapping
- * TypeScript enforces an entry for EVERY list defined in SHAREPOINT_CONFIG
- * Adding a new list to config without adding mock data here will cause a compile error
+ * TypeScript enforces an entry for every list in SHAREPOINT_CONFIG
+ * Adding a new list without mock data here will cause compile error
  */
 type ListNames = AppSharePointConfig["lists"][keyof AppSharePointConfig["lists"]]["name"];
 type MockDataMap = Record<ListNames, any[]>;
@@ -20,8 +20,7 @@ const MOCK_DATA_BY_LIST_NAME: MockDataMap = {
 };
 
 /**
- * App-specific MockDataProvider
- * Uses MOCK_DATA_BY_LIST_NAME for type-safe list name mapping
+ * App-specific mock data provider with type-safe list name mapping
  */
 export class MockDataProvider extends BaseMockDataProvider {
   protected getDataForList(listName: string): any[] {
