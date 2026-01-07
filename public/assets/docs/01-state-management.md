@@ -131,9 +131,9 @@ Centralized application state with Svelte 5 runes. Protected with setter functio
 ```ts
 // Define state
 export const global_State = $state({
-  user: undefined,
+  currentUser: undefined,
   userProperties: undefined,
-  AccessRole: null,
+  accessRole: null,
 });
 
 // Setter functions (with validation)
@@ -142,15 +142,11 @@ export function setCurrentUser(user: Sharepoint_User | undefined) {
     console.warn("Invalid user data");
     return;
   }
-  global_State.user = user;
+  global_State.currentUser = user;
 }
 
 export function setAccessRole(role: AccessRole) {
-  if (!role || (role !== "Admin" && role !== "Viewer" && role !== "Editor")) {
-    console.warn("Invalid role");
-    return;
-  }
-  global_State.AccessRole = role;
+  global_State.accessRole = role;
 }
 
 export function setUserProperties(properties: Sharepoint_User_Properties | undefined) {
@@ -162,9 +158,20 @@ export function setUserProperties(properties: Sharepoint_User_Properties | undef
 }
 
 export function resetGlobalState() {
-  global_State.user = undefined;
-  global_State.AccessRole = null;
+  global_State.currentUser = undefined;
+  global_State.accessRole = null;
   global_State.userProperties = undefined;
+}
+
+// Computed getters
+export const isAdmin = $derived(global_State.accessRole === "Admin");
+export const currentUserId = $derived(global_State.currentUser?.Id);
+export const isLoggedIn = $derived(global_State.currentUser !== undefined);
+
+// Permission helper
+export function canEditItem(authorId: number | undefined): boolean {
+  if (!authorId) return false;
+  return global_State.accessRole === "Admin" || global_State.currentUser?.Id === authorId;
 }
 ```
 
@@ -172,7 +179,7 @@ export function resetGlobalState() {
 
 ```svelte
 <script>
-  import { global_State, setCurrentUser } from "$lib/data/global-state.svelte";
+  import { global_State, setCurrentUser, isAdmin, canEditItem } from "$lib/data/global-state.svelte";
   import { getCurrentUser } from "$lib/common-library/integrations/sharepoint-rest-api/get/getCurrentUser";
 
   const loadState = new AsyncLoadState();
@@ -195,20 +202,35 @@ export function resetGlobalState() {
   }
 </script>
 
-{#if global_State.user}
-  <p>Welcome, {global_State.user.Title}!</p>
+{#if global_State.currentUser}
+  <p>Welcome, {global_State.currentUser.Title}!</p>
 {/if}
 ```
 
 **Role-based Rendering:**
 
 ```svelte
-{#if global_State.AccessRole === "Admin"}
+{#if isAdmin}
   <AdminPanel />
-{:else if global_State.AccessRole === "Editor"}
+{:else if global_State.accessRole === "Editor"}
   <EditorPanel />
 {:else}
   <ViewerPanel />
+{/if}
+```
+
+**Permission Checks:**
+
+```svelte
+<script>
+  import { canEditItem } from "$lib/data/global-state.svelte";
+  
+  let story: Story_ListItem = $state();
+  let currentUserCanEdit = $derived(canEditItem(story?.Author?.Id));
+</script>
+
+{#if currentUserCanEdit}
+  <button>Edit Story</button>
 {/if}
 ```
 
@@ -218,6 +240,13 @@ export function resetGlobalState() {
 - Prevent invalid states
 - Single point of mutation
 - Easier debugging and testing
+
+**Why Computed Getters?**
+
+- Centralize permission logic
+- Consistent access patterns
+- Better performance (cached)
+- Clearer component code
 
 ---
 

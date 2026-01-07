@@ -4,6 +4,7 @@ import { setCurrentUser, setAccessRole, setUserProperties } from "$lib/data/glob
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
 import type { Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
+import type { User_ListItem } from "$lib/data/types";
 
 export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) {
   const provider = getDataProvider();
@@ -25,14 +26,14 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) 
   setCurrentUser(fetchResponse);
 
   //FETCH USER ACCESS ROLE
-  const userId = fetchResponse.Id!;
+  const currentUserId = fetchResponse.Id!;
 
-  const userAccessRoleFetchResponse = await provider.getListItems({
+  const userAccessRoleFetchResponse = await provider.getListItems<{ value: User_ListItem[] }>({
     listName: SHAREPOINT_CONFIG.lists.UsersInfo.name,
     operations: [
       ["select", "User/Id,AccessRole"],
       ["expand", "User"],
-      ["filter", `User/Id eq ${userId}`],
+      ["filter", `User/Id eq ${currentUserId}`],
     ],
   });
 
@@ -44,9 +45,12 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) 
     return;
   }
 
-  userAccessRoleFetchResponse;
+  const currentUserInDB = userAccessRoleFetchResponse.value[0];
+
   //STORE IN GLOBAL STATE
-  // setAccessRole(currentUserInDB);
+  if (currentUserInDB) {
+    setAccessRole(currentUserInDB.AccessRole);
+  }
 
   //NOT WAITING FOR THIS DATA
   fetchAndSetCurrentUserProperties();

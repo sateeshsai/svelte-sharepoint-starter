@@ -2,14 +2,20 @@ import { Sharepoint_Default_Props_Schema, SharepointTitleProps_Schema, Sharepoin
 import { z } from "zod";
 import dayjs from "dayjs";
 
+/**
+ * Schema version for migration tracking
+ * Increment when making breaking changes to schemas
+ */
+export const SCHEMA_VERSION = "1.0.0";
+
 /** When updating schemas, verify derived types in ./types.ts */
 
 /** File attachment schemas - used for story images/documents */
 export const FileSchema = z.strictObject({
-  Title: z.string().min(3, "File name is required."),
-  Description: z.string().max(255),
+  Title: z.string().min(3, "File name must be at least 3 characters."),
+  Description: z.string().max(255, "Description must be 255 characters or less."),
   ParentType: z.enum(["Story"], "Parent type is required."),
-  FileOrder: z.number().positive(),
+  FileOrder: z.number().positive("File order must be a positive number."),
 });
 
 export const FileListSchema = z.strictObject({
@@ -22,7 +28,7 @@ export const FileListSchema = z.strictObject({
 export const FilePostSchema = z.strictObject({
   // ...SharepointTitleProps_Schema.shape,
   ...FileSchema.shape,
-  ParentId: z.number().positive("Parent Id is required."),
+  ParentId: z.number().positive("Parent ID is required."),
 });
 
 /** Variant with required description (for story image captions) */
@@ -49,16 +55,16 @@ export const EngagementListSchema = z.strictObject({
 export const EngagementPostSchema = z.strictObject({
   ...SharepointTitleProps_Schema.shape,
   ...EngagementSchema.shape,
-  ParentId: z.number().positive(),
+  ParentId: z.number().positive("Parent ID is required."),
 });
 
 /** Story schemas - main content items with validation */
 export const StorySchema = z.strictObject({
-  Title: z.string().min(10, "Minimum 10 characters."),
-  Content: z.string().min(10, "Minimum 10 characters."),
+  Title: z.string().min(10, "Title must be at least 10 characters."),
+  Content: z.string().min(10, "Content must be at least 10 characters."),
   Tags: z.string(), //Comma seperated string
-  Introduction: z.string("Minimum 10 and maximum 255 characters.").min(10).max(255),
-  CoverFileName: z.string().min(2, "Please add cover art."),
+  Introduction: z.string().min(10, "Introduction must be at least 10 characters.").max(255, "Introduction must be 255 characters or less."),
+  CoverFileName: z.string().min(2, "Cover image is required."),
   ActiveStatus: z.enum(["Active", "Inactive"]),
   PublishStatus: z.enum(["Draft", "Published"]),
 });
@@ -67,7 +73,6 @@ export const StoryListSchema = z.strictObject({
   ...Sharepoint_Default_Props_Schema.shape,
   ...StorySchema.shape,
   Author: Sharepoint_Lookup_DefaultProps_Schema,
-  Engagements: z.array(EngagementSchema),
 });
 
 export const StoryPostSchema = z.strictObject({
@@ -89,5 +94,58 @@ export const UserListSchema = z.strictObject({
 export const UserPostSchema = z.strictObject({
   ...SharepointTitleProps_Schema.shape,
   ...UserSchema.shape,
-  UserId: z.number().positive(),
+  UserId: z.number().positive("User ID is required."),
 });
+
+// ============================================================================
+// VALIDATION HELPER FUNCTIONS
+// Centralized validation with consistent error handling
+// ============================================================================
+
+/**
+ * Validate story data for POST/creation
+ * @returns Typed success result or error with formatted message
+ */
+export function validateStoryForPost(data: unknown): { success: true; data: z.infer<typeof StoryPostSchema> } | { success: false; error: string } {
+  const result = StoryPostSchema.safeParse(data);
+  if (result.success) {
+    return { success: true, data: result.data };
+  }
+  return { success: false, error: result.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join("; ") };
+}
+
+/**
+ * Validate file data for POST/creation
+ * @returns Typed success result or error with formatted message
+ */
+export function validateFileForPost(data: unknown): { success: true; data: z.infer<typeof FilePostSchema> } | { success: false; error: string } {
+  const result = FilePostSchema.safeParse(data);
+  if (result.success) {
+    return { success: true, data: result.data };
+  }
+  return { success: false, error: result.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join("; ") };
+}
+
+/**
+ * Validate story file data for POST/creation (with required description/caption)
+ * @returns Typed success result or error with formatted message
+ */
+export function validateStoryFileForPost(data: unknown): { success: true; data: z.infer<typeof FilePostSchema_ForStory> } | { success: false; error: string } {
+  const result = FilePostSchema_ForStory.safeParse(data);
+  if (result.success) {
+    return { success: true, data: result.data };
+  }
+  return { success: false, error: result.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join("; ") };
+}
+
+/**
+ * Validate multiple story files at once
+ * @returns Typed success result or error with formatted message
+ */
+export function validateStoryFiles(data: unknown): { success: true; data: z.infer<typeof storyFilesSchema> } | { success: false; error: string } {
+  const result = storyFilesSchema.safeParse(data);
+  if (result.success) {
+    return { success: true, data: result.data };
+  }
+  return { success: false, error: result.error.issues.map((e) => `${e.path.join(".")}: ${e.message}`).join("; ") };
+}

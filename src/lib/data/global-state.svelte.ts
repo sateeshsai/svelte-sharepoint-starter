@@ -1,9 +1,9 @@
 import type { AccessRole, Sharepoint_User, Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
 
-export const global_State: { user: undefined | Sharepoint_User; AccessRole: AccessRole; userProperties: undefined | Sharepoint_User_Properties } = $state({
-  user: undefined,
+export const global_State: { currentUser: undefined | Sharepoint_User; accessRole: AccessRole; userProperties: undefined | Sharepoint_User_Properties } = $state({
+  currentUser: undefined,
   userProperties: undefined,
-  AccessRole: null,
+  accessRole: null,
 });
 
 /**
@@ -14,18 +14,14 @@ export function setCurrentUser(user: Sharepoint_User | undefined): void {
     console.warn("[Global State] Attempted to set invalid user data:", user);
     return;
   }
-  global_State.user = user;
+  global_State.currentUser = user;
 }
 
 /**
- * Set user access role - validates role type
+ * Set user access role - null is valid for non-admin users
  */
 export function setAccessRole(role: AccessRole): void {
-  if (!role) {
-    console.warn("[Global State] Attempted to set invalid access role:", role);
-    return;
-  }
-  global_State.AccessRole = role;
+  global_State.accessRole = role;
 }
 
 /**
@@ -41,7 +37,25 @@ export function setUserProperties(properties: Sharepoint_User_Properties | undef
 
 /** Reset all global state (for logout or cleanup) */
 export function resetGlobalState(): void {
-  global_State.user = undefined;
-  global_State.AccessRole = null;
+  global_State.currentUser = undefined;
+  global_State.accessRole = null;
   global_State.userProperties = undefined;
+}
+
+/** Computed getter - true if current user is an admin */
+export const isAdmin = $derived(global_State.accessRole === "Admin");
+
+/** Computed getter - current user's ID (undefined if not logged in) */
+export const currentUserId = $derived(global_State.currentUser?.Id);
+
+/** Computed getter - true if user is logged in */
+export const isLoggedIn = $derived(global_State.currentUser !== undefined);
+
+/**
+ * Check if current user can edit an item
+ * Admins can edit anything, regular users can only edit their own items
+ */
+export function canEditItem(authorId: number | undefined): boolean {
+  if (!authorId) return false;
+  return global_State.accessRole === "Admin" || global_State.currentUser?.Id === authorId;
 }

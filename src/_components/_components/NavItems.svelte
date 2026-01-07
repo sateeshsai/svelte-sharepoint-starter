@@ -16,7 +16,7 @@
 <nav class="px-4 py-3">
   <ul class="flex flex-col gap-8 lg:gap-4 lg:flex-row lg:items-center">
     {#each NAVIGATION_MENU_ITEMS as menuItem}
-      {#if menuItem.accessRole !== "Admin" || global_State.AccessRole === "Admin"}
+      {#if menuItem.accessRole !== "Admin" || global_State.accessRole === "Admin"}
         <li>
           <a onclick={() => (sheetIsOpen = false)} class={cn("w-full md:text-sm")} use:isActiveLink={{ className: ACTIVE_LINK_CLASSES }} href={SHAREPOINT_CONFIG.paths.page + "#" + menuItem.route}>
             {menuItem.name}
