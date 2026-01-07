@@ -82,6 +82,7 @@
         {#each storyFilesSorted as file, idx (file.Id)}
           {@const fileValidationError = filesValidationErrors.find((e) => e.path[1] === idx)}
           <div class="grid group" in:receive={{ key: file.Id, duration: 500 }} out:send={{ key: file.Id, duration: 500 }} animate:flip={{ duration: 500 }}>
+            {console.log(file)}
             <Field.Set class="file gap-0 rounded overflow-hidden bg-muted/80 border">
               <div class="grid relative content-stretch">
                 <button

@@ -72,6 +72,74 @@ Tiptap-based WYSIWYG editor with Markdown support, code blocks, tables, math, an
 
 **Used in:** Story creation (`src/routes/stories/[id]/index.svelte`)
 
+### Edra Rich Text Editor (Enterprise)
+
+Full-featured Tiptap editor with Markdown support, code blocks, tables, math, media insertion, and drag-handle controls. Includes built-in image/audio/video placeholder components with SharePoint file upload integration.
+
+#### EdraEditor with File Upload Configuration
+
+The `EdraEditor` component requires `sharepointFileUploadOptions` to be passed from the app layer. This decouples the editor from app-specific configuration:
+
+```svelte
+<script>
+  import { EdraEditor, EdraToolBar, EdraDragHandleExtended } from "$lib/common-library/integrations/components/edra-rich-text/shadcn";
+  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
+  import type { Content, Editor } from "@tiptap/core";
+
+  let content = $state<Content>("");
+  let editor = $state<Editor>();
+
+  function onUpdate() {
+    content = editor?.getHTML() as string;
+  }
+</script>
+
+<div class="rounded-md border">
+  {#if editor && !editor.isDestroyed}
+    <EdraToolBar {editor} />
+  {/if}
+  <EdraEditor
+    bind:editor
+    {content}
+    {onUpdate}
+    sharepointFileUploadOptions={{
+      siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+      serverRelativeUrl: SHAREPOINT_CONFIG.folders.StoryFiles.rel_path,
+      folderName: SHAREPOINT_CONFIG.folders.StoryFiles.name,
+    }}
+  />
+</div>
+```
+
+**Why pass as prop?**
+
+The placeholder components (ImagePlaceholder, AudioPlaceholder, VideoPlaceholder) are reusable library components that don't import `SHAREPOINT_CONFIG` directly. Instead, they receive file upload options via context from the editor. This maintains clean separation:
+
+- **App layer responsibility:** Provide configuration (knows about SHAREPOINT_CONFIG)
+- **Library responsibility:** Handle file uploads (knows nothing about app-specific paths)
+
+**FileUploadOptions interface:**
+
+```typescript
+interface FileUploadOptions {
+  siteCollectionUrl: string; // e.g., "/sites/MyTeamSite"
+  serverRelativeUrl: string; // e.g., "/sites/MyTeamSite/Shared Documents/StoryFiles"
+  folderName: string; // e.g., "StoryFiles"
+}
+```
+
+**Features:**
+
+- Image, audio, video placeholder drag-and-drop upload
+- Markdown import/export
+- Code blocks with syntax highlighting
+- Tables, lists, and KaTeX math support
+- Drag handle for block manipulation
+- LOCAL_MODE support (simulates file uploads without network calls)
+- Error reporting to SharePoint via `reportError()`
+
+**Used in:** Story editing (`src/routes/stories/[id]/edit/`)
+
 ### File Upload Components
 
 #### FileDropZoneWrapper

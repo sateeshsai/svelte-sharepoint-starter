@@ -3,19 +3,22 @@
   import type { NodeViewProps } from "@tiptap/core";
   import Audio from "@lucide/svelte/icons/audio-lines";
   import { buttonVariants } from "$lib/components/ui/button/button.svelte";
-  import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+  import { SharePointAsyncSubmitState } from "$lib/common-library/integrations/error-handling";
   import FileDropZoneWrapper from "$lib/common-library/utils/components/file/FileDropZoneWrapper.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import MediaPlaceHolder from "$lib/common-library/integrations/components/edra-rich-text/components/MediaPlaceHolder.svelte";
   import { uploadFile } from "./post.svelte";
   import { randomIdString } from "$lib/common-library/utils/functions/string";
+  // TODO: Decouple this from app-specific config. Use props or context instead.
+  // import { sharepointUploadOptions_Story } from "$lib/data/sharepoint-upload-options.svelte";
 
   const { editor }: NodeViewProps = $props();
 
-  const fileUploadState = new AsyncSubmitState();
+  const fileUploadState = new SharePointAsyncSubmitState();
 
   async function addFile(files: File[]) {
-    await uploadFile(files, fileUploadState);
+    // @ts-expect-error
+    await uploadFile(files, fileUploadState, {});
 
     if (fileUploadState.success) {
       const file = files?.[0]!;
@@ -47,7 +50,9 @@
       {fileUploadState}
       class="flex h-10 w-full max-w-none grow gap-2 border-none"
     >
-      <Audio />
+      {#snippet icon()}
+        <Audio />
+      {/snippet}
     </FileDropZoneWrapper>
   </div>
 </MediaPlaceHolder>

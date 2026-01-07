@@ -24,10 +24,12 @@ Manage application state with Svelte 5 runes and async operations.
 
 Track data loading with `AsyncLoadState`.
 
-```ts
-AsyncLoadState;
+> **Note:** Use `SharePointAsyncLoadState` in route components for automatic error reporting to SharePoint. Use `AsyncLoadState` in reusable utility components that should be framework-agnostic.
 
-const loadState = new AsyncLoadState();
+```ts
+import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
+
+const loadState = new SharePointAsyncLoadState();
 
 $effect(() => {
   loadStories();
@@ -74,10 +76,12 @@ async function loadStories() {
 
 Track form submission lifecycle with `AsyncSubmitState`.
 
-```ts
-AsyncSubmitState;
+> **Note:** Use `SharePointAsyncSubmitState` in route components for automatic error reporting to SharePoint. Use `AsyncSubmitState` in reusable utility components that should be framework-agnostic.
 
-const submitState = new AsyncSubmitState();
+```ts
+import { SharePointAsyncSubmitState } from "$lib/common-library/integrations/error-handling";
+
+const submitState = new SharePointAsyncSubmitState();
 
 async function handleSubmit(event: SubmitEvent) {
   submitState.setInprogress();
@@ -230,6 +234,87 @@ export function resetGlobalState() {
 ❌ **DON'T:**
 
 - Mutate global_State directly (always use setters)
+
+---
+
+## Architecture: Pure Utilities vs Integration Wrappers
+
+The async state classes follow a **layered composition pattern** for maximum reusability:
+
+### Pure Utility Classes (Framework-Agnostic)
+
+Located in `src/lib/common-library/utils/async/async.svelte.ts`:
+
+```ts
+// ✅ Zero dependencies - safe to use anywhere
+export class AsyncLoadState {
+  loading = $state(true);
+  ready = $state(false);
+  error = $state("");
+
+  setError = (errorMessage: string) => {
+    this.error = errorMessage;
+    this.loading = false;
+  };
+  // ... other methods
+}
+```
+
+**Use in reusable components:**
+
+```ts
+// Utility component (used across multiple projects)
+import { AsyncLoadState } from "$lib/common-library/utils/async";
+
+export function FileDropZone({ onUpload }) {
+  const uploadState = new AsyncLoadState();
+  // ...
+}
+```
+
+### SharePoint Integration Wrappers
+
+Located in `src/lib/common-library/integrations/error-handling/`:
+
+```ts
+// ✅ Extends base class with SharePoint-specific behavior
+export class SharePointAsyncLoadState extends AsyncLoadState {
+  #config: SharePointConfig;
+
+  constructor() {
+    super();
+    this.#config = getContext<SharePointConfig>("sharePointConfig");
+  }
+
+  setError = (errorMessage: string, context?: string) => {
+    super.setError(errorMessage);
+    // Auto-report to SharePoint
+    reportError(this.#config, {
+      errorType: "Load",
+      technicalMessage: errorMessage,
+    }).catch(() => {});
+  };
+}
+```
+
+**Use in route components:**
+
+```ts
+// Route component (SharePoint-specific)
+import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
+
+export default function StoriesPage() {
+  const loadState = new SharePointAsyncLoadState();
+  // Auto-reports errors to SharePoint ErrorReports list
+}
+```
+
+**Benefits:**
+
+- Utilities stay **completely decoupled** from frameworks/integrations
+- Teams can reuse base classes in non-SharePoint projects
+- SharePoint-specific behavior is centralized in wrappers
+- Clear, composable architecture patterns
 - Forget to pass signal to API calls
 - Mix loading states with component logic
 - Use global state for temporary UI state

@@ -8,21 +8,64 @@ import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "../da
  * Extend this class in your app layer and implement getDataForList() to provide project-specific data
  * Lives in common-library for portability across different projects
  *
+ * Maintains an in-memory session store that persists POST/UPDATE/DELETE operations
  * Config is injected via constructor for use as defaults in all methods
  */
 export abstract class BaseMockDataProvider implements DataProvider {
   protected config: SharePointConfig;
+
+  /**
+   * Session store for mock data - persists changes during the browser session
+   * Key: listName, Value: array of items
+   * Initialized lazily from getDataForList() on first access
+   */
+  private sessionStore: Map<string, any[]> = new Map();
+
+  /**
+   * Counter for generating unique IDs per list
+   */
+  private idCounters: Map<string, number> = new Map();
 
   constructor(config: SharePointConfig) {
     this.config = config;
   }
 
   /**
-   * Abstract method - implement in concrete class to return mock data for a given list
+   * Abstract method - implement in concrete class to return initial mock data for a given list
+   * This data seeds the session store on first access
    * @param listName - Name of the SharePoint list
    * @returns Array of mock items for that list
    */
   protected abstract getDataForList(listName: string): any[];
+
+  /**
+   * Get the session data for a list, initializing from seed data if needed
+   * All reads go through this to ensure we're using the mutable session store
+   */
+  private getSessionData(listName: string): any[] {
+    if (!this.sessionStore.has(listName)) {
+      // Initialize from seed data (deep clone to avoid mutation of original)
+      const seedData = this.getDataForList(listName);
+      this.sessionStore.set(listName, JSON.parse(JSON.stringify(seedData)));
+
+      // Initialize ID counter based on max ID in seed data
+      const maxId = seedData.reduce((max, item) => Math.max(max, item.Id || 0), 0);
+      this.idCounters.set(listName, maxId + 1);
+      console.log(`[MockDataProvider] Initialized session for ${listName}, maxId=${maxId}, items=${seedData.length}`);
+    }
+    return this.sessionStore.get(listName)!;
+  }
+
+  /**
+   * Generate the next unique ID for a list
+   */
+  private getNextId(listName: string): number {
+    // Ensure session is initialized
+    this.getSessionData(listName);
+    const nextId = this.idCounters.get(listName) || 1000;
+    this.idCounters.set(listName, nextId + 1);
+    return nextId;
+  }
 
   /**
    * Simulates a delay to mimic network latency
@@ -31,54 +74,351 @@ export abstract class BaseMockDataProvider implements DataProvider {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  async getListItems<T extends { value: Record<string, any> }>(options: {
+  /**
+   * Parse operations array into a map for easier access
+   */
+  private parseOperations(operations?: Sharepoint_Get_Operations): Map<string, string | number> {
+    const opMap = new Map<string, string | number>();
+    if (!operations) return opMap;
+
+    if (typeof operations === "string") {
+      // Handle raw query string format: "$select=Id,Title&$filter=..."
+      const parts = operations.replace(/^\$/, "").split("&$");
+      parts.forEach((part) => {
+        const [key, value] = part.split("=");
+        if (key && value) opMap.set(key, value);
+      });
+    } else {
+      operations.forEach(([op, value]) => {
+        opMap.set(op, value);
+      });
+    }
+    return opMap;
+  }
+
+  /**
+   * Apply $filter operation - supports SharePoint 2013 REST API filter syntax
+   * SharePoint-specific behaviors:
+   * - String values use single quotes: Title eq 'Hello'
+   * - Numeric values have no quotes: Id eq 5
+   * - Dates use ISO format with quotes: Created ge '2024-01-01T00:00:00Z'
+   * - Lookup fields use / for nested: Author/Id eq 1
+   * - Boolean: Active eq true (lowercase, no quotes)
+   * - Null: Field eq null
+   * - Operators: eq, ne, gt, ge, lt, le
+   * - Logical: and, or (case-insensitive)
+   * - Functions: substringof, startswith, endswith (SharePoint 2013 uses substringof, not contains)
+   */
+  private applyFilter(data: any[], filterExpr: string): any[] {
+    if (!filterExpr) return data;
+
+    return data.filter((item) => this.evaluateFilterExpression(item, filterExpr));
+  }
+
+  /**
+   * Evaluate a filter expression against an item
+   * Follows SharePoint 2013 REST API OData conventions
+   */
+  private evaluateFilterExpression(item: any, expr: string): boolean {
+    // Handle 'and' operator (lower precedence than comparisons)
+    if (/ and /i.test(expr)) {
+      const parts = expr.split(/ and /i);
+      return parts.every((part) => this.evaluateFilterExpression(item, part.trim()));
+    }
+
+    // Handle 'or' operator
+    if (/ or /i.test(expr)) {
+      const parts = expr.split(/ or /i);
+      return parts.some((part) => this.evaluateFilterExpression(item, part.trim()));
+    }
+
+    // SharePoint 2013 uses substringof('value', field) - note: value comes FIRST
+    // This is different from OData 4's contains(field, 'value')
+    const substringOfMatch = expr.match(/substringof\(\s*'([^']+)'\s*,\s*([^)]+)\)/i);
+    if (substringOfMatch) {
+      const searchValue = substringOfMatch[1];
+      const fieldValue = this.getNestedValue(item, substringOfMatch[2].trim());
+      return fieldValue != null && String(fieldValue).toLowerCase().includes(searchValue.toLowerCase());
+    }
+
+    // Also support contains() for forward compatibility
+    const containsMatch = expr.match(/contains\(\s*([^,]+)\s*,\s*'([^']+)'\s*\)/i);
+    if (containsMatch) {
+      const fieldValue = this.getNestedValue(item, containsMatch[1].trim());
+      return fieldValue != null && String(fieldValue).toLowerCase().includes(containsMatch[2].toLowerCase());
+    }
+
+    // Handle startswith(field, 'value')
+    const startsWithMatch = expr.match(/startswith\(\s*([^,]+)\s*,\s*'([^']+)'\s*\)/i);
+    if (startsWithMatch) {
+      const fieldValue = this.getNestedValue(item, startsWithMatch[1].trim());
+      return fieldValue != null && String(fieldValue).toLowerCase().startsWith(startsWithMatch[2].toLowerCase());
+    }
+
+    // Handle endswith(field, 'value')
+    const endsWithMatch = expr.match(/endswith\(\s*([^,]+)\s*,\s*'([^']+)'\s*\)/i);
+    if (endsWithMatch) {
+      const fieldValue = this.getNestedValue(item, endsWithMatch[1].trim());
+      return fieldValue != null && String(fieldValue).toLowerCase().endsWith(endsWithMatch[2].toLowerCase());
+    }
+
+    // Handle comparison operators: eq, ne, gt, ge, lt, le
+    const comparisonMatch = expr.match(/^(.+?)\s+(eq|ne|gt|ge|lt|le)\s+(.+)$/i);
+    if (comparisonMatch) {
+      const field = comparisonMatch[1].trim();
+      const operator = comparisonMatch[2].toLowerCase();
+      let compareValue: any = comparisonMatch[3].trim();
+
+      // Parse the compare value according to SharePoint conventions
+      // Strings: wrapped in single quotes 'value'
+      // Numbers: no quotes, parsed as number
+      // Booleans: true/false (lowercase, no quotes)
+      // Null: null keyword
+      // Dates: ISO string in single quotes '2024-01-01T00:00:00Z'
+      if (compareValue.startsWith("'") && compareValue.endsWith("'")) {
+        // String or date value - remove quotes
+        compareValue = compareValue.slice(1, -1);
+      } else if (compareValue === "null") {
+        compareValue = null;
+      } else if (compareValue === "true") {
+        compareValue = true;
+      } else if (compareValue === "false") {
+        compareValue = false;
+      } else if (!isNaN(Number(compareValue))) {
+        // Numeric value (no quotes in SharePoint for numbers)
+        compareValue = Number(compareValue);
+      }
+
+      const fieldValue = this.getNestedValue(item, field);
+
+      // SharePoint date comparisons - dates are ISO strings in quotes
+      // Check if compareValue looks like a date string
+      const isDateComparison = typeof compareValue === "string" && /^\d{4}-\d{2}-\d{2}/.test(compareValue);
+      const fieldDate = isDateComparison && fieldValue ? new Date(fieldValue) : null;
+      const compareDate = isDateComparison ? new Date(compareValue) : null;
+
+      switch (operator) {
+        case "eq":
+          // SharePoint eq is case-sensitive for strings
+          if (isDateComparison && fieldDate && compareDate) {
+            return fieldDate.getTime() === compareDate.getTime();
+          }
+          // Use == for type coercion (SharePoint sometimes returns string IDs)
+          return fieldValue == compareValue;
+        case "ne":
+          if (isDateComparison && fieldDate && compareDate) {
+            return fieldDate.getTime() !== compareDate.getTime();
+          }
+          return fieldValue != compareValue;
+        case "gt":
+          if (fieldDate && compareDate) return fieldDate > compareDate;
+          return fieldValue > compareValue;
+        case "ge":
+          if (fieldDate && compareDate) return fieldDate >= compareDate;
+          return fieldValue >= compareValue;
+        case "lt":
+          if (fieldDate && compareDate) return fieldDate < compareDate;
+          return fieldValue < compareValue;
+        case "le":
+          if (fieldDate && compareDate) return fieldDate <= compareDate;
+          return fieldValue <= compareValue;
+        default:
+          return true;
+      }
+    }
+
+    return true; // If we can't parse the expression, include the item
+  }
+
+  /**
+   * Get nested property value (e.g., "Author/Id" -> item.Author.Id)
+   */
+  private getNestedValue(item: any, path: string): any {
+    const parts = path.split("/");
+    let value = item;
+    for (const part of parts) {
+      if (value == null) return null;
+      value = value[part];
+    }
+    return value;
+  }
+
+  /**
+   * Apply $select operation - returns only specified fields
+   * Handles nested fields like "Author/Id,Author/Title" by preserving nested structure
+   */
+  private applySelect(data: any[], selectExpr: string): any[] {
+    if (!selectExpr) return data;
+
+    const fields = selectExpr.split(",").map((f) => f.trim());
+
+    return data.map((item) => {
+      const selected: Record<string, any> = {};
+
+      fields.forEach((field) => {
+        if (field.includes("/")) {
+          // Nested field like "Author/Id"
+          const [parent, child] = field.split("/");
+          if (item[parent] != null) {
+            if (!selected[parent]) selected[parent] = {};
+            selected[parent][child] = item[parent][child];
+          }
+        } else {
+          // Top-level field
+          if (field in item) {
+            selected[field] = item[field];
+          }
+        }
+      });
+
+      return selected;
+    });
+  }
+
+  /**
+   * Apply $orderby operation - sorts results by Created field
+   * Accepts "asc" or "desc" as direction
+   */
+  private applyOrderBy(data: any[], direction: string): any[] {
+    if (!direction) return data;
+
+    const field = "Created"; // Default sort field
+    const dir = direction.toLowerCase() === "desc" ? -1 : 1;
+
+    return [...data].sort((a, b) => {
+      const aVal = this.getNestedValue(a, field);
+      const bVal = this.getNestedValue(b, field);
+
+      if (aVal == null && bVal == null) return 0;
+      if (aVal == null) return dir;
+      if (bVal == null) return -dir;
+
+      // Handle date strings
+      const aDate = Date.parse(aVal);
+      const bDate = Date.parse(bVal);
+      if (!isNaN(aDate) && !isNaN(bDate)) {
+        return (aDate - bDate) * dir;
+      }
+
+      // Handle strings
+      if (typeof aVal === "string" && typeof bVal === "string") {
+        return aVal.localeCompare(bVal) * dir;
+      }
+
+      // Handle numbers
+      return (aVal - bVal) * dir;
+    });
+  }
+
+  /**
+   * Apply $top operation - limits results
+   */
+  private applyTop(data: any[], top: number): any[] {
+    return data.slice(0, top);
+  }
+
+  /**
+   * Apply $skip operation - skips first N results (for pagination)
+   */
+  private applySkip(data: any[], skip: number): any[] {
+    return data.slice(skip);
+  }
+
+  async getListItems<T extends { value: any[] }>(options: {
     siteCollectionUrl?: string;
     listName: string;
     operations?: Sharepoint_Get_Operations;
     logToConsole?: boolean;
     signal?: AbortSignal;
     deduplicationTtlMs?: number;
+    mockResponse?: T;
   }): Promise<T | Sharepoint_Error_Formatted> {
     await this.simulateDelay(300);
 
-    // Get mock data for this list (implemented by subclass)
-    let mockData = this.getDataForList(options.listName);
+    // If mockResponse provided, return it directly (escape hatch for testing)
+    if (options.mockResponse !== undefined) {
+      if (options.logToConsole) {
+        console.log("[MockDataProvider] getListItems using mockResponse override", options.mockResponse);
+      }
+      return options.mockResponse;
+    }
 
-    // Apply filtering if operations include a filter
-    if (options.operations) {
-      const filterOp = (options.operations as Array<[string, any]>).find((op) => op[0] === "filter");
-      if (filterOp) {
-        const filterValue = filterOp[1];
-        // Simple mock filtering: only handle "Created ge 'date'" filters
-        if (filterValue && typeof filterValue === "string" && filterValue.includes("Created ge")) {
-          const dateMatch = filterValue.match(/'([^']+)'/);
-          if (dateMatch) {
-            const filterDate = new Date(dateMatch[1]);
+    // Get mock data from session store (includes any POST/UPDATE/DELETE changes)
+    let mockData = [...this.getSessionData(options.listName)]; // Clone to avoid mutation during filtering
+    console.log(`[MockDataProvider] getListItems ${options.listName}, sessionItems=${mockData.length}, ids=[${mockData.map((i) => i.Id).join(",")}]`);
 
-            // Simulate new items being created for polling
-            // 30% chance to return a simulated new item with creation date after the filter
-            if (Math.random() < 0.3) {
-              const firstItem = mockData[0];
-              if (firstItem) {
-                const newItem = {
-                  ...firstItem,
-                  Id: Math.floor(Math.random() * 10000) + 5000,
-                  Title: `New Item ${new Date().getTime()}`,
-                  Created: new Date().toISOString(),
-                  Modified: new Date().toISOString(),
-                };
-                mockData = [newItem];
-              }
-            } else {
-              // Otherwise return items created after filter date
-              mockData = mockData.filter((item) => {
-                const itemDate = new Date(item.Created);
-                return itemDate >= filterDate;
-              });
+    // Apply operations in the order they are passed (respects caller's intent)
+    const operations = options.operations;
+    if (operations && typeof operations !== "string") {
+      for (const [op, value] of operations) {
+        switch (op) {
+          case "filter":
+            if (typeof value === "string") {
+              mockData = this.applyFilter(mockData, value);
             }
-          }
+            break;
+          case "orderby":
+            if (typeof value === "string") {
+              mockData = this.applyOrderBy(mockData, value);
+            }
+            break;
+          case "skip":
+            if (typeof value === "number") {
+              mockData = this.applySkip(mockData, value);
+            }
+            break;
+          case "top":
+            if (typeof value === "number") {
+              mockData = this.applyTop(mockData, value);
+            }
+            break;
+          case "select":
+            if (typeof value === "string") {
+              mockData = this.applySelect(mockData, value);
+            }
+            break;
+          case "expand":
+            // $expand is handled implicitly - mock data already has nested objects populated
+            // SharePoint's $expand tells the API to include related entities, which we already have
+            break;
         }
       }
+    } else if (typeof operations === "string") {
+      // Handle raw query string format - parse and apply in standard order
+      const opMap = this.parseOperations(operations);
+
+      const filterExpr = opMap.get("filter");
+      if (filterExpr && typeof filterExpr === "string") {
+        mockData = this.applyFilter(mockData, filterExpr);
+      }
+
+      const orderbyExpr = opMap.get("orderby");
+      if (orderbyExpr && typeof orderbyExpr === "string") {
+        mockData = this.applyOrderBy(mockData, orderbyExpr);
+      }
+
+      const skipValue = opMap.get("skip");
+      if (typeof skipValue === "number") {
+        mockData = this.applySkip(mockData, skipValue);
+      }
+
+      const topValue = opMap.get("top");
+      if (typeof topValue === "number") {
+        mockData = this.applyTop(mockData, topValue);
+      }
+
+      const selectExpr = opMap.get("select");
+      if (selectExpr && typeof selectExpr === "string") {
+        mockData = this.applySelect(mockData, selectExpr);
+      }
+    }
+
+    if (options.logToConsole) {
+      console.log("[MockDataProvider] getListItems", {
+        listName: options.listName,
+        operations: options.operations,
+        resultCount: mockData.length,
+      });
     }
 
     const result: T = { value: mockData } as unknown as T;
@@ -118,23 +458,70 @@ export abstract class BaseMockDataProvider implements DataProvider {
     return "0x1234567890ABCDEF";
   }
 
-  async postListItem<T extends { d: Record<string, any> }>(options: {
+  async postListItem<T extends Record<string, any>>(options: {
     siteCollectionUrl?: string;
     listName: string;
     body: Record<string, any>;
     logToConsole?: boolean;
     signal?: AbortSignal;
+    mockResponse?: T;
   }): Promise<T | Sharepoint_Error_Formatted> {
     await this.simulateDelay(400);
 
-    // Create and return mock item with ID
-    const mockItem: T = {
-      d: {
-        Id: Math.floor(Math.random() * 1000) + 1000,
-        ...options.body,
-      },
-    } as unknown as T;
-    return mockItem;
+    // If mockResponse provided, return it directly (escape hatch for testing)
+    if (options.mockResponse !== undefined) {
+      if (options.logToConsole) {
+        console.log("[MockDataProvider] postListItem using mockResponse override", options.mockResponse);
+      }
+      // Still add to session store so subsequent getListItems can find it
+      const sessionData = this.getSessionData(options.listName);
+      sessionData.push(options.mockResponse);
+      return options.mockResponse;
+    }
+
+    const now = new Date().toISOString();
+    const newId = this.getNextId(options.listName);
+
+    // Create new item with SharePoint-like metadata
+    // Include Author field like SharePoint does (using first mock user as default)
+    const mockAuthor = LOCAL_SHAREPOINT_USERS[0];
+
+    // Convert flat lookup IDs (e.g., ParentId) to expanded lookup objects (e.g., Parent: { Id, Title })
+    // This mimics SharePoint's behavior when you POST with ParentId and GET with $expand=Parent
+    const expandedBody = { ...options.body };
+    for (const key of Object.keys(expandedBody)) {
+      if (key.endsWith("Id") && typeof expandedBody[key] === "number") {
+        const lookupFieldName = key.slice(0, -2); // Remove "Id" suffix
+        const lookupId = expandedBody[key];
+        // Create expanded lookup object
+        expandedBody[lookupFieldName] = { Id: lookupId, Title: `${lookupFieldName} ${lookupId}` };
+        // Keep the original Id field too (SharePoint does this)
+      }
+    }
+
+    const newItem = {
+      Id: newId,
+      ID: newId, // SharePoint returns both Id and ID
+      Created: now,
+      Modified: now,
+      Author: mockAuthor ? { Id: mockAuthor.Id, Title: mockAuthor.Title } : { Id: 1, Title: "Mock User" },
+      ...expandedBody,
+    };
+
+    // Add to session store so subsequent getListItems will find it
+    const sessionData = this.getSessionData(options.listName);
+    sessionData.push(newItem);
+
+    if (options.logToConsole) {
+      console.log("[MockDataProvider] postListItem", {
+        listName: options.listName,
+        newId,
+        item: newItem,
+      });
+    }
+
+    // Return flat data (odata=nometadata format - no {d:...} wrapper)
+    return newItem as unknown as T;
   }
 
   async readAndUploadFile(options: {
@@ -145,8 +532,17 @@ export abstract class BaseMockDataProvider implements DataProvider {
     folder?: string;
     logToConsole?: boolean;
     signal?: AbortSignal;
+    mockResponse?: { Url: string };
   }): Promise<{ Url: string } | Sharepoint_Error_Formatted> {
     await this.simulateDelay(500);
+
+    // If mockResponse provided, return it directly (escape hatch for testing)
+    if (options.mockResponse !== undefined) {
+      if (options.logToConsole) {
+        console.log("[MockDataProvider] readAndUploadFile using mockResponse override", options.mockResponse);
+      }
+      return options.mockResponse;
+    }
 
     // Return a mock file URL
     return {
@@ -161,17 +557,80 @@ export abstract class BaseMockDataProvider implements DataProvider {
     body: Record<string, any>;
     logToConsole?: boolean;
     signal?: AbortSignal;
+    mockResponse?: void;
   }): Promise<void | Sharepoint_Error_Formatted> {
     await this.simulateDelay(300);
 
-    // Mock update succeeds silently
+    // If mockResponse provided (even if undefined/void), skip normal logic
+    // For update, mockResponse is typically undefined to simulate success
+    if ("mockResponse" in options) {
+      if (options.logToConsole) {
+        console.log("[MockDataProvider] updateListItem using mockResponse override");
+      }
+      return options.mockResponse;
+    }
+
+    const sessionData = this.getSessionData(options.listName);
+    const itemIndex = sessionData.findIndex((item) => item.Id === options.itemId);
+
+    if (itemIndex === -1) {
+      return { error: `Item with Id ${options.itemId} not found in list ${options.listName}` };
+    }
+
+    // Update the item in session store
+    sessionData[itemIndex] = {
+      ...sessionData[itemIndex],
+      ...options.body,
+      Modified: new Date().toISOString(),
+    };
+
+    if (options.logToConsole) {
+      console.log("[MockDataProvider] updateListItem", {
+        listName: options.listName,
+        itemId: options.itemId,
+        updatedItem: sessionData[itemIndex],
+      });
+    }
+
     return;
   }
 
-  async deleteListItem(options: { siteCollectionUrl?: string; listName: string; itemId: number; logToConsole?: boolean; signal?: AbortSignal }): Promise<void | Sharepoint_Error_Formatted> {
+  async deleteListItem(options: {
+    siteCollectionUrl?: string;
+    listName: string;
+    itemId: number;
+    logToConsole?: boolean;
+    signal?: AbortSignal;
+    mockResponse?: void;
+  }): Promise<void | Sharepoint_Error_Formatted> {
     await this.simulateDelay(300);
 
-    // Mock delete succeeds silently
+    // If mockResponse provided (even if undefined/void), skip normal logic
+    // For delete, mockResponse is typically undefined to simulate success
+    if ("mockResponse" in options) {
+      if (options.logToConsole) {
+        console.log("[MockDataProvider] deleteListItem using mockResponse override");
+      }
+      return options.mockResponse;
+    }
+
+    const sessionData = this.getSessionData(options.listName);
+    const itemIndex = sessionData.findIndex((item) => item.Id === options.itemId);
+
+    if (itemIndex === -1) {
+      return { error: `Item with Id ${options.itemId} not found in list ${options.listName}` };
+    }
+
+    // Remove the item from session store
+    sessionData.splice(itemIndex, 1);
+
+    if (options.logToConsole) {
+      console.log("[MockDataProvider] deleteListItem", {
+        listName: options.listName,
+        itemId: options.itemId,
+      });
+    }
+
     return;
   }
 }

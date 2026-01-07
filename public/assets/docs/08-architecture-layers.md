@@ -149,16 +149,26 @@ export abstract class BaseMockDataProvider implements DataProvider {
 Extends `BaseMockDataProvider` and provides project-specific data mapping:
 
 ```typescript
+import { SHAREPOINT_CONFIG, type AppSharePointConfig } from "$lib/env/sharepoint-config";
+
+/**
+ * Type-safe mock data mapping
+ * TypeScript enforces an entry for EVERY list defined in SHAREPOINT_CONFIG
+ * Adding a new list to config without adding mock data here will cause a compile error
+ */
+type ListNames = AppSharePointConfig["lists"][keyof AppSharePointConfig["lists"]]["name"];
+type MockDataMap = Record<ListNames, any[]>;
+
+const MOCK_DATA_BY_LIST_NAME: MockDataMap = {
+  [SHAREPOINT_CONFIG.lists.Story.name]: LOCAL_STORY_ITEMS,
+  [SHAREPOINT_CONFIG.lists.Engagements.name]: LOCAL_ENGAGEMENTS,
+  [SHAREPOINT_CONFIG.lists.StoryFiles.name]: LOCAL_FILES,
+  // ... TypeScript enforces ALL lists have entries
+};
+
 export class MockDataProvider extends BaseMockDataProvider {
   protected getDataForList(listName: string): any[] {
-    // Map app-specific list names to local data
-    if (listName === SHAREPOINT_CONFIG.lists.Story.name) {
-      return LOCAL_STORY_ITEMS;
-    } else if (listName === SHAREPOINT_CONFIG.lists.Engagements.name) {
-      return LOCAL_ENGAGEMENTS;
-    }
-    // ... etc
-    return [];
+    return MOCK_DATA_BY_LIST_NAME[listName] ?? [];
   }
 }
 ```
@@ -283,6 +293,42 @@ const response = await provider.getListItems({
 const stories = response.value; // Same interface regardless of provider
 ```
 
+#### Mock Response Escape Hatch
+
+All CRUD methods support an optional `mockResponse` parameter for LOCAL_MODE testing. When provided, the mock provider returns this exact data instead of generating mock data:
+
+```typescript
+// Override mock data for specific test scenarios
+const testStory = { Id: 999, Title: "Test Story", Created: new Date().toISOString() };
+
+const response = await provider.postListItem({
+  listName: "Stories",
+  body: { Title: "Test Story" },
+  mockResponse: testStory, // ← Mock provider returns this exactly
+});
+
+// In production, mockResponse is ignored - real SharePoint API is called
+```
+
+**Use cases:**
+
+- Testing specific edge cases
+- Simulating specific server responses
+- Integration testing with known data
+
+#### Response Format (odata=nometadata)
+
+SharePoint with `odata=nometadata` header returns **flat data** (no `{ d: {...} }` wrapper):
+
+```typescript
+// ✅ Correct: Access data directly
+const item = await provider.postListItem({ listName: "Stories", body });
+console.log(item.Id); // Works
+
+// ❌ Wrong: No 'd' wrapper exists
+console.log(item.d.Id); // undefined
+```
+
 #### No LOCAL_MODE Logic in UI
 
 ```typescript
@@ -358,6 +404,83 @@ Modules that are **project-specific**:
 - **env/** - SharePoint config (list names, URLs)
 - **routes/** - App pages and features
 - **types/** - Project domain types (Story, Engagement, etc.)
+
+---
+
+## Configuration Passing Pattern
+
+### Problem
+
+Common-library components that need app-specific configuration (like file upload destinations) should NOT import from the app layer. This breaks reusability across projects.
+
+### Solution: Pass Configuration as Props/Context
+
+Instead of importing `SHAREPOINT_CONFIG` directly in library components, pass it from the app layer:
+
+**Example: EdraEditor File Upload**
+
+App layer provides `sharepointFileUploadOptions` to the editor:
+
+```svelte
+<!-- src/routes/stories/[id]/edit/_components/_content/EditStoryContent.svelte -->
+<script>
+  import { EdraEditor } from "$lib/common-library/integrations/components/edra-rich-text/shadcn";
+  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
+</script>
+
+<EdraEditor
+  bind:editor
+  {content}
+  sharepointFileUploadOptions={{
+    siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+    serverRelativeUrl: SHAREPOINT_CONFIG.folders.StoryFiles.rel_path,
+    folderName: SHAREPOINT_CONFIG.folders.StoryFiles.name,
+  }}
+/>
+```
+
+How it works internally:
+
+1. **App layer** imports `SHAREPOINT_CONFIG` (app-specific)
+2. **App layer** constructs `FileUploadOptions` object
+3. **App layer** passes to `EdraEditor` prop
+4. **EdraEditor** sets in context via `setContext("sharepointFileUploadOptions", options)`
+5. **Placeholder components** (ImagePlaceholder, AudioPlaceholder, VideoPlaceholder) retrieve via `getContext<FileUploadOptions>("sharepointFileUploadOptions")`
+6. **Placeholder components** pass to `uploadFile()` function
+
+**Benefits:**
+
+- ✅ Library components don't import app config
+- ✅ Components are truly reusable across projects
+- ✅ Type-safe: `FileUploadOptions` interface ensures correct structure
+- ✅ Flexible: Different callers can provide different configurations
+
+### Pattern for New Components
+
+When creating library components that need configuration:
+
+1. **Define configuration interface** (in common-library)
+   ```typescript
+   export interface MyComponentOptions {
+     siteUrl: string;
+     folderPath: string;
+   }
+   ```
+
+2. **Accept as prop** (in component)
+   ```svelte
+   let { myOptions } = $props();
+   ```
+
+3. **Set in context if needed** (for child components)
+   ```svelte
+   setContext("myOptions", myOptions);
+   ```
+
+4. **Use from app layer** (caller provides config)
+   ```svelte
+   <MyComponent myOptions={{ siteUrl: SHAREPOINT_CONFIG.paths.site_collection, ... }} />
+   ```
 
 ---
 

@@ -6,12 +6,19 @@ import type {
   Sharepoint_PostItem_SuccessResponse_WithPostedData,
   Sharepoint_PostItemResponse,
   Sharepoint_UploadFile_SuccessResponse,
-} from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
+} from "$lib/common-library/integrations";
 import type { File_ListItem, File_ListItem_Post_ForStory } from "$lib/data/types";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-import { getDataProvider } from "$lib/data/provider-factory";
+import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
-export type FileDetailsPostSuccessResponses = Sharepoint_PostItem_SuccessResponse_WithPostedData<File_ListItem_Post_ForStory, {}>;
+/** Response from postListItem - flat data with odata=nometadata */
+export type FileDetailsPostSuccessResponse = File_ListItem_Post_ForStory & {
+  Id: number;
+  Created: string;
+  Modified: string;
+  Author: { Id: number; Title: string };
+  Parent?: { Id: number; Title: string };
+};
 
 export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[], storyId: number, fileUploadState: AsyncSubmitState) {
   fileUploadState.setInprogress();
@@ -29,7 +36,7 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
   files.forEach((file) => {
     const fileUploadPromise = provider.readAndUploadFile({
       siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
-      listName: SHAREPOINT_CONFIG.lists.Files.name,
+      listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
       itemId: 0,
       file: file,
       folder: SHAREPOINT_CONFIG.folders.StoryFiles.name,
@@ -76,7 +83,7 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
 
     const fileDetailsPostPromise = provider.postListItem({
       siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
-      listName: SHAREPOINT_CONFIG.lists.Files.name,
+      listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
       body: fileDetailsToPost,
     });
     fileDetailsPromises.push(fileDetailsPostPromise as any);
@@ -84,13 +91,13 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
 
   const fileDetailsPostResults = await Promise.allSettled(fileDetailsPromises);
   const fileDetailsPostErrors: string[] = [];
-  const fileDetailsPostSuccessResponses: FileDetailsPostSuccessResponses[] = [];
+  const fileDetailsPostSuccessResponses: FileDetailsPostSuccessResponse[] = [];
 
   //2.B. VALIDATE POST PROMISES
   fileDetailsPostResults.forEach((fileDetailsPostResult) => {
     console.log(fileDetailsPostResult);
     if (fileDetailsPostResult.status === "fulfilled") {
-      const fileDetailsPostResponse = fileDetailsPostResult.value as Sharepoint_PostItemResponse<File_ListItem_Post_ForStory, { Id: number }>;
+      const fileDetailsPostResponse = fileDetailsPostResult.value as FileDetailsPostSuccessResponse | Sharepoint_Error_Formatted;
       if ("error" in fileDetailsPostResponse) {
         fileDetailsPostErrors.push("A file upload failed. Error message: " + fileDetailsPostResponse.error);
       } else {
@@ -105,6 +112,7 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
     fileUploadState.appendError(fileDetailsPostErrors.join("\n"));
   }
 
-  fileUploadState.setSuccess();
+  // Resetting the form to allow uploading more files.
+  fileUploadState.resetForm();
   return fileDetailsPostSuccessResponses;
 }

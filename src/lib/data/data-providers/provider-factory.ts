@@ -8,7 +8,9 @@ import type { DataProvider } from "$lib/common-library/integrations/sharepoint-r
 
 /**
  * Initialize DataProvider implementations in the registry
- * Call this once at app startup (in main.ts)
+ *
+ * IMPORTANT: Call this in main.ts BEFORE any component renders.
+ * Components calling getDataProvider() before initialization will throw.
  *
  * This function:
  * 1. Validates SharePoint configuration at runtime

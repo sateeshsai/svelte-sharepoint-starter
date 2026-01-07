@@ -1,5 +1,5 @@
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/constants/const";
-import { getDataProvider } from "$lib/data/provider-factory";
+import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 import { createSelectExpandQueries } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
 import { createNew_Story_ListItem } from "$lib/data/new-items.svelte";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
@@ -8,6 +8,7 @@ import type { File_ListItem, Story_ListItem } from "$lib/data/types";
 import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
 
 export async function getStory(storyId: number, storyLoadState: AsyncLoadState, signal?: AbortSignal) {
+  console.log("[getStory] fetching storyId=", storyId);
   const selectExpand = createSelectExpandQueries(createNew_Story_ListItem);
   const provider = getDataProvider();
   const fetchResponse = await provider.getListItems({
@@ -15,12 +16,14 @@ export async function getStory(storyId: number, storyLoadState: AsyncLoadState, 
     operations: [
       ["select", selectExpand.select],
       ["expand", selectExpand.expand],
-      ["filter", `Id eq '${storyId}'`],
+      ["filter", `Id eq ${storyId}`],
       ["top", 5000],
     ],
     logToConsole: false,
     signal,
   });
+
+  console.log("[getStory] response=", fetchResponse);
 
   if ("error" in fetchResponse) {
     storyLoadState.setError("Something went wrong. Could not create a new story. " + fetchResponse.error);
@@ -33,6 +36,7 @@ export async function getStory(storyId: number, storyLoadState: AsyncLoadState, 
   }
   // storyLoadState.setData(fetchResponse.value[0]);
   storyLoadState.setReady();
+  console.log("[getStory] returning story=", fetchResponse.value[0]);
   return fetchResponse.value[0];
 }
 
@@ -40,10 +44,11 @@ export async function getStoryFiles(storyId: number, storyFilesLoadState: AsyncL
   const selectExpand = createSelectExpandQueries(createNew_File_ListItem({ ParentId: storyId, ParentType: "Story" }));
   const provider = getDataProvider();
   const storyFilesResponse = await provider.getListItems({
-    listName: SHAREPOINT_CONFIG.lists.Files.name,
+    listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
     operations: [
       ["select", selectExpand.select],
       ["expand", selectExpand.expand],
+      ["filter", `Parent/Id eq ${storyId}`],
       ["top", 5000],
     ],
     signal,

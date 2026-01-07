@@ -21,7 +21,7 @@ export async function reportError(
       ErrorType: (params.errorType ?? "Other") as (typeof ERROR_TYPES)[number],
       Context: params.context ?? "",
       TechnicalMessage: params.technicalMessage ?? "",
-      UserMessage: params.userMessage ?? "An error occurred. Please contact support if the issue persists.",
+      UserMessage: params.userMessage ?? "",
       RouteUrl: routeUrl,
       BrowserUserAgent: browserUserAgent,
     };

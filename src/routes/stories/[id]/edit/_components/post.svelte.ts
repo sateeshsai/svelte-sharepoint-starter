@@ -2,7 +2,7 @@ import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.sve
 import { convert_Story_ListItem_ToPost } from "$lib/data/convert-items";
 import type { Story_ListItem } from "$lib/data/types";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-import { getDataProvider } from "$lib/data/provider-factory";
+import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
 export async function updateStory(story: Story_ListItem, storySubmissionState: AsyncSubmitState) {
   storySubmissionState.setInprogress();

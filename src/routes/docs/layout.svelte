@@ -6,12 +6,13 @@
   import { getDocs } from "./get.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+  import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import type { Snippet } from "svelte";
 
   const { children }: { children: Snippet } = $props();
   let searchQuery = $state("");
   let sections: DocSection[] = $state([]);
-  const docsLoadState = new AsyncLoadState();
+  const docsLoadState = new SharePointAsyncLoadState();
 
   // Expose sections via context for child routes
   setContext<() => DocSection[]>("getDocSections", () => sections);

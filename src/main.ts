@@ -2,7 +2,7 @@ import { mount } from "svelte";
 import "./app.css";
 import App from "./App.svelte";
 import "sv-router/generated";
-import { initializeDataProviders } from "./lib/data/provider-factory";
+import { initializeDataProviders } from "./lib/data/data-providers/provider-factory";
 
 // Initialize data providers before mounting app
 initializeDataProviders();

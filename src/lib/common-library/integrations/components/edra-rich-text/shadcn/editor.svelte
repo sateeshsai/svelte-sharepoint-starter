@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
+  import { getContext, onDestroy, onMount, setContext } from "svelte";
   import type { EdraEditorProps } from "../types.js";
   import initEditor from "../editor.js";
   import { focusEditor } from "../utils.js";

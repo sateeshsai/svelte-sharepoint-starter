@@ -1,11 +1,10 @@
 import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
-import { createSelectExpandQueries } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
-import type { Sharepoint_Get_Operations } from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
+import { createSelectExpandQueries, type Sharepoint_Get_Operations } from "$lib/common-library/integrations";
 import { createNew_Story_ListItem } from "$lib/data/new-items.svelte";
 import type { Story_ListItem } from "$lib/data/types";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
-import { getDataProvider } from "$lib/data/provider-factory";
+import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
 export async function getStories(storiesLoadState: AsyncLoadState, lastFetchedInPollTimeString?: string | undefined, signal?: AbortSignal): Promise<Story_ListItem[] | undefined> {
   const selectExpand = createSelectExpandQueries(createNew_Story_ListItem());

@@ -3,42 +3,33 @@ import { z, type ZodObject } from "zod";
 import { AnalyticsEntryListSchema, AnalyticsEntryPostSchema } from "$lib/common-library/integrations/analytics/schemas";
 import { ErrorReportListSchema, ErrorReportPostSchema } from "$lib/common-library/integrations/error-handling/error-schemas";
 import { SHAREPOINT_PATHS, getFolderRelativePath } from "./sharepoint-paths";
+import type { SharePointConfig } from "$lib/common-library/integrations";
 
-export type SharepointListNames = "Story" | "Engagements" | "Files" | "UsersInfo" | "Analytics" | "ErrorReports";
-export type SharepointFolderNames = "StoryFiles";
+// export type SharepointListNames = "Story" | "Engagements" | "Files" | "UsersInfo" | "Analytics" | "ErrorReports";
+// export type SharepointFolderNames = "StoryFiles";
 
-export interface SharepointList {
-  name: string;
-  schemas: {
-    list: ZodObject;
-    post: ZodObject;
-  };
-}
+// export interface SharepointList {
+//   name: string;
+//   schemas: {
+//     list: ZodObject;
+//     post: ZodObject;
+//   };
+// }
 
-export interface SharepointFolder {
-  name: string;
-  rel_path: string;
-}
-
-export interface SharepointEnv {
-  info: { version: string; emails: { support: { email: string; subject: string; body: string; cc: string[]; bcc: string[] } } };
-  lists: Record<SharepointListNames, SharepointList>;
-  paths: {
-    root: string;
-    assets: string;
-    page: string;
-    domain: string;
-    site_collection: string;
-  };
-  folders: Record<SharepointFolderNames, SharepointFolder>;
-}
+// export interface SharepointFolder {
+//   name: string;
+//   rel_path: string;
+// }
 
 /**
  * Static SharePoint configuration
  * Contains list definitions with their validation schemas and folder configurations
  * Uses runtime paths from sharepoint-paths.ts
+ *
+ * Uses `satisfies` to validate against SharePointConfig while preserving literal types
+ * for better autocomplete (e.g., lists.Story instead of lists[string])
  */
-export const SHAREPOINT_CONFIG: SharepointEnv = {
+export const SHAREPOINT_CONFIG = {
   info: {
     version: "Version 1",
     emails: {
@@ -73,7 +64,7 @@ export const SHAREPOINT_CONFIG: SharepointEnv = {
         post: EngagementPostSchema,
       },
     },
-    Files: {
+    StoryFiles: {
       name: "FilesList",
       schemas: {
         list: FileListSchema,
@@ -102,6 +93,10 @@ export const SHAREPOINT_CONFIG: SharepointEnv = {
     },
   },
   paths: SHAREPOINT_PATHS,
-};
+} satisfies SharePointConfig;
 
-console.log(SHAREPOINT_CONFIG);
+/**
+ * Type of the app's SharePoint configuration
+ * Preserves literal types for lists, folders keys for better autocomplete
+ */
+export type AppSharePointConfig = typeof SHAREPOINT_CONFIG;

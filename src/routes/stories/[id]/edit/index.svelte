@@ -7,6 +7,7 @@
   import { getStory } from "../get.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+  import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import { onMount } from "svelte";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import { slide } from "svelte/transition";
@@ -17,17 +18,20 @@
   const params = $derived(route.getParams("/stories/:id/edit"));
   const storyId = $derived(params.id === "new" ? undefined : params.id);
 
-  let storyLoadState = new AsyncLoadState();
+  let storyLoadState = new SharePointAsyncLoadState();
   let story: Story_ListItem | undefined = $state();
-  let userCanEdit = $derived(global_State.AccessRole === "Admin" || story?.Author.Id === global_State.user?.Id);
+  let userCanEdit = $derived(global_State.AccessRole === "Admin" || story?.Author?.Id === global_State.user?.Id);
 
-  onMount(() => {
+  // Use $effect instead of onMount to react to storyId changes during navigation
+  $effect(() => {
+    console.log("[edit/index.svelte] effect running, storyId=", storyId);
     if (storyId) {
       loadData(storyId);
     }
   });
 
   async function loadData(story_Id: string | undefined) {
+    console.log("[edit/index.svelte] loadData called, story_Id=", story_Id);
     if (!story_Id || Number.isNaN(+story_Id)) {
       navigate("/stories", {
         replace: true,
@@ -36,6 +40,7 @@
     }
 
     story = await getStory(+story_Id, storyLoadState);
+    console.log("[edit/index.svelte] story loaded=", story);
 
     if (story && !userCanEdit) {
       navigate("/stories/:id", {

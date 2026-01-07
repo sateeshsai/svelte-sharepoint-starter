@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/constants/const";
   import { reportError } from "$lib/common-library/integrations/error-handling/report-error";
   import Button from "$lib/components/ui/button/button.svelte";
   import { cn } from "$lib/utils";
   import type { Snippet } from "svelte";
   import { getContext } from "svelte";
   import type { SharePointConfig } from "$lib/common-library/integrations/sharepoint-rest-api/config";
+  import { route } from "sv-router/generated";
 
   let {
     error,
@@ -17,7 +17,7 @@
     actionSnippet = defaultActionSnippet,
     customError,
   }: {
-    error: string | Record<string, any> | null;
+    error: string | Error | null;
     reset: () => void;
     class?: string;
     messageSnippet?: Snippet;
@@ -27,7 +27,8 @@
     customError: string;
   } = $props();
 
-  const errorString = $derived(typeof error === "string" ? error : typeof error === "object" ? JSON.stringify(error) : "Unknown boundary error.");
+  const errorString = $derived(typeof error === "string" ? error : error instanceof Error ? JSON.stringify(error, Object.getOwnPropertyNames(error)) : "Unknown boundary error.");
+  const errorMessage = $derived(typeof error === "string" ? error : error instanceof Error ? error.message : "Unknown boundary error.");
 
   const config = getContext<SharePointConfig>("sharePointConfig");
 
@@ -51,8 +52,7 @@
       "Site URL: " +
       window.location.href +
       "%0D%0A%0D%0A" + //%0D%0A is a line break in the body of the email
-      "Error message:%0D%0A" +
-      +customError +
+      `Error message: ${customError}` +
       "%0D%0A" +
       errorString +
       config.info.emails.support.body +
@@ -61,22 +61,24 @@
   );
 </script>
 
-<div class={cn("ErrorBoundaryMessage grid h-full justify-center gap-2 text-center place-items-center content-center pb-12", className)}>
+<div class={cn("ErrorBoundaryMessage px-2 grid h-full justify-center gap-1 text-center place-items-center content-center pb-12", className)}>
   {@render messageSnippet()}
-  {#if showReportSnippet}
-    {@render reportSnippet()}
-  {/if}
-  {@render actionSnippet()}
+  <div class="flex justify-center gap-2">
+    {#if showReportSnippet}
+      {@render reportSnippet()}
+    {/if}
+    {@render actionSnippet()}
+  </div>
 </div>
 
 {#snippet defaultMessageSnippet()}
   <h2 class="text-destructive mb-2">An error occured.</h2>
-  <p class="mb-2">Error message: {customError}</p>
-  <p class="mb-2">Error message: {errorString}</p>
+  <p class="mb-2">{customError}</p>
+  <p class="mb-2 text-muted-foreground text-balance text-sm max-w-[50ch]">Error message: {errorString}</p>
 {/snippet}
 
 {#snippet defaultReportSnippet()}
-  <Button size="sm" variant="secondary" href={errorReportEmail_Mailto_Link} class="mb-2">Report this error</Button>
+  <Button size="sm" variant="destructive" href={errorReportEmail_Mailto_Link} class="mb-2">Report</Button>
 {/snippet}
 {#snippet defaultActionSnippet()}
   <Button
@@ -84,6 +86,6 @@
     onclick={() => {
       reset();
     }}
-    class="">Try reloading</Button
+    class="">Reload</Button
   >
 {/snippet}

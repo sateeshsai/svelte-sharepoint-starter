@@ -14,22 +14,20 @@
   async function handleUploadStoryFiles(files: File[]) {
     fileUploadState.resetForm();
     const fileDetailsPostSuccessResponses = await uploadStoryFiles(files, storyFiles, storyId, fileUploadState);
-    //3. LOCAL MODE UPDATE
+    //3. LOCAL MODE UPDATE - Add new files to local state
     if (fileDetailsPostSuccessResponses) {
-      fileDetailsPostSuccessResponses.forEach((fileDetailsPostSuccessResponse) => {
+      fileDetailsPostSuccessResponses.forEach((data) => {
+        // postListItem returns flat data (odata=nometadata format)
         const fileDetails_ListItem: File_ListItem = {
-          Id: fileDetailsPostSuccessResponse.Id,
-          Author: {
-            Id: fileDetailsPostSuccessResponse.AuthorId,
-            Title: "",
-          },
-          FileOrder: fileDetailsPostSuccessResponse.FileOrder,
-          Created: fileDetailsPostSuccessResponse.Created,
-          Modified: fileDetailsPostSuccessResponse.Modified,
-          Title: fileDetailsPostSuccessResponse.Title,
-          Parent: { Id: fileDetailsPostSuccessResponse.ParentId, Title: "" },
-          Description: fileDetailsPostSuccessResponse.Description,
-          ParentType: fileDetailsPostSuccessResponse.ParentType,
+          Id: data.Id,
+          Author: data.Author,
+          FileOrder: data.FileOrder,
+          Created: data.Created,
+          Modified: data.Modified,
+          Title: data.Title,
+          Parent: data.Parent ?? { Id: data.ParentId, Title: "" },
+          Description: data.Description,
+          ParentType: data.ParentType,
         };
         storyFiles.push(fileDetails_ListItem);
       });

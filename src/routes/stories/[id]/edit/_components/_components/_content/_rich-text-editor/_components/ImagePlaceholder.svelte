@@ -7,18 +7,19 @@
   import FileDropZoneWrapper from "$lib/common-library/utils/components/file/FileDropZoneWrapper.svelte";
   import { randomIdString } from "$lib/common-library/utils/functions/string";
   import MediaPlaceHolder from "$lib/common-library/integrations/components/edra-rich-text/components/MediaPlaceHolder.svelte";
-  import { uploadFile } from "./post.svelte";
+  uploadFile;
   // TODO: Decouple this from app-specific config. Use props or context instead.
   // import { sharepointUploadOptions_Story } from "$lib/data/sharepoint-upload-options.svelte";
   import { getContext } from "svelte";
+  // import type { SharePointConfig } from "$lib/common-library/integrations/sharepoint-rest-api";
+  import { uploadFile } from "../post.svelte";
 
   const { editor }: NodeViewProps = $props();
 
   const fileUploadState = new SharePointAsyncSubmitState();
 
   async function addFile(files: File[]) {
-    // @ts-expect-error
-    await uploadFile(files, fileUploadState, {});
+    await uploadFile(files, fileUploadState);
 
     if (fileUploadState.success) {
       const file = files?.[0]!;

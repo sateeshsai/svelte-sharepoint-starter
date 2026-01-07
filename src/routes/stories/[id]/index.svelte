@@ -8,12 +8,10 @@
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { global_State } from "$lib/data/global-state.svelte";
   import PenLine from "@lucide/svelte/icons/pen-line";
-  import { getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
+  import { getUserFirstLastNames, type Sharepoint_User_Properties, SharePointAsyncLoadState, SharePointAsyncSubmitState } from "$lib/common-library/integrations";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
-  import { getDataProvider } from "$lib/data/provider-factory";
-  import type { Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
+  import { getDataProvider } from "$lib/data/data-providers/provider-factory";
   import StoryFileGallery from "./_components/StoryFileGallery.svelte";
-  import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { fade, fly, scale, slide } from "svelte/transition";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
@@ -25,21 +23,22 @@
   const { signal } = useAbortController();
 
   const params = $derived(route.getParams("/stories/:id"));
-  const storyId = $derived(params.id.toLowerCase() === "new" ? undefined : params.id);
+  const storyId = $derived(params.id.toLowerCase() === "new" || params.id.toLowerCase() === "create" ? undefined : params.id);
 
-  let storyLoadState = new AsyncLoadState();
+  let storyLoadState = new SharePointAsyncLoadState();
   let story: Story_ListItem | undefined = $state();
-  let userCanEdit = $derived(global_State.AccessRole === "Admin" || story?.Author.Id === global_State.user?.Id);
+  let userCanEdit = $derived(global_State.AccessRole === "Admin" || story?.Author?.Id === global_State.user?.Id);
 
   $effect(() => {
     loadData();
   });
 
-  const newStorySubmitState = new AsyncSubmitState();
+  const newStorySubmitState = new SharePointAsyncSubmitState();
 
   async function loadData() {
-    console.log("X");
+    console.log("[index.svelte] loadData called, storyId=", storyId, "params.id=", params.id);
     if (!storyId) {
+      console.log("[index.svelte] storyId is undefined, calling postNewStory...");
       postNewStory(newStorySubmitState);
       return;
     }
@@ -57,7 +56,7 @@
   }
 
   let storyFiles: File_ListItem[] | undefined = $state();
-  let storyFilesLoadState = new AsyncLoadState();
+  let storyFilesLoadState = new SharePointAsyncLoadState();
 
   $effect(() => {
     loadStoryFiles(storyId);

@@ -12,7 +12,7 @@
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { p } from "sv-router/generated";
   import { updateStory } from "./post.svelte";
-  import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+  import { SharePointAsyncLoadState, SharePointAsyncSubmitState } from "$lib/common-library/integrations/error-handling";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import { slide } from "svelte/transition";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
@@ -30,7 +30,7 @@
     return storyDataToPost_ValidationResult.error ? z.flattenError(storyDataToPost_ValidationResult.error) : undefined;
   });
 
-  let storyFilesLoadState = $state(new AsyncLoadState());
+  let storyFilesLoadState = $state(new SharePointAsyncLoadState());
   let storyFiles: File_ListItem[] | undefined = $state();
 
   let filesValidationErrors: z.core.$ZodIssue[] = $derived.by(() => {
@@ -52,7 +52,7 @@
     coverimageCropperState.showCropper = true;
   }
 
-  const storySubmissionState = new AsyncSubmitState();
+  const storySubmissionState = new SharePointAsyncSubmitState();
 
   function submitStory(e: Event) {
     e.preventDefault();
@@ -75,7 +75,7 @@
     updateStory(story, storySubmissionState);
   }
 
-  export const coverImageUploadState = new AsyncSubmitState();
+  export const coverImageUploadState = new SharePointAsyncSubmitState();
 </script>
 
 <article in:slide|global class={cn("stories h-full")}>

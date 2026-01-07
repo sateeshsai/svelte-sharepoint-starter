@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { initializeDataProviders } from "$lib/data/provider-factory";
+  import { initializeDataProviders } from "$lib/data/data-providers/provider-factory";
 
   let configError: string | null = null;
   let isInitialized = false;

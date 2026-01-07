@@ -14,6 +14,9 @@ import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_
  * SharePointDataProvider - implements DataProvider interface using real SharePoint REST API
  * Makes actual HTTP requests to SharePoint lists and operations
  * Config is injected via constructor for use as defaults in all methods
+ *
+ * NOTE: mockResponse option is defined in DataProvider interface but intentionally
+ * not implemented here - only BaseMockDataProvider uses it for testing escape hatches
  */
 export class SharePointDataProvider implements DataProvider {
   protected config: SharePointConfig;
@@ -22,7 +25,7 @@ export class SharePointDataProvider implements DataProvider {
     this.config = config;
   }
 
-  async getListItems<T extends { value: Record<string, any> }>(options: {
+  async getListItems<T extends { value: any[] }>(options: {
     siteCollectionUrl?: string;
     listName: string;
     operations?: Sharepoint_Get_Operations;
@@ -59,7 +62,7 @@ export class SharePointDataProvider implements DataProvider {
     return getFormDigestValueAPI(options);
   }
 
-  async postListItem<T extends { d: Record<string, any> }>(options: {
+  async postListItem<T extends Record<string, any>>(options: {
     siteCollectionUrl?: string;
     listName: string;
     body: Record<string, any>;

@@ -6,7 +6,7 @@ import { navigate } from "sv-router/generated";
 import type { Story_ListItem } from "$lib/data/types";
 import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import type { ReturnResolvedType } from "$lib/common-library/utils/types/util-types";
-import { getDataProvider } from "$lib/data/provider-factory";
+import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
 export async function postNewStory(newStoryState: AsyncSubmitState) {
   const newStoryToPost = convert_Story_ListItem_ToPost(createNew_Story_ListItem());
@@ -15,16 +15,26 @@ export async function postNewStory(newStoryState: AsyncSubmitState) {
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
     listName: SHAREPOINT_CONFIG.lists.Story.name,
     body: newStoryToPost,
+    logToConsole: true,
   });
+
+  console.log("[postNewStory] response:", postNewStoryResponse);
 
   if ("error" in postNewStoryResponse) {
     newStoryState.setError("Something went wrong. Could not create a new story. " + postNewStoryResponse.error);
     return;
   }
 
+  // odata=nometadata returns flat data, Id is directly on response
+  const newId = postNewStoryResponse.Id;
+  if (!newId) {
+    newStoryState.setError("Story created but no Id returned");
+    return;
+  }
+
   navigate("/stories/:id/edit", {
     params: {
-      id: String(postNewStoryResponse.d.Id),
+      id: String(newId),
     },
     replace: true,
   });

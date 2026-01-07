@@ -1,5 +1,5 @@
 import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
-import { getDataProvider } from "$lib/data/provider-factory";
+import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 import { setCurrentUser, setAccessRole, setUserProperties } from "$lib/data/global-state.svelte";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
@@ -44,8 +44,9 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) 
     return;
   }
 
+  userAccessRoleFetchResponse;
   //STORE IN GLOBAL STATE
-  setAccessRole(userAccessRoleFetchResponse.value.AccessRole);
+  // setAccessRole(currentUserInDB);
 
   //NOT WAITING FOR THIS DATA
   fetchAndSetCurrentUserProperties();

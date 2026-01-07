@@ -1,6 +1,6 @@
 import { dataUriToFile } from "$lib/common-library/utils/functions/file";
 import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
-import { readAndUploadFile } from "$lib/common-library/integrations/sharepoint-rest-api/rest-functions/post/readAndUploadFile";
+import { readAndUploadFile } from "$lib/common-library/integrations";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 
 export async function uploadCroppedImage(dataUri: string, file: File, fileUploadState: AsyncSubmitState) {

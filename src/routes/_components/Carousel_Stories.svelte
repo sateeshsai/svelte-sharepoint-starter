@@ -8,7 +8,7 @@
   import { getStories } from "$routes/stories/get.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { p } from "sv-router/generated";
-  import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+  import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
 
   let api = $state<CarouselAPI>();
@@ -28,7 +28,7 @@
 
   const plugin = Autoplay({ delay: autoPlayDelay, stopOnInteraction: true });
 
-  let storiesLoadState = new AsyncLoadState();
+  let storiesLoadState = new SharePointAsyncLoadState();
   let stories: Story_ListItem[] | undefined = $state();
 
   async function loadStories() {

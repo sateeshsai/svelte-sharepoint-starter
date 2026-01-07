@@ -8,6 +8,7 @@
   import PenLine from "@lucide/svelte/icons/pen-line";
   import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
   import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+  import { SharePointAsyncSubmitState } from "$lib/common-library/integrations/error-handling";
   import { ImageCropperState } from "$lib/common-library/utils/components/cropper/cropperState.svelte";
   import type { typeToFlattenedError } from "zod/v3";
   import { uploadCroppedImage } from "./post.svelte";
@@ -15,7 +16,7 @@
 
   interface Props {
     story: Story_ListItem;
-    storySubmissionState: AsyncSubmitState;
+    storySubmissionState: SharePointAsyncSubmitState;
     storyDataToPost_ValidationErrors: typeToFlattenedError<Story_ListItem> | undefined;
   }
 
@@ -32,7 +33,7 @@
     coverimageCropperState.showCropper = true;
   }
 
-  export const coverImageUploadState = new AsyncSubmitState();
+  export const coverImageUploadState = new SharePointAsyncSubmitState();
 
   async function handleUploadCroppedImage(dataUri: string) {
     coverimageCropperState.showFileDropZone = true;

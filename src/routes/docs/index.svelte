@@ -4,13 +4,13 @@
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+  import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
 
   import { renderDocSection, type DocSection } from "./get.svelte";
   import { getContext } from "svelte";
 
   let htmlContent = $state("");
-  const loadState = new AsyncLoadState();
-
+  const loadState = new SharePointAsyncLoadState();
   // Get sections from layout context
   const getDocSections = getContext<() => DocSection[]>("getDocSections") || (() => []);
 

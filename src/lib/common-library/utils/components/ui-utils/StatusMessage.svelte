@@ -14,16 +14,16 @@
   }: { children?: Snippet; icon?: Snippet; type: "loading" | "success" | "error" | "message"; message: string; class?: string } = $props();
 </script>
 
-<div class={cn("statusMessage h-full justify-center gap-2 text-center place-items-center content-center", type === "error" ? "flex text-destructive pb-24" : "grid", className)}>
+<div class={cn("statusMessage h-full grid justify-center gap-2 text-center place-items-center content-center", type === "error" ? "gap-1 text-destructive pb-24 text-balance" : "grid", className)}>
   {@render icon()}
   {@render children()}
 </div>
 
 {#snippet loaderIcon()}
   {#if type === "success"}
-    <CircleCheck class=" animate-ping" />
+    <CircleCheck class=" animate-bounce text-dgreen-500" />
   {:else if type === "error"}
-    <CircleX size="20" />
+    <CircleX size="20" class="" />
   {:else if type === "message"}
     <Info class="animate-spin" />
   {:else}
@@ -32,5 +32,5 @@
 {/snippet}
 
 {#snippet messageSnippet()}
-  <p>{message}</p>
+  <p class="shrink my-1!">{message}</p>
 {/snippet}

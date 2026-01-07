@@ -1,4 +1,10 @@
 import type { Engagement_ListItem, File_ListItem, Story_ListItem, User_ListItem } from "$lib/data/types";
+import type { z } from "zod";
+import type { AnalyticsEntryListSchema } from "$lib/common-library/integrations/analytics/schemas";
+import type { ErrorReportListSchema } from "$lib/common-library/integrations/error-handling/error-schemas";
+
+export type Analytics_ListItem = z.infer<typeof AnalyticsEntryListSchema>;
+export type ErrorReport_ListItem = z.infer<typeof ErrorReportListSchema>;
 
 export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
   {
@@ -248,5 +254,40 @@ export const LOCAL_USERS: User_ListItem[] = [
     AccessRole: null,
     Created: new Date().toISOString(),
     Modified: new Date().toISOString(),
+  },
+];
+
+export const LOCAL_ANALYTICS: Analytics_ListItem[] = [
+  {
+    Id: 1,
+    Title: "Version 1",
+    SessionId: "mock-session-001",
+    Route: "/stories",
+    Data: JSON.stringify({ action: "view", timestamp: Date.now() }),
+    Created: new Date().toISOString(),
+    Modified: new Date().toISOString(),
+    Author: {
+      Id: 1,
+      Title: "Modukuru, Sateeshsai",
+    },
+  },
+];
+
+export const LOCAL_ERROR_REPORTS: ErrorReport_ListItem[] = [
+  {
+    Id: 1,
+    Title: "Sample Network Error",
+    ErrorType: "Network",
+    Context: "Like fetching from a list",
+    TechnicalMessage: "Sample technical error: Failed to fetch: 500 Internal Server Error",
+    UserMessage: "Unable to load items",
+    RouteUrl: "/routename",
+    BrowserUserAgent: "Mozilla/5.0 (Mock)",
+    Created: new Date().toISOString(),
+    Modified: new Date().toISOString(),
+    Author: {
+      Id: 1,
+      Title: "Modukuru, Sateeshsai",
+    },
   },
 ];

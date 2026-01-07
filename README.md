@@ -2,12 +2,15 @@
 
 ## Features:
 
+- IDEA - Proposal designer - voice and prompt based.
+- Designer workshop
+
 ## Fixes
 
 - Caching too much in poll
 - Robust implementation of fetchListItems operations.
 - JS Doc comments consistency
-- Make mock data persist like a db each session
+- Add report button to StatusMessage type error
 
 ### Docs
 
@@ -38,6 +41,9 @@
 - Error boundaries
 - Polling
 - Analytics
+- Mock data persistence (session store for CRUD operations)
+- Type-safe mock data mappings
+- mockResponse escape hatch for LOCAL_MODE testing
 
 ## Examples
 

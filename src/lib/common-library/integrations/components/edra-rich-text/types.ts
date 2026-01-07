@@ -1,30 +1,32 @@
-import type { Content, Editor } from '@tiptap/core';
-import type { EditorState } from '@tiptap/pm/state';
-import type { EditorView } from '@tiptap/pm/view';
-import type { Snippet } from 'svelte';
+import type { Content, Editor } from "@tiptap/core";
+import type { EditorState } from "@tiptap/pm/state";
+import type { EditorView } from "@tiptap/pm/view";
+import type { Snippet } from "svelte";
+// import type { FileUploadOptions } from "../edra-rich-text-sharepoint/shadcn/components/post.svelte";
 
 export interface EdraEditorProps {
-	content?: Content;
-	editable?: boolean;
-	editor?: Editor;
-	autofocus?: boolean;
-	onUpdate?: () => void;
-	class?: string;
+  content?: Content;
+  editable?: boolean;
+  editor?: Editor;
+  autofocus?: boolean;
+  onUpdate?: () => void;
+  class?: string;
+  // sharepointFileUploadOptions: FileUploadOptions;
 }
 
 export interface EdraToolbarProps {
-	editor: Editor;
-	class?: string;
-	excludedCommands?: string[];
-	children?: Snippet<[]>;
+  editor: Editor;
+  class?: string;
+  excludedCommands?: string[];
+  children?: Snippet<[]>;
 }
 
 export interface ShouldShowProps {
-	editor: Editor;
-	element: HTMLElement;
-	view: EditorView;
-	state: EditorState;
-	oldState?: EditorState;
-	from: number;
-	to: number;
+  editor: Editor;
+  element: HTMLElement;
+  view: EditorView;
+  state: EditorState;
+  oldState?: EditorState;
+  from: number;
+  to: number;
 }

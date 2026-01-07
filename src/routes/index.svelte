@@ -12,6 +12,7 @@
   import { IsInViewport } from "runed";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import { getContext } from "svelte";
 
   let targetNode = $state<HTMLElement>()!;
   const inViewport = new IsInViewport(() => targetNode);

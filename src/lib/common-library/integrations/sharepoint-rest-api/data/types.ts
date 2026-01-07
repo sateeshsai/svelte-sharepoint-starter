@@ -84,14 +84,13 @@ export interface Sharepoint_UploadFile_SuccessResponse {
 
 // export type Sharepoint_UploadFileResponse = Sharepoint_UploadFile_SuccessResponse | Sharepoint_Error | undefined;
 
-export type Sharepoint_Get_Operations =
-  | (
-      | ["select", string]
-      | ["filter", string]
-      | ["expand", string]
-      | ["top", number]
-      | ["skip", number]
-      // TODO: HANDLE ORDERBY
-      | ["orderby", "asc" | "desc"]
-    )[]
-  | `$${string}=${string}`;
+/**
+ * SharePoint OData query operations
+ * - select: Comma-separated field names, supports nested (e.g., "Id,Title,Author/Id,Author/Title")
+ * - filter: OData filter expression (e.g., "Id eq 5", "Author/Id eq 1 and Created ge '2024-01-01'")
+ * - expand: Comma-separated lookup fields to expand (e.g., "Author,Editor")
+ * - top: Maximum number of items to return
+ * - skip: Number of items to skip (for pagination)
+ * - orderby: Sort direction, sorts by Created field
+ */
+export type Sharepoint_Get_Operations = (["select", string] | ["filter", string] | ["expand", string] | ["top", number] | ["skip", number] | ["orderby", "asc" | "desc"])[] | `$${string}=${string}`;
