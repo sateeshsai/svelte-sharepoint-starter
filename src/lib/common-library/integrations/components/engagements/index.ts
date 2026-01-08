@@ -5,7 +5,7 @@ export { default as EngagementSection } from "./EngagementSection.svelte";
 export * from "./engagement-constants";
 
 // Data fetchers (low-level API calls)
-export { getEngagements, postReaction, postComment, deleteEngagement, groupReactionsByEmoji, getComments, getReactions } from "./engagement-fetchers";
+export { getEngagements, postReaction, postComment, deleteEngagement, groupReactionsByEmoji, getComments, getReactions } from "./engagement-api";
 
 // Handlers (high-level with optimistic updates, shared across routes)
 export { addEngagement, removeEngagement, findUserReaction, isOwnEngagement } from "./engagement-handlers";

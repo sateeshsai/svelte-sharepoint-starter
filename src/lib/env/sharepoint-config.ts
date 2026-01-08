@@ -1,4 +1,7 @@
-import { EngagementListSchema, EngagementPostSchema, FileListSchema, FilePostSchema_ForStory, StoryListSchema, StoryPostSchema, UserListSchema, UserPostSchema } from "$lib/data/schemas";
+import { StoryListSchema, StoryPostSchema } from "$lib/data/items/stories/schemas";
+import { FileListSchema, FilePostSchema_ForStory, storyFilesSchema } from "$lib/data/items/files/schemas";
+import { UserListSchema, UserPostSchema } from "$lib/data/items/users/schemas";
+import { EngagementListSchema, EngagementPostSchema } from "$lib/common-library/integrations/components/engagements/engagement-schemas";
 import { z, type ZodObject } from "zod";
 import { AnalyticsEntryListSchema, AnalyticsEntryPostSchema } from "$lib/common-library/integrations/analytics/schemas";
 import { ErrorReportListSchema, ErrorReportPostSchema } from "$lib/common-library/integrations/error-handling/error-schemas";
@@ -19,7 +22,7 @@ export const SHAREPOINT_CONFIG = {
       support: {
         email: "smodukuru@deloitte.com",
         subject: "Site name: support request",
-        body: "%0D%0A%0D%0APlease describe the issue you are facing, along with any additional details and screenshots",
+        body: "Please describe the issue you are facing, along with any additional details and screenshots",
         cc: [""],
         bcc: ["smodukuru@deloitte.com"],
       },

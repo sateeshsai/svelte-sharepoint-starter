@@ -1,26 +1,31 @@
-import {
-  EngagementListSchema,
-  EngagementPostSchema,
-  FileListSchema,
-  FilePostSchema,
-  FilePostSchema_ForStory,
-  StoryListSchema,
-  StoryPostSchema,
-  UserListSchema,
-  UserPostSchema,
-} from "$lib/data/schemas";
-import type z from "zod";
+/**
+ * @deprecated Import from domain-specific folders instead:
+ * - Stories: $lib/data/items/stories/schemas
+ * - Files: $lib/data/items/files/schemas
+ * - Users: $lib/data/items/users/schemas
+ * - Engagements: $lib/common-library/integrations
+ *
+ * This file re-exports for backward compatibility only.
+ */
 
-/** Type definitions derived from schemas */
-export type Story_ListItem = z.infer<typeof StoryListSchema>;
-export type Story_ListItem_Post = z.infer<typeof StoryPostSchema>;
+// Story types
+export type {
+  Story_ListItem,
+  Story_ListItem_Post,
+} from "$lib/data/items/stories/schemas";
 
-export type Engagement_ListItem = z.infer<typeof EngagementListSchema>;
-export type Engagement_ListItem_Post = z.infer<typeof EngagementPostSchema>;
+// File types
+export type {
+  File_ListItem,
+  File_ListItem_Post,
+  File_ListItem_Post_ForStory,
+} from "$lib/data/items/files/schemas";
 
-export type File_ListItem = z.infer<typeof FileListSchema>;
-export type File_ListItem_Post = z.infer<typeof FilePostSchema>;
-export type File_ListItem_Post_ForStory = z.infer<typeof FilePostSchema_ForStory>;
+// User types
+export type {
+  User_ListItem,
+  User_ListItem_Post,
+} from "$lib/data/items/users/schemas";
 
-export type User_ListItem = z.infer<typeof UserListSchema>;
-export type User_ListItem_Post = z.infer<typeof UserPostSchema>;
+// Engagement types - re-export from common library
+export type { Engagement_ListItem, Engagement_Post as Engagement_ListItem_Post } from "$lib/common-library/integrations";

@@ -3,7 +3,9 @@
   import { cn } from "$lib/utils";
   import { navigate, p, route } from "sv-router/generated";
   import { getStory, getStoryFiles, getStoryEngagements, postNewStory, addEngagement, removeEngagement } from "$lib/data/items/stories";
-  import type { File_ListItem, Story_ListItem, Engagement_ListItem } from "$lib/data/types";
+  import type { Story_ListItem } from "$lib/data/items/stories/schemas";
+  import type { File_ListItem } from "$lib/data/items/files/schemas";
+  import type { Engagement_ListItem } from "$lib/common-library/integrations";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { canEditItem } from "$lib/data/global-state.svelte";
   import PenLine from "@lucide/svelte/icons/pen-line";

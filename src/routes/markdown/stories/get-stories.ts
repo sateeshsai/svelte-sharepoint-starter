@@ -1,4 +1,5 @@
-import type { Story_ListItem, File_ListItem } from "$lib/data/types";
+import type { Story_ListItem } from "$lib/data/items/stories/schemas";
+import type { File_ListItem } from "$lib/data/items/files/schemas";
 import YAML from "js-yaml";
 import { marked } from "marked";
 

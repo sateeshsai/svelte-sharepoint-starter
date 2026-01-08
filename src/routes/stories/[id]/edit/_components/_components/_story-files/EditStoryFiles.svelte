@@ -12,7 +12,7 @@
   import { deleteStoryFile, updateStoryFile } from "$lib/data/items/files";
   import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import { flip } from "svelte/animate";
-  import type { File_ListItem } from "$lib/data/types";
+  import type { File_ListItem } from "$lib/data/items/files/schemas";
   import { z } from "zod";
   import { crossfade } from "svelte/transition";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";

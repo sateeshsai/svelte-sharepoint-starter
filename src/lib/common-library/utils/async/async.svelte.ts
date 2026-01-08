@@ -4,16 +4,36 @@
  * Use for POST/PUT/DELETE operations
  */
 
+import type { ErrorReportParams } from "$lib/common-library/integrations/error-handling/error-types";
+
 export class AsyncSubmitState {
   initial = $state(true);
   attempted = $state(false);
   inProgress = $state(false);
   success = $state(false);
   error: string | undefined = $state("");
+  /** Full error details for UI components (popover, report button) */
+  errorDetails: ErrorReportParams | undefined = $state(undefined);
   message = $state("");
 
-  setError(errorMessage: string) {
-    this.error = errorMessage;
+  /**
+   * Set error state with structured error params.
+   * Stores full details in `errorDetails` for UI components (popover, report button).
+   * Use helper functions for consistent error categorization:
+   * @example
+   * // API/network errors
+   * state.setError(apiError({ userMessage: "Could not save", technicalMessage: response.error, context: "updateStory" }))
+   * @example
+   * // Validation errors
+   * state.setError(validationError({ userMessage: "Form is incomplete", context: "StoryEditor" }))
+   * @example
+   * // Catch blocks with unknown errors
+   * state.setError(unknownError({ error: e, userMessage: "Operation failed", context: "MyComponent" }))
+   * @see apiError, validationError, notFoundError, boundaryError, unknownError
+   */
+  setError(error: ErrorReportParams) {
+    this.error = error.userMessage;
+    this.errorDetails = error;
     this.attempted = true;
     this.#clearInProgress();
   }
@@ -72,9 +92,27 @@ export class AsyncLoadState {
   loading = $state(true);
   ready: boolean = $state(false);
   error: string | undefined = $state("");
+  /** Full error details for UI components (popover, report button) */
+  errorDetails: ErrorReportParams | undefined = $state(undefined);
 
-  setError(errorMessage: string) {
-    this.error = errorMessage;
+  /**
+   * Set error state with structured error params.
+   * Stores full details in `errorDetails` for UI components (popover, report button).
+   * Use helper functions for consistent error categorization:
+   * @example
+   * // API/network errors
+   * state.setError(apiError({ userMessage: "Could not fetch", technicalMessage: response.error, context: "getStories" }))
+   * @example
+   * // Not found errors
+   * state.setError(notFoundError({ userMessage: "Story not found", context: "StoryPage" }))
+   * @example
+   * // Catch blocks with unknown errors
+   * state.setError(unknownError({ error: e, userMessage: "Load failed", context: "MyComponent" }))
+   * @see apiError, validationError, notFoundError, boundaryError, unknownError
+   */
+  setError(error: ErrorReportParams) {
+    this.error = error.userMessage;
+    this.errorDetails = error;
     this.ready = false;
     this.loading = false;
   }

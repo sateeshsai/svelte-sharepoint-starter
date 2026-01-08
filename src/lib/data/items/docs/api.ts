@@ -2,6 +2,7 @@
  * Docs API - Documentation fetching and rendering
  */
 import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+import { notFoundError, apiError } from "$lib/common-library/integrations";
 import YAML from "js-yaml";
 import { marked } from "marked";
 
@@ -46,8 +47,7 @@ export async function getDocs(docsloadState: AsyncLoadState): Promise<DocSection
     const docFiles = await getDocIndex();
 
     if (docFiles.length === 0) {
-      const errorMessage = "No documentation files found in index";
-      docsloadState.setError(errorMessage);
+      docsloadState.setError(notFoundError({ userMessage: "No documentation files found in index", context: "getDocs" }));
       return;
     }
 
@@ -101,7 +101,7 @@ export async function renderDocSection(section: DocSection, loadState: AsyncLoad
   try {
     const response = await fetch(`./assets/docs/${section.filename}.md`);
     if (!response.ok) {
-      loadState.setError(`Failed to fetch documentation file: ${section.filename}`);
+      loadState.setError(apiError({ userMessage: `Failed to fetch documentation file: ${section.filename}`, technicalMessage: response.statusText, context: "renderDocSection" }));
       return;
     }
 
@@ -114,7 +114,7 @@ export async function renderDocSection(section: DocSection, loadState: AsyncLoad
     return htmlContent;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    loadState.setError(`Failed to load documentation: ${errorMessage}`);
+    loadState.setError(apiError({ userMessage: "Failed to load documentation", technicalMessage: errorMessage, context: "renderDocSection" }));
     return;
   }
 }

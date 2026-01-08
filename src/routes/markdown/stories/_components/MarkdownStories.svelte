@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Story_ListItem } from "$lib/data/types";
+  import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import { flip } from "svelte/animate";
   import { crossfade, slide } from "svelte/transition";
   const [send, receive] = crossfade({

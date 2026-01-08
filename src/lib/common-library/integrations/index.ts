@@ -66,8 +66,9 @@ export { BaseMockDataProvider, SharePointDataProvider, getDataProvider, register
 // Error Handling & Async State
 // ============================================================================
 
-export { reportError } from "./error-handling/report-error";
-export type { ErrorReport_ListItem_Post, ErrorReport_ListItem } from "./error-handling/error-types";
+export { reportError } from "./error-handling/error-api";
+export type { ErrorReport_ListItem_Post, ErrorReport_ListItem, ErrorReportParams } from "./error-handling/error-types";
+export { apiError, validationError, notFoundError, boundaryError } from "./error-handling/error-types";
 export { ERROR_TYPES, ErrorReportListSchema, ErrorReportPostSchema } from "./error-handling/error-schemas";
 export { SharePointAsyncSubmitState, SharePointAsyncLoadState } from "./error-handling/sharepoint-async-state.svelte";
 

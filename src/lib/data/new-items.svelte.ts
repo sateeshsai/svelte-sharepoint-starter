@@ -1,6 +1,7 @@
 /** Factory functions for creating new list items with default values */
 
-import type { File_ListItem, File_ListItem_Post_ForStory, Story_ListItem, Story_ListItem_Post, File_ListItem_Post } from "$lib/data/types";
+import type { Story_ListItem, Story_ListItem_Post } from "$lib/data/items/stories/schemas";
+import type { File_ListItem, File_ListItem_Post_ForStory, File_ListItem_Post } from "$lib/data/items/files/schemas";
 
 /**
  * Create Story list item template with default values

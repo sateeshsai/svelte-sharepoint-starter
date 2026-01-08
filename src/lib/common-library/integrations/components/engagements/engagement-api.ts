@@ -1,6 +1,7 @@
 import type { DataProvider } from "../../sharepoint-rest-api/providers/data-provider";
 import type { Engagement_ListItem, EmojiReactionCount } from "./engagement-types";
 import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+import { apiError } from "$lib/common-library/integrations/error-handling";
 
 export async function getEngagements(provider: DataProvider, listName: string, parentId: number, engagementsLoadState?: AsyncLoadState, signal?: AbortSignal) {
   const resp = await provider.getListItems<{ value: Engagement_ListItem[] }>({
@@ -13,7 +14,7 @@ export async function getEngagements(provider: DataProvider, listName: string, p
   });
 
   if ("error" in resp) {
-    engagementsLoadState?.setError(String(resp.error));
+    engagementsLoadState?.setError(apiError({ userMessage: "Could not fetch engagements", technicalMessage: String(resp.error), context: "getEngagements" }));
     return [] as Engagement_ListItem[];
   }
   engagementsLoadState?.setReady();

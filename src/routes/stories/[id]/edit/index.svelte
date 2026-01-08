@@ -1,6 +1,6 @@
 <script lang="ts">
   import StoryEditor from "./_components/StoryEditor.svelte";
-  import type { Story_ListItem } from "$lib/data/types";
+  import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import { navigate } from "sv-router/generated";
   import { route } from "sv-router/generated";
   import { canEditItem } from "$lib/data/global-state.svelte";

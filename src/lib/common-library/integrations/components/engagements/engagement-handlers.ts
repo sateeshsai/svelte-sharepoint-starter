@@ -7,7 +7,7 @@ import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
 import { currentUserId, global_State } from "$lib/data/global-state.svelte";
 import type { Engagement_ListItem } from "./engagement-types";
-import { deleteEngagement as deleteEngagementApi } from "./engagement-fetchers";
+import { deleteEngagement as deleteEngagementApi } from "./engagement-api";
 import { EngagementPostSchema } from "./engagement-schemas";
 
 type EngagementType = "Reaction" | "Comment";

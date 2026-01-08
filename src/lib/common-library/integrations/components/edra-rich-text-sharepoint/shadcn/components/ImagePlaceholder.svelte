@@ -3,7 +3,7 @@
   import type { NodeViewProps } from "@tiptap/core";
   import Image from "@lucide/svelte/icons/image";
   import { buttonVariants } from "$lib/components/ui/button/button.svelte";
-  import { SharePointAsyncSubmitState } from "$lib/common-library/integrations/error-handling";
+  import { SharePointAsyncSubmitState, validationError, apiError } from "$lib/common-library/integrations/error-handling";
   import FileDropZoneWrapper from "$lib/common-library/utils/components/file/FileDropZoneWrapper.svelte";
   import { randomIdString } from "$lib/common-library/utils/functions/string";
   import MediaPlaceHolder from "$lib/common-library/integrations/components/edra-rich-text/components/MediaPlaceHolder.svelte";
@@ -18,7 +18,7 @@
   async function addFile(files: File[]) {
     const file = files?.[0];
     if (!file) {
-      fileUploadState.setError("No file selected.");
+      fileUploadState.setError(validationError({ userMessage: "No file selected", context: "ImagePlaceholder" }));
       return;
     }
 
@@ -36,7 +36,7 @@
     const result = await uploadContext.upload(file, fileUploadState);
 
     if ("error" in result) {
-      fileUploadState.setError(result.error);
+      fileUploadState.setError(apiError({ userMessage: "Image upload failed", technicalMessage: result.error, context: "ImagePlaceholder" }));
       return;
     }
 

@@ -3,11 +3,12 @@
  */
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/constants/const";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
-import { createSelectExpandQueries, getEngagements, type Sharepoint_Get_Operations } from "$lib/common-library/integrations";
+import { createSelectExpandQueries, getEngagements, type Sharepoint_Get_Operations, apiError, notFoundError } from "$lib/common-library/integrations";
 import { createNew_Story_ListItem, createNew_File_ListItem, createNew_Story_Post } from "$lib/data/new-items.svelte";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { convert_Story_ListItem_ToPost } from "$lib/data/convert-items";
-import type { File_ListItem, Story_ListItem } from "$lib/data/types";
+import type { Story_ListItem } from "./schemas";
+import type { File_ListItem } from "$lib/data/items/files/schemas";
 import type { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { toast } from "svelte-sonner";
 import { navigate } from "sv-router/generated";
@@ -54,7 +55,7 @@ export async function getStories(
 
   if ("error" in fetchResponse) {
     if (!lastFetchedInPollTimeString) {
-      storiesLoadState.setError("Something went wrong. Could not fetch stories. " + fetchResponse?.error);
+      storiesLoadState.setError(apiError({ userMessage: "Could not fetch stories", technicalMessage: fetchResponse.error, context: "getStories" }));
     } else {
       toast.error("Lives updates failed. Please reload the browser window to see new stories, if any.", { duration: Infinity, dismissable: true, style: "--width:75%" });
     }
@@ -81,12 +82,12 @@ export async function getStory(storyId: number, storyLoadState: AsyncLoadState, 
   });
 
   if ("error" in fetchResponse) {
-    storyLoadState.setError("Something went wrong. Could not fetch story. " + fetchResponse.error);
+    storyLoadState.setError(apiError({ userMessage: "Could not fetch story", technicalMessage: fetchResponse.error, context: "getStory" }));
     return;
   }
 
   if (!fetchResponse.value.length) {
-    storyLoadState.setError("No story with the Id: " + storyId + ". " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.report);
+    storyLoadState.setError(notFoundError({ userMessage: `No story with Id: ${storyId}. ${RECOMMENDED_ERROR_ACTIONS_FOR_UI.report}`, context: "getStory" }));
     return;
   }
 
@@ -109,7 +110,7 @@ export async function getStoryFiles(storyId: number, storyFilesLoadState: AsyncL
   });
 
   if ("error" in storyFilesResponse) {
-    storyFilesLoadState.setError("Something went wrong. Could not fetch story files. " + storyFilesResponse?.error);
+    storyFilesLoadState.setError(apiError({ userMessage: "Could not fetch story files", technicalMessage: storyFilesResponse?.error, context: "getStoryFiles" }));
     return;
   }
 
@@ -138,13 +139,13 @@ export async function postNewStory(newStoryState: AsyncSubmitState) {
   });
 
   if ("error" in postNewStoryResponse) {
-    newStoryState.setError("Something went wrong. Could not create a new story. " + postNewStoryResponse.error);
+    newStoryState.setError(apiError({ userMessage: "Could not create a new story", technicalMessage: postNewStoryResponse.error, context: "postNewStory" }));
     return;
   }
 
   const newId = postNewStoryResponse.Id;
   if (!newId) {
-    newStoryState.setError("Story created but no Id returned");
+    newStoryState.setError(apiError({ userMessage: "Story created but no Id returned", technicalMessage: "Missing Id in response", context: "postNewStory" }));
     return;
   }
 
@@ -174,7 +175,7 @@ export async function updateStory(story: Story_ListItem, storySubmissionState: A
   });
 
   if (storyUpdateResponse && "error" in storyUpdateResponse) {
-    storySubmissionState.setError("Error saving story. " + storyUpdateResponse.error);
+    storySubmissionState.setError(apiError({ userMessage: "Error saving story", technicalMessage: storyUpdateResponse.error, context: "updateStory" }));
     return;
   }
 

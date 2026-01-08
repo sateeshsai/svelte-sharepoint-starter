@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as Field from "$lib/components/ui/field/index.js";
-  import type { Story_ListItem } from "$lib/data/types";
+  import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import Button from "$lib/components/ui/button/button.svelte";
   import CropperJsWrapper from "$lib/common-library/utils/components/cropper/CropperJsWrapper.svelte";
   import FileDropZoneWrapper from "$lib/common-library/utils/components/file/FileDropZoneWrapper.svelte";

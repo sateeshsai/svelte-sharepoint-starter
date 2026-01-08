@@ -6,7 +6,7 @@
   import { cn } from "$lib/utils";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
-  import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
+  import { SharePointAsyncLoadState, notFoundError, validationError } from "$lib/common-library/integrations/error-handling";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import LineAnimated from "$lib/common-library/utils/components/ui-utils/Line_Animated.svelte";
@@ -25,13 +25,13 @@
     storyLoadState.setLoading();
 
     if (!slug) {
-      storyLoadState.setError("No story selected");
+      storyLoadState.setError(validationError({ userMessage: "No story selected", context: "StoryMarkdownPage" }));
       return;
     }
 
     story = await getStory(slug);
     if (!story) {
-      storyLoadState.setError(`Story "${slug}" not found`);
+      storyLoadState.setError(notFoundError({ userMessage: `Story "${slug}" not found`, context: "StoryMarkdownPage" }));
     } else {
       storyLoadState.setReady();
     }

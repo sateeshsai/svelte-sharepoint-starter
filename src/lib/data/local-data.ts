@@ -1,4 +1,7 @@
-import type { Engagement_ListItem, File_ListItem, Story_ListItem, User_ListItem } from "$lib/data/types";
+import type { Story_ListItem } from "$lib/data/items/stories/schemas";
+import type { File_ListItem } from "$lib/data/items/files/schemas";
+import type { User_ListItem } from "$lib/data/items/users/schemas";
+import type { Engagement_ListItem } from "$lib/common-library/integrations";
 import type { z } from "zod";
 import type { AnalyticsEntryListSchema } from "$lib/common-library/integrations/analytics/schemas";
 import type { ErrorReportListSchema } from "$lib/common-library/integrations/error-handling/error-schemas";

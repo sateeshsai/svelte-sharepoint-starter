@@ -7,7 +7,7 @@
   import type { Filter } from "$routes/stories/_components/StoryFilters.svelte";
   import { getStories } from "./get-stories";
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
-  import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
+  import { SharePointAsyncLoadState, apiError } from "$lib/common-library/integrations/error-handling";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import StoryFilters from "$routes/stories/_components/StoryFilters.svelte";
   import * as Sheet from "$lib/components/ui/sheet/index.js";
@@ -25,7 +25,7 @@
       stories = await getStories();
       storiesLoadState.setReady();
     } catch (error) {
-      storiesLoadState.setError(error instanceof Error ? error.message : "Failed to load stories");
+      storiesLoadState.setError(apiError({ userMessage: "Failed to load stories", technicalMessage: error instanceof Error ? error.message : String(error), context: "MarkdownStoriesPage" }));
     }
   });
 

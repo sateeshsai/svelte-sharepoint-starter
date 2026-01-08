@@ -2,11 +2,12 @@
  * Files API - File upload and management operations
  */
 import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+import { apiError, validationError } from "$lib/common-library/integrations";
 import { dataUriToFile } from "$lib/common-library/utils/functions/file";
 import { readAndUploadFile, type Sharepoint_Error_Formatted, type Sharepoint_PostItemResponse } from "$lib/common-library/integrations";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
-import type { File_ListItem, File_ListItem_Post_ForStory } from "$lib/data/types";
+import type { File_ListItem, File_ListItem_Post_ForStory } from "./schemas";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
 /** Response from postListItem */
@@ -35,7 +36,7 @@ export async function uploadCroppedImage(dataUri: string, file: File, fileUpload
   });
 
   if ("error" in fileUploadResponse) {
-    fileUploadState.setError("Error uploading cover art. Error message: " + fileUploadResponse.error);
+    fileUploadState.setError(apiError({ userMessage: "Error uploading cover art", technicalMessage: fileUploadResponse.error, context: "uploadCroppedImage" }));
     return;
   }
 
@@ -56,7 +57,7 @@ export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Parti
   });
 
   if (updateResponse && "error" in updateResponse) {
-    updateFileState.setError("Error updating file's sort order. Error message: " + updateResponse.error);
+    updateFileState.setError(apiError({ userMessage: "Error updating file's sort order", technicalMessage: updateResponse.error, context: "updateStoryFile" }));
     return;
   }
 
@@ -79,7 +80,7 @@ export async function deleteStoryFile(fileId: number, deleteFileState: AsyncSubm
   });
 
   if (deleteFileResponse && "error" in deleteFileResponse) {
-    deleteFileState.setError("Unable to delete file. Error message: " + deleteFileResponse.error);
+    deleteFileState.setError(apiError({ userMessage: "Unable to delete file", technicalMessage: deleteFileResponse.error, context: "deleteStoryFile" }));
     return;
   }
 
@@ -98,7 +99,7 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
   fileUploadState.setInprogress();
 
   if (!files?.length) {
-    fileUploadState.setError("No valid files were selected. Please try again or report the error by clicking on the Help button.");
+    fileUploadState.setError(validationError({ userMessage: "No valid files were selected. Please try again or report the error.", context: "uploadStoryFiles" }));
     return;
   }
 
@@ -138,7 +139,7 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
   });
 
   if (fileUploadErrors.length) {
-    fileUploadState.setError(fileUploadErrors.join("\n"));
+    fileUploadState.setError(apiError({ userMessage: "Some files failed to upload", technicalMessage: fileUploadErrors.join("\n"), context: "uploadStoryFiles" }));
   }
 
   // 2. POST UPLOADED FILE DETAILS TO FILES LIST

@@ -4,7 +4,7 @@
   import type { CarouselAPI } from "$lib/components/ui/carousel/context.js";
   import { cn } from "$lib/utils";
   import Autoplay from "embla-carousel-autoplay";
-  import type { Story_ListItem } from "$lib/data/types";
+  import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import { getStories } from "$lib/data/items/stories";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { p } from "sv-router/generated";

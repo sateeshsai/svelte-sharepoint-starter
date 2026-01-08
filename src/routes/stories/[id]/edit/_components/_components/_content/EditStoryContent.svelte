@@ -3,6 +3,7 @@
   import { EdraToolBar, EdraDragHandleExtended, EdraEditor, EDRA_FILE_UPLOAD_KEY, type EdraFileUploadContext } from "$lib/common-library/integrations/components/edra-rich-text/shadcn";
   import { setContext } from "svelte";
   import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+  import { apiError } from "$lib/common-library/integrations";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
   import { getDataProvider } from "$lib/data/data-providers/provider-factory";
@@ -37,7 +38,7 @@
       });
 
       if ("error" in response) {
-        state.setError("Upload failed: " + response.error);
+        state.setError(apiError({ userMessage: "Upload failed", technicalMessage: response.error, context: "EditStoryContent" }));
         return { error: response.error };
       }
 

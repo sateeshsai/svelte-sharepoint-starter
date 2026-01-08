@@ -1,4 +1,5 @@
-import type { Story_ListItem_Post, Story_ListItem, File_ListItem, File_ListItem_Post_ForStory } from "$lib/data/types";
+import type { Story_ListItem_Post, Story_ListItem } from "$lib/data/items/stories/schemas";
+import type { File_ListItem, File_ListItem_Post_ForStory } from "$lib/data/items/files/schemas";
 
 /** Convert Story list item to POST format (strips SharePoint metadata) */
 export function convert_Story_ListItem_ToPost(storyListItem: Story_ListItem): Story_ListItem_Post {

@@ -2,12 +2,13 @@
  * Users API - All user-related data operations
  */
 import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+import { apiError } from "$lib/common-library/integrations";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 import { setCurrentUser, setAccessRole, setUserProperties } from "$lib/data/global-state.svelte";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
 import type { Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
-import type { User_ListItem } from "$lib/data/types";
+import type { User_ListItem } from "./schemas";
 
 // ============================================================================
 // GET Operations
@@ -22,8 +23,7 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) 
   });
 
   if ("error" in fetchResponse) {
-    const errorMessage = "Something went wrong. Could not fetch user details. " + fetchResponse.error;
-    dataLoadState.setError(errorMessage);
+    dataLoadState.setError(apiError({ userMessage: "Could not fetch user details", technicalMessage: fetchResponse.error, context: "getAndStoreCurrentUserInfo" }));
     navigator.clipboard.writeText(fetchResponse.error);
     toast.error(fetchResponse.error);
     return;
@@ -45,8 +45,8 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) 
   });
 
   if ("error" in userAccessRoleFetchResponse) {
-    const errorMessage = "Something went wrong. Could not verify user role. " + userAccessRoleFetchResponse.error;
-    dataLoadState.setError(errorMessage);
+    const errorMessage = "Could not verify user role: " + userAccessRoleFetchResponse.error;
+    dataLoadState.setError(apiError({ userMessage: "Could not verify user role", technicalMessage: userAccessRoleFetchResponse.error, context: "getAndStoreCurrentUserInfo" }));
     navigator.clipboard.writeText(errorMessage);
     toast.error(errorMessage);
     return;

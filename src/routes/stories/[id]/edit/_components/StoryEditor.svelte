@@ -1,18 +1,20 @@
 <script lang="ts">
   import * as Field from "$lib/components/ui/field/index.js";
-  import type { File_ListItem, Story_ListItem } from "$lib/data/types";
+  import type { Story_ListItem } from "$lib/data/items/stories/schemas";
+  import type { File_ListItem } from "$lib/data/items/files/schemas";
   import LoaderCircle from "@lucide/svelte/icons/loader-circle";
   import Input from "$lib/components/ui/input/input.svelte";
   import Textarea from "$lib/components/ui/textarea/textarea.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
-  import { storyFilesSchema, StoryPostSchema } from "$lib/data/schemas";
+  import { storyFilesSchema } from "$lib/data/items/files/schemas";
+  import { StoryPostSchema } from "$lib/data/items/stories/schemas";
   import { convert_File_ListItem_To_Post, convert_Story_ListItem_ToPost } from "$lib/data/convert-items";
   import { z } from "zod";
   import { cn } from "$lib/utils";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { p } from "sv-router/generated";
   import { updateStory } from "$lib/data/items/stories";
-  import { SharePointAsyncLoadState, SharePointAsyncSubmitState } from "$lib/common-library/integrations/error-handling";
+  import { SharePointAsyncLoadState, SharePointAsyncSubmitState, validationError } from "$lib/common-library/integrations/error-handling";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import { slide } from "svelte/transition";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
@@ -57,17 +59,15 @@
   function submitStory(e: Event) {
     e.preventDefault();
     if (Object.values(storyDataToPost_ValidationErrors?.fieldErrors ?? {}).length) {
-      //FORM VALIDATION FAILED
-      storySubmissionState.setError("Form is incomplete or has invalid inputs. Please check and try again.");
+      storySubmissionState.setError(validationError({ userMessage: "Form is incomplete or has invalid inputs. Please check and try again.", context: "StoryEditor" }));
       return;
     }
 
     if (filesValidationErrors.length) {
-      //FORM VALIDATION FAILED
       if (filesValidationErrors.find((e) => e.path.length > 1)) {
-        storySubmissionState.setError("File details are incomplete or have invalid input. Please check and try again.");
+        storySubmissionState.setError(validationError({ userMessage: "File details are incomplete or have invalid input. Please check and try again.", context: "StoryEditor" }));
       } else {
-        storySubmissionState.setError("Add atleast one file.");
+        storySubmissionState.setError(validationError({ userMessage: "Add at least one file.", context: "StoryEditor" }));
       }
       return;
     }

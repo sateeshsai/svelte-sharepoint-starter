@@ -6,7 +6,7 @@
   import { cn } from "$lib/utils";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
 
-  import type { Story_ListItem } from "$lib/data/types";
+  import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import type { Filter } from "./_components/StoryFilters.svelte";
   import StoryFilters from "./_components/StoryFilters.svelte";
   import { getStories } from "$lib/data/items/stories";
