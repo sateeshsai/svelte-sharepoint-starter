@@ -29,6 +29,7 @@ Comprehensive configuration validation using Zod schema and an error boundary co
   - `lists[*].name` - list names cannot be empty
   - `paths.root, assets, page, domain, site_collection` - must be non-empty strings
   - `folders[*].name, rel_path` - folder names/paths cannot be empty
+  - `pwa` (optional) - PWA manifest config with `name`, `short_name`, `description`, `install_description`, `theme_color`, `background_color`
 
 - **validateSharePointConfig()** - Validation function that:
   - Parses config against schema
