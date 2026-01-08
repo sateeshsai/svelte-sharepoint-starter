@@ -1,7 +1,30 @@
+/**
+ * File Schemas, Types, and Validation
+ *
+ * This module defines the data structure for File attachments:
+ * - FileSchema: Core fields for file metadata
+ * - FileListSchema: Full schema including SharePoint metadata (for GET)
+ * - FilePostSchema: Schema for uploading files (for POST)
+ * - FilePostSchema_ForStory: Variant requiring caption for story images
+ * - storyFilesSchema: Validates array of story files
+ *
+ * @example
+ * ```typescript
+ * import { validateStoryFileForPost, type File_ListItem } from "$lib/data/items/files/schemas";
+ *
+ * const result = validateStoryFileForPost(fileData);
+ * if (result.success) {
+ *   await uploadFile(result.data);
+ * }
+ * ```
+ */
 import { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "$lib/common-library/integrations/sharepoint-rest-api/data/schemas";
 import { z } from "zod";
 
-/** File attachment schemas - used for story images/documents */
+/**
+ * Core File fields schema
+ * Used as base for both list and post schemas
+ */
 export const FileSchema = z.strictObject({
   Title: z.string().min(3, "File name must be at least 3 characters."),
   Description: z.string().max(255, "Description must be 255 characters or less."),

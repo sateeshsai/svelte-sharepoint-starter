@@ -1,7 +1,29 @@
+/**
+ * Story Schemas, Types, and Validation
+ *
+ * This module defines the data structure for Story items:
+ * - StorySchema: Core fields for story content
+ * - StoryListSchema: Full schema including SharePoint metadata (for GET)
+ * - StoryPostSchema: Schema for creating/updating stories (for POST/PATCH)
+ *
+ * @example
+ * ```typescript
+ * import { StoryListSchema, type Story_ListItem } from "$lib/data/items/stories/schemas";
+ *
+ * // Validate API response
+ * const story = StoryListSchema.parse(apiResponse);
+ *
+ * // Type-safe usage
+ * const stories: Story_ListItem[] = validatedData;
+ * ```
+ */
 import { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "$lib/common-library/integrations/sharepoint-rest-api/data/schemas";
 import { z } from "zod";
 
-/** Story schemas - main content items with validation */
+/**
+ * Core Story fields schema
+ * Used as base for both list and post schemas
+ */
 export const StorySchema = z.strictObject({
   Title: z.string().min(10, "Title must be at least 10 characters."),
   Content: z.string().min(10, "Content must be at least 10 characters."),
@@ -12,12 +34,14 @@ export const StorySchema = z.strictObject({
   PublishStatus: z.enum(["Draft", "Published"]),
 });
 
+/** Full Story schema including SharePoint metadata - use for GET responses */
 export const StoryListSchema = z.strictObject({
   ...Sharepoint_Default_Props_Schema.shape,
   ...StorySchema.shape,
   Author: Sharepoint_Lookup_DefaultProps_Schema,
 });
 
+/** Story schema for POST/PATCH operations - excludes SharePoint metadata */
 export const StoryPostSchema = z.strictObject({
   ...StorySchema.shape,
 });

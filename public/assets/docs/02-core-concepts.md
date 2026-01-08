@@ -60,54 +60,91 @@ See [Architecture docs](/docs/architecture) for detailed implementation.
 
 ## Schemas → Types → Validation
 
-The starter uses **Zod schemas** as the single source of truth:
+The starter uses **Zod schemas** as the single source of truth, organized by domain:
+
+### Domain-Based Schema Organization
+
+Schemas live alongside their related API and data files:
+
+```
+src/lib/data/items/
+├── stories/
+│   ├── schemas.ts    # StorySchema, types, validation
+│   ├── api.ts        # Story CRUD operations
+│   └── index.ts      # Re-exports
+├── files/
+│   ├── schemas.ts    # FileSchema, types, validation
+│   ├── api.ts        # File upload operations
+│   └── index.ts
+└── users/
+    ├── schemas.ts    # UserSchema, types
+    ├── api.ts        # User operations
+    └── index.ts
+```
 
 ### 1. Define Schema (Source of Truth)
 
-[src/lib/data/schemas.ts](../../src/lib/data/schemas.ts):
+[src/lib/data/items/stories/schemas.ts](../../src/lib/data/items/stories/schemas.ts):
 
 ```typescript
 import { z } from "zod";
 import { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "$lib/common-library/integrations";
 
+// Core fields schema
 export const StorySchema = z.strictObject({
-  ...Sharepoint_Default_Props_Schema.shape, // Id, Created, Modified, etc.
-  Title: z.string().min(3, "Title must be at least 3 characters"),
-  Content: z.string(),
-  Tags: z.string(),
-  Author: Sharepoint_Lookup_DefaultProps_Schema,
-  Status: z.enum(["Draft", "Published", "Archived"]),
-});
-
-export const StoryPostSchema = z.strictObject({
-  Title: z.string().min(3),
+  Title: z.string().min(10, "Title must be at least 10 characters"),
   Content: z.string().min(10, "Content too short"),
   Tags: z.string(),
-  Status: z.enum(["Draft", "Published", "Archived"]),
+  Introduction: z.string().min(10).max(255),
+  CoverFileName: z.string().min(2),
+  ActiveStatus: z.enum(["Active", "Inactive"]),
+  PublishStatus: z.enum(["Draft", "Published"]),
+});
+
+// Full schema for GET responses (includes SharePoint metadata)
+export const StoryListSchema = z.strictObject({
+  ...Sharepoint_Default_Props_Schema.shape,
+  ...StorySchema.shape,
+  Author: Sharepoint_Lookup_DefaultProps_Schema,
+});
+
+// Schema for POST/PATCH (excludes SharePoint metadata)
+export const StoryPostSchema = z.strictObject({
+  ...StorySchema.shape,
 });
 ```
 
 **Schema Components:**
 
-- `Sharepoint_Default_Props_Schema` - SharePoint system fields (Id, Created, Modified, Author metadata, etc.)
+- `Sharepoint_Default_Props_Schema` - SharePoint system fields (Id, Created, Modified, etc.)
 - `Sharepoint_Lookup_DefaultProps_Schema` - LookUp column structure `{ Id, Title }`
 - `z.strictObject()` - Catches typos by disallowing extra properties
 
 ### 2. Derive TypeScript Types
 
-[src/lib/data/types.ts](../../src/lib/data/types.ts):
+Types are defined in the same file as schemas:
 
 ```typescript
-import type z from "zod";
-import { StorySchema, StoryPostSchema } from "./schemas";
-
-export type Story_ListItem = z.infer<typeof StorySchema>;
+// In stories/schemas.ts
+export type Story_ListItem = z.infer<typeof StoryListSchema>;
 export type Story_ListItem_Post = z.infer<typeof StoryPostSchema>;
 ```
 
 **No manual typing!** Types are automatically derived from schemas.
 
-### 3. Validation Happens Automatically
+### 3. Import from Domain Folders
+
+```typescript
+// Import schemas and types from domain folders
+import { StoryListSchema, type Story_ListItem } from "$lib/data/items/stories/schemas";
+import { type File_ListItem } from "$lib/data/items/files/schemas";
+import { type User_ListItem } from "$lib/data/items/users/schemas";
+
+// Or use barrel exports
+import { getStories, type Story_ListItem } from "$lib/data/items/stories";
+```
+
+### 4. Validation Happens Automatically
 
 ```typescript
 // Runtime validation in data providers

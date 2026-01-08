@@ -1,7 +1,26 @@
+/**
+ * User Schemas and Types
+ *
+ * This module defines the data structure for User items:
+ * - UserSchema: Core fields for user access control
+ * - UserListSchema: Full schema including SharePoint metadata (for GET)
+ * - UserPostSchema: Schema for creating user records (for POST)
+ *
+ * @example
+ * ```typescript
+ * import { UserListSchema, type User_ListItem } from "$lib/data/items/users/schemas";
+ *
+ * const users: User_ListItem[] = UserListSchema.array().parse(apiResponse.value);
+ * const admins = users.filter(u => u.AccessRole === "Admin");
+ * ```
+ */
 import { Sharepoint_Default_Props_Schema, SharepointTitleProps_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "$lib/common-library/integrations/sharepoint-rest-api/data/schemas";
 import { z } from "zod";
 
-/** User schemas - SharePoint user list with access roles */
+/**
+ * Core User fields schema
+ * AccessRole determines user permissions in the application
+ */
 export const UserSchema = z.strictObject({
   AccessRole: z.enum(["Admin"]).nullable(),
 });
