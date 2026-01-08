@@ -39,7 +39,7 @@ Data Provider Interface (getListItems, postListItem, etc.)
 // In your component
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
-const provider = getDataProvider();  // Auto-selects mock or real
+const provider = getDataProvider(); // Auto-selects mock or real
 
 const response = await provider.getListItems({
   listName: "Stories",
@@ -48,6 +48,7 @@ const response = await provider.getListItems({
 ```
 
 **Benefits:**
+
 - ✅ No `if (LOCAL_MODE)` conditionals in UI code
 - ✅ Easy to test with mocks
 - ✅ Seamless dev/prod switching
@@ -67,13 +68,10 @@ The starter uses **Zod schemas** as the single source of truth:
 
 ```typescript
 import { z } from "zod";
-import {
-  Sharepoint_Default_Props_Schema,
-  Sharepoint_Lookup_DefaultProps_Schema
-} from "$lib/common-library/integrations";
+import { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "$lib/common-library/integrations";
 
 export const StorySchema = z.strictObject({
-  ...Sharepoint_Default_Props_Schema.shape,  // Id, Created, Modified, etc.
+  ...Sharepoint_Default_Props_Schema.shape, // Id, Created, Modified, etc.
   Title: z.string().min(3, "Title must be at least 3 characters"),
   Content: z.string(),
   Tags: z.string(),
@@ -90,6 +88,7 @@ export const StoryPostSchema = z.strictObject({
 ```
 
 **Schema Components:**
+
 - `Sharepoint_Default_Props_Schema` - SharePoint system fields (Id, Created, Modified, Author metadata, etc.)
 - `Sharepoint_Lookup_DefaultProps_Schema` - LookUp column structure `{ Id, Title }`
 - `z.strictObject()` - Catches typos by disallowing extra properties
@@ -121,6 +120,7 @@ const validated = StorySchema.parse(responseData);
 ### Schema Best Practices
 
 **DO:**
+
 - ✅ Use `z.strictObject()` to catch extra/missing properties
 - ✅ Add validation messages: `z.string().min(3, "Too short")`
 - ✅ Extend `Sharepoint_Default_Props_Schema` for list items
@@ -129,6 +129,7 @@ const validated = StorySchema.parse(responseData);
 - ✅ Use `ColumnNameId` for LookUp references in Post schemas
 
 **DON'T:**
+
 - ❌ Manually write TypeScript interfaces
 - ❌ Skip validation messages
 - ❌ Use `z.object()` instead of `z.strictObject()`
@@ -143,7 +144,7 @@ Every SharePoint list item includes these system fields:
 ```typescript
 export const Sharepoint_Default_Props_Schema = z.strictObject({
   Id: z.number(),
-  Created: z.string(),  // ISO 8601 date string
+  Created: z.string(), // ISO 8601 date string
   Modified: z.string(),
   // ... other system fields
 });
@@ -153,7 +154,7 @@ export const Sharepoint_Default_Props_Schema = z.strictObject({
 
 ```typescript
 export const MyListSchema = z.strictObject({
-  ...Sharepoint_Default_Props_Schema.shape,  // ← Include this
+  ...Sharepoint_Default_Props_Schema.shape, // ← Include this
   Title: z.string(),
   // Your custom fields
 });
@@ -171,13 +172,13 @@ SharePoint LookUp columns reference other lists. Handle them carefully:
 export const StorySchema = z.strictObject({
   ...Sharepoint_Default_Props_Schema.shape,
   Title: z.string(),
-  Author: Sharepoint_Lookup_DefaultProps_Schema,  // { Id, Title }
+  Author: Sharepoint_Lookup_DefaultProps_Schema, // { Id, Title }
   Category: Sharepoint_Lookup_DefaultProps_Schema.optional(),
 });
 
 export const StoryPostSchema = z.strictObject({
   Title: z.string(),
-  AuthorId: z.number(),  // Use "Id" suffix for LookUp reference
+  AuthorId: z.number(), // Use "Id" suffix for LookUp reference
   CategoryId: z.number().optional(),
 });
 ```
@@ -191,7 +192,7 @@ const response = await provider.getListItems({
   listName: "Stories",
   operations: [
     ["select", "Id,Title,Author/Id,Author/Title,Category/Id,Category/Title"],
-    ["expand", "Author,Category"],  // ← Required!
+    ["expand", "Author,Category"], // ← Required!
   ],
 });
 ```
@@ -212,7 +213,7 @@ const response = await provider.getListItems({
 ```typescript
 const newStory = {
   Title: "New Story",
-  AuthorId: 5,      // Reference by Id
+  AuthorId: 5, // Reference by Id
   CategoryId: 2,
 };
 
@@ -251,18 +252,13 @@ export function setCurrentUser(user: Sharepoint_User | undefined) {
 }
 
 // Derived state
-export const isAdmin = $derived(
-  global_State.accessRole === "Admin"
-);
+export const isAdmin = $derived(global_State.accessRole === "Admin");
 
-export const currentUserId = $derived(
-  global_State.currentUser?.Id
-);
+export const currentUserId = $derived(global_State.currentUser?.Id);
 
 // Computed helper
 export function canEditItem(authorId: number | undefined): boolean {
-  return global_State.accessRole === "Admin" || 
-         global_State.currentUser?.Id === authorId;
+  return global_State.accessRole === "Admin" || global_State.currentUser?.Id === authorId;
 }
 ```
 
@@ -271,7 +267,7 @@ export function canEditItem(authorId: number | undefined): boolean {
 ```svelte
 <script>
   import { global_State, isAdmin, canEditItem } from "$lib/data/global-state.svelte";
-  
+
   const userCanEdit = $derived(canEditItem(story?.Author?.Id));
 </script>
 
@@ -300,7 +296,7 @@ async function loadData() {
     items = data.value;
     loadState.setReady();
   } catch (err) {
-    loadState.setError(err.message, "DataLoad");  // Auto-reports to SharePoint
+    loadState.setError(err.message, "DataLoad"); // Auto-reports to SharePoint
   }
 }
 ```
@@ -335,9 +331,9 @@ navigate("/stories");
 navigate("/stories/123");
 
 // With query params
-navigate("/stories", { 
+navigate("/stories", {
   replace: true,
-  queryParams: { filter: "active" } 
+  queryParams: { filter: "active" },
 });
 
 // Get path helper (for links)
@@ -350,10 +346,10 @@ const storyPath = p("/stories/:id", { id: "123" });
 ```svelte
 <script>
   import { route } from "sv-router/generated";
-  
+
   const params = $derived(route.getParams("/stories/:id"));
   const storyId = $derived(params.id);
-  
+
   $effect(() => {
     loadStory(storyId);
   });
@@ -377,6 +373,7 @@ const storyPath = p("/stories/:id", { id: "123" });
 ```
 
 **Route structure:**
+
 ```
 routes/
 ├── index.svelte          # /
@@ -425,6 +422,7 @@ The built `index.html` and `assets/` are at the same level, so use relative path
 All SharePoint REST API responses use `odata=nometadata` format:
 
 **Request:**
+
 ```javascript
 headers: {
   "Accept": "application/json;odata=nometadata",
@@ -432,6 +430,7 @@ headers: {
 ```
 
 **Response (simplified):**
+
 ```json
 {
   "value": [
@@ -446,6 +445,7 @@ headers: {
 ```
 
 **Benefits:**
+
 - ✅ Smaller response size
 - ✅ No metadata clutter
 - ✅ Cleaner JSON structure
@@ -466,9 +466,9 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Title: "Sample Story",
     Content: "Story content...",
     Tags: "tech,innovation",
-    Author: { Id: 1, Title: "John Doe" },  // LookUp format
+    Author: { Id: 1, Title: "John Doe" }, // LookUp format
     Status: "Published",
-    Created: "2025-01-01T10:00:00Z",  // ISO 8601
+    Created: "2025-01-01T10:00:00Z", // ISO 8601
     Modified: "2025-01-05T15:30:00Z",
     // ... other SharePoint default props
   },
@@ -476,6 +476,7 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
 ```
 
 **Mock Data Checklist:**
+
 - ✅ Includes all SharePoint default props
 - ✅ LookUp columns use `{ Id, Title }` format
 - ✅ Dates in ISO 8601 format
@@ -505,7 +506,7 @@ export function getDataProvider(): DataProvider {
 **Usage everywhere:**
 
 ```typescript
-const provider = getDataProvider();  // Works in dev & prod!
+const provider = getDataProvider(); // Works in dev & prod!
 ```
 
 **No conditional logic needed** in your components.
@@ -517,6 +518,7 @@ const provider = getDataProvider();  // Works in dev & prod!
 ### Common-Library (`src/lib/common-library/`)
 
 **Reusable across projects:**
+
 - SharePoint REST API functions
 - Data provider interfaces & base classes
 - Error handling & analytics
@@ -524,6 +526,7 @@ const provider = getDataProvider();  // Works in dev & prod!
 - Utility functions
 
 **Rules:**
+
 - ❌ Never imports from app layer
 - ✅ Receives config via context/constructor
 - ✅ Generic implementations
@@ -532,6 +535,7 @@ const provider = getDataProvider();  // Works in dev & prod!
 ### App Layer (`src/lib/data/`, `src/lib/env/`, `src/routes/`)
 
 **Project-specific:**
+
 - Your schemas & types
 - Mock data for your lists
 - Concrete provider implementations
@@ -539,6 +543,7 @@ const provider = getDataProvider();  // Works in dev & prod!
 - Route pages
 
 **Rules:**
+
 - ✅ Imports from common-library
 - ✅ Project-specific implementation
 - ✅ Extends base classes from common-library
@@ -547,7 +552,7 @@ const provider = getDataProvider();  // Works in dev & prod!
 
 ```typescript
 // ❌ WRONG: common-library imports from app
-import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";  // Can't do this in common-library
+import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config"; // Can't do this in common-library
 
 // ✅ RIGHT: app extends common-library
 import { BaseMockDataProvider } from "$lib/common-library/integrations";
@@ -566,7 +571,7 @@ Multiple layers ensure type safety:
 
 ```typescript
 const story: Story_ListItem = {
-  Title: "Test",  // TypeScript error if wrong type
+  Title: "Test", // TypeScript error if wrong type
 };
 ```
 
@@ -632,12 +637,12 @@ graph TD
 
 ## Quick Reference
 
-| Concept | File Location |
-|---------|---------------|
-| Schemas | `src/lib/data/schemas.ts` |
-| Types | `src/lib/data/types.ts` |
-| Mock Data | `src/lib/data/local-data.ts` |
-| Provider | `src/lib/data/data-providers/` |
-| Config | `src/lib/env/sharepoint-config.ts` |
+| Concept      | File Location                         |
+| ------------ | ------------------------------------- |
+| Schemas      | `src/lib/data/schemas.ts`             |
+| Types        | `src/lib/data/types.ts`               |
+| Mock Data    | `src/lib/data/local-data.ts`          |
+| Provider     | `src/lib/data/data-providers/`        |
+| Config       | `src/lib/env/sharepoint-config.ts`    |
 | Global State | `src/lib/data/global-state.svelte.ts` |
-| Routes | `src/routes/` |
+| Routes       | `src/routes/`                         |

@@ -1,4 +1,4 @@
-/** 
+/**
  * App-specific marketing content for the starter project
  * Used on home page to highlight key benefits
  */
@@ -26,7 +26,7 @@ export const FRAMEWORK_FEATURES: FrameworkFeature[] = [
     category: "infrastructure",
     priority: 7,
   },
-  
+
   // Developer Experience
   {
     text: "100% type-safe with Zod schema validation and TypeScript coverage",
@@ -48,7 +48,7 @@ export const FRAMEWORK_FEATURES: FrameworkFeature[] = [
     category: "developer-experience",
     priority: 9,
   },
-  
+
   // Production-Ready Features
   {
     text: "Error boundaries prevent entire app crashes",
@@ -65,7 +65,7 @@ export const FRAMEWORK_FEATURES: FrameworkFeature[] = [
     category: "production-ready",
     priority: 11,
   },
-  
+
   // SharePoint Integration
   {
     text: "SharePoint REST API with request deduplication and cancellation",
@@ -80,6 +80,4 @@ export const FRAMEWORK_FEATURES: FrameworkFeature[] = [
 ];
 
 /** Simple string array for backward compatibility and simple displays */
-export const FRAMEWORK_FEATURES_SIMPLE = FRAMEWORK_FEATURES
-  .sort((a, b) => a.priority - b.priority)
-  .map(f => f.text);
+export const FRAMEWORK_FEATURES_SIMPLE = FRAMEWORK_FEATURES.sort((a, b) => a.priority - b.priority).map((f) => f.text);

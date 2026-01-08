@@ -75,10 +75,10 @@ export const SHAREPOINT_CONFIG = {
   lists: {
     // Define your lists here
     MyList: {
-      name: "MyListName",  // Actual SharePoint list name
+      name: "MyListName", // Actual SharePoint list name
       schemas: {
-        list: MyListSchema,  // Schema for items from SharePoint
-        post: MyListPostSchema,  // Schema for creating items
+        list: MyListSchema, // Schema for items from SharePoint
+        post: MyListPostSchema, // Schema for creating items
       },
     },
     // Add more lists as needed
@@ -99,14 +99,11 @@ Edit [src/lib/data/schemas.ts](../../src/lib/data/schemas.ts):
 
 ```typescript
 import { z } from "zod";
-import {
-  Sharepoint_Default_Props_Schema,
-  Sharepoint_Lookup_DefaultProps_Schema
-} from "$lib/common-library/integrations";
+import { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "$lib/common-library/integrations";
 
 // Define your schema
 export const MyListSchema = z.strictObject({
-  ...Sharepoint_Default_Props_Schema.shape,  // Id, Created, Modified, etc.
+  ...Sharepoint_Default_Props_Schema.shape, // Id, Created, Modified, etc.
   Title: z.string(),
   Description: z.string().optional(),
   Status: z.enum(["Active", "Archived"]),
@@ -120,11 +117,12 @@ export const MyListPostSchema = z.strictObject({
   Title: z.string().min(3, "Title must be at least 3 characters"),
   Description: z.string().optional(),
   Status: z.enum(["Active", "Archived"]),
-  CategoryId: z.number().optional(),  // LookUp uses Id suffix
+  CategoryId: z.number().optional(), // LookUp uses Id suffix
 });
 ```
 
 **Schema Best Practices:**
+
 - Use `z.strictObject()` to catch typos
 - Always extend `Sharepoint_Default_Props_Schema` for list items
 - Use `Sharepoint_Lookup_DefaultProps_Schema` for LookUp columns
@@ -169,6 +167,7 @@ export const LOCAL_MY_LIST_ITEMS: MyList_ListItem[] = [
 ```
 
 **Mock Data Tips:**
+
 - Match SharePoint's response structure exactly
 - Include edge cases (empty strings, nulls, long text)
 - Use realistic dates in ISO format
@@ -199,6 +198,7 @@ export class MockDataProvider extends BaseMockDataProvider {
 ```
 
 **Benefits:**
+
 - TypeScript ensures all lists have mock data
 - Automatic validation at compile time
 - Easy to add new lists
@@ -230,6 +230,7 @@ For each list in your config, create it in SharePoint with:
 
 1. **Correct list name** (matches `SHAREPOINT_CONFIG.lists.*.name`)
 2. **Required columns**:
+
    - Title (built-in)
    - Any custom columns from your schema
    - LookUp columns properly configured
@@ -246,29 +247,33 @@ For each list in your config, create it in SharePoint with:
 ### Handling LookUp Columns
 
 **In SharePoint:**
+
 - Column name: `Category`
 - Type: Lookup
 - Get information from: `Categories` list
 - In this column: `Title`
 
 **In Schema (List):**
+
 ```typescript
 Category: Sharepoint_Lookup_DefaultProps_Schema,
 // Returns: { Id: 1, Title: "General" }
 ```
 
 **In Schema (Post):**
+
 ```typescript
 CategoryId: z.number(),  // Note the "Id" suffix
 ```
 
 **When fetching:**
+
 ```typescript
 const items = await provider.getListItems({
   listName: "MyList",
   operations: [
     ["select", "Id,Title,Category/Id,Category/Title"],
-    ["expand", "Category"],  // Required for LookUp columns!
+    ["expand", "Category"], // Required for LookUp columns!
   ],
 });
 ```
@@ -309,17 +314,20 @@ src/lib/
 ## Development Workflow
 
 ### 1. Define Schema & Mock Data
+
 ```bash
 # Edit schemas.ts, types.ts, local-data.ts
 pnpm check  # Verify types
 ```
 
 ### 2. Build UI with Mock Data
+
 ```bash
 pnpm dev  # Uses mock data on localhost
 ```
 
 ### 3. Test with SharePoint
+
 ```bash
 # Create SharePoint lists
 # Deploy to SharePoint folder
@@ -327,6 +335,7 @@ pnpm dev  # Uses mock data on localhost
 ```
 
 ### 4. Iterate
+
 - Add features with mock data
 - Test on localhost
 - Deploy to SharePoint
@@ -361,11 +370,11 @@ const response = await provider.getListItems({
     ["orderby", "Created desc"],
     ["top", 10],
   ],
-  signal,  // For cancellation
+  signal, // For cancellation
 });
 
 if (!("error" in response)) {
-  const items = response.value;  // Typed as MyList_ListItem[]
+  const items = response.value; // Typed as MyList_ListItem[]
 }
 ```
 
@@ -398,6 +407,7 @@ The starter enforces type safety at multiple levels:
 4. **Mock data validation** via TypeScript
 
 If something is wrong, you'll know immediately:
+
 - **Development:** TypeScript errors in IDE
 - **Runtime:** Zod validation errors with clear messages
 - **Startup:** Config validation catches misconfigurations
@@ -418,21 +428,25 @@ Now that you're set up:
 ## Troubleshooting
 
 ### Mock Data Not Loading
+
 - Check `MOCK_DATA_BY_LIST_NAME` includes your list name
 - Verify list name matches `SHAREPOINT_CONFIG.lists.*.name`
 - Look for console errors
 
 ### Type Errors
+
 - Run `pnpm check` to see all type issues
 - Ensure schemas are exported from `schemas.ts`
 - Verify types are derived in `types.ts`
 
 ### SharePoint Connection Issues
+
 - Check FormDigest is being fetched (see Network tab)
 - Verify `sharepoint-paths.ts` has correct site URLs
 - Ensure CORS/authentication is configured in SharePoint
 
 ### Schema Validation Fails
+
 - Check mock data matches schema exactly
 - Look for missing required fields
 - Verify LookUp column structure: `{ Id: number, Title: string }`

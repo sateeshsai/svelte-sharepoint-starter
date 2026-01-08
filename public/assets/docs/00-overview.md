@@ -6,13 +6,13 @@ keywords:
   - overview
   - intro
   - starter
-  - alpha
+  - beta
   - version
 ---
 
 # Svelte + SharePoint Starter
 
-**Version:** Alpha 1.0.0  
+**Version:** Beta 1.0.0  
 **Last Updated:** January 2026
 
 ## What is This?
@@ -50,23 +50,27 @@ This starter provides:
 ## Key Benefits for Your Team
 
 ### 1. **Faster Development**
+
 - Start new projects in minutes instead of days
 - Copy-paste working patterns instead of reinventing them
 - Mock data lets you build UI before backend is ready
 
 ### 2. **Higher Quality**
+
 - Consistent patterns across all team projects
 - Type-safe from schemas to UI
 - Built-in error handling and analytics
 - Production-tested code
 
 ### 3. **Better Collaboration**
+
 - Common vocabulary and patterns across team
 - Easy to review code when everyone follows same conventions
 - New team members onboard faster
 - Reusable common-library reduces duplication
 
 ### 4. **SharePoint Made Easy**
+
 - Abstracts away SharePoint complexity
 - Handles pagination, LookUp columns, FormDigest automatically
 - Mock/real data switching handled transparently
@@ -145,12 +149,14 @@ svelte-starter-2025/
 **Purpose:** Code that can be reused across any team project
 
 **Rules:**
+
 - ❌ Never imports from app layer (`$lib/data`, `$lib/env`)
 - ✅ Receives config via Svelte context or constructor params
 - ✅ Generic, reusable implementations
 - ✅ Can be extracted to npm package
 
 **Contains:**
+
 - SharePoint REST API functions & providers
 - Analytics tracking system
 - Error handling & reporting
@@ -162,12 +168,14 @@ svelte-starter-2025/
 **Purpose:** Project-specific implementation
 
 **Rules:**
+
 - ✅ Imports from common-library
 - ✅ Defines project-specific schemas, types, config
 - ✅ Implements concrete providers (extends base classes)
 - ✅ Application routes and components
 
 **Contains:**
+
 - Your SharePoint list schemas
 - Mock data for your lists
 - App-specific state management
@@ -191,6 +199,7 @@ Always link to assets using **relative paths starting with `./assets`** because 
 ```
 
 **Why?** SharePoint hosts the built `index.html` and `assets/` folder at the same level:
+
 ```
 SharePoint Folder/
 ├── index.html          ← Your built app
@@ -205,40 +214,43 @@ SharePoint Folder/
 ## Development vs Production
 
 ### Development (localhost)
+
 - Uses **mock data** from `src/lib/data/local-data.ts`
 - No SharePoint connection required
 - Fast refresh, full Svelte DevTools
 - Mock data persists in sessionStorage
 
 ### Production (SharePoint)
+
 - Uses **SharePoint REST API** automatically
 - No code changes needed
 - Build outputs to `dist/` folder
 - Deploy `dist/` contents to SharePoint folder
 
 **Auto-detection:** The codebase automatically detects the environment based on hostname:
+
 ```typescript
-export const LOCAL_MODE = 
-  hostname === "localhost" || hostname.startsWith("127.");
+export const LOCAL_MODE = hostname === "localhost" || hostname.startsWith("127.");
 ```
 
 ---
 
 ## Version Information
 
-**Current Version:** Alpha 1.0.0
+**Current Version:** Beta 1.0.0
 
-### What "Alpha" Means
+### What "Beta" Means
 
-- ⚠️ **API may change** - We may refactor patterns as we learn
-- ⚠️ **Breaking changes possible** - Stay in sync with updates
-- ✅ **Production-ready code** - Used in real projects
+- ✅ **Stable API** - Core patterns are established and documented
+- ✅ **Production-ready** - Used in real projects with confidence
 - ✅ **Comprehensive examples** - Everything you need to get started
-- ✅ **Active development** - Regular improvements
+- ✅ **Active development** - Regular improvements and bug fixes
+- ⚠️ **Minor changes possible** - Edge case refinements may occur
 
 ### Upgrade Path
 
 When we release new versions:
+
 1. Review CHANGELOG for breaking changes
 2. Update common-library code
 3. Verify your schemas and types still work
@@ -260,20 +272,20 @@ Ready to get started? Continue to:
 
 ## Quick Reference
 
-| Topic | Link |
-|-------|------|
-| State Management | [/docs/state](/docs/state) |
-| API Integration | [/docs/api](/docs/api) |
-| Error Handling | [/docs/errors](/docs/errors) |
-| Architecture | [/docs/architecture](/docs/architecture) |
-| Analytics | [/docs/analytics](/docs/analytics) |
-| Utilities | [/docs/utils](/docs/utils) |
-| Components | [/docs/components](/docs/components) |
+| Topic            | Link                                     |
+| ---------------- | ---------------------------------------- |
+| State Management | [/docs/state](/docs/state)               |
+| API Integration  | [/docs/api](/docs/api)                   |
+| Error Handling   | [/docs/errors](/docs/errors)             |
+| Architecture     | [/docs/architecture](/docs/architecture) |
+| Analytics        | [/docs/analytics](/docs/analytics)       |
+| Utilities        | [/docs/utils](/docs/utils)               |
+| Components       | [/docs/components](/docs/components)     |
 
 ---
 
 ## Support & Feedback
 
 **Contact:** smodukuru@deloitte.com  
-**Status:** Alpha - Active Development  
+**Status:** Beta 1.0.0 - Production Ready  
 **Updates:** Check back regularly for improvements

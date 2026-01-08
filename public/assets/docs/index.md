@@ -1,6 +1,6 @@
 ---
 title: Documentation Index
-version: Alpha 1.0.0
+version: Beta 1.0.0
 files:
   - 00-overview
   - 01-getting-started
@@ -15,11 +15,12 @@ files:
   - 10-utilities
   - 11-components
   - 12-config-validation
+  - 13-quickstart
 ---
 
 # Documentation Index
 
-**Version:** Alpha 1.0.0  
+**Version:** Beta 1.0.0  
 **Last Updated:** January 2026
 
 This file tracks all documentation files in order.
@@ -28,20 +29,21 @@ This file tracks all documentation files in order.
 
 1. **[Overview](00-overview.md)** - What this is and why it exists
 2. **[Getting Started](01-getting-started.md)** - Setup and configuration
-3. **[Core Concepts](02-core-concepts.md)** - Fundamental patterns
+3. **[Quickstart](13-quickstart.md)** - Build your first feature in 15 minutes
+4. **[Core Concepts](02-core-concepts.md)** - Fundamental patterns
 
 ## Integration & Patterns
 
-4. **[SharePoint Integration](03-sharepoint.md)** - REST API, LookUp columns, best practices
-5. **[Examples & Routes](04-examples.md)** - Working implementations
+5. **[SharePoint Integration](03-sharepoint.md)** - REST API, LookUp columns, best practices
+6. **[Examples & Routes](04-examples.md)** - Working implementations
 
 ## Development Patterns
 
-6. **[State Management](05-state-management.md)** - Async loading, forms, global state
-7. **[API Integration](06-api-integration.md)** - Data providers and patterns
-8. **[Error Handling](07-error-handling.md)** - Boundaries and reporting
-9. **[Architecture & Layers](08-architecture-layers.md)** - Code organization
-10. **[Analytics](09-analytics.md)** - User tracking
-11. **[Utilities](10-utilities.md)** - Helper functions
-12. **[Components](11-components.md)** - UI components
-13. **[Config Validation](12-config-validation.md)** - Runtime validation
+7. **[State Management](05-state-management.md)** - Async loading, forms, global state
+8. **[API Integration](06-api-integration.md)** - Data providers and patterns
+9. **[Error Handling](07-error-handling.md)** - Boundaries, network recovery, retry patterns
+10. **[Architecture & Layers](08-architecture-layers.md)** - Code organization
+11. **[Analytics](09-analytics.md)** - User tracking
+12. **[Utilities](10-utilities.md)** - Helper functions
+13. **[Components](11-components.md)** - UI components
+14. **[Config Validation](12-config-validation.md)** - Runtime validation
