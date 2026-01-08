@@ -1,3 +1,6 @@
+/**
+ * Users API - All user-related data operations
+ */
 import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 import { setCurrentUser, setAccessRole, setUserProperties } from "$lib/data/global-state.svelte";
@@ -5,6 +8,10 @@ import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
 import type { Sharepoint_User_Properties } from "$lib/common-library/integrations/sharepoint-rest-api/data/types";
 import type { User_ListItem } from "$lib/data/types";
+
+// ============================================================================
+// GET Operations
+// ============================================================================
 
 export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) {
   const provider = getDataProvider();

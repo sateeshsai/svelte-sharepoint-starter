@@ -2,8 +2,7 @@
   import { setContext } from "svelte";
   import { cn } from "$lib/utils";
   import { p } from "sv-router/generated";
-  import type { DocSection } from "./get.svelte";
-  import { getDocs } from "./get.svelte";
+  import { getDocs, type DocSection } from "$lib/data/items/docs";
   import Input from "$lib/components/ui/input/input.svelte";
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";

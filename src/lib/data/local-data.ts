@@ -217,10 +217,12 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
 ];
 
 export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
-  // Story 1: Beyond the Stars - High engagement
+  // Story 1: Beyond the Stars - High engagement (reactions + comments)
   {
     Id: 1,
     Title: "❤️",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-03-16").toISOString(),
     Modified: new Date("2024-03-16").toISOString(),
     Author: {
@@ -233,6 +235,8 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 2,
     Title: "🚀",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-03-17").toISOString(),
     Modified: new Date("2024-03-17").toISOString(),
     Author: {
@@ -245,6 +249,8 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 3,
     Title: "⭐",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-03-18").toISOString(),
     Modified: new Date("2024-03-18").toISOString(),
     Author: {
@@ -257,6 +263,8 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 4,
     Title: "❤️",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-03-19").toISOString(),
     Modified: new Date("2024-03-19").toISOString(),
     Author: {
@@ -266,10 +274,26 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Parent: { Id: 1, Title: "Beyond the Stars" },
     ParentType: "Story",
   },
+  {
+    Id: 16,
+    Title: "This story beautifully captures the sense of wonder...",
+    EngagementType: "Comment",
+    Content: "This story beautifully captures the sense of wonder and adventure that comes with space exploration. The invitation from beyond is such a powerful narrative device!",
+    Created: new Date("2024-03-20").toISOString(),
+    Modified: new Date("2024-03-20").toISOString(),
+    Author: {
+      Id: 2,
+      Title: "Mooring, James",
+    },
+    Parent: { Id: 1, Title: "Beyond the Stars" },
+    ParentType: "Story",
+  },
   // Story 2: Whispers of the Forest - Moderate engagement
   {
     Id: 5,
     Title: "🌲",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-06-11").toISOString(),
     Modified: new Date("2024-06-11").toISOString(),
     Author: {
@@ -282,6 +306,8 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 6,
     Title: "💚",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-06-12").toISOString(),
     Modified: new Date("2024-06-12").toISOString(),
     Author: {
@@ -291,10 +317,26 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Parent: { Id: 2, Title: "Whispers of the Forest" },
     ParentType: "Story",
   },
+  {
+    Id: 17,
+    Title: "The forest setting is perfect for this kind of...",
+    EngagementType: "Comment",
+    Content: "The forest setting is perfect for this kind of magical realism. I love how you've woven ancient wisdom into the narrative. Really resonates with themes of mindfulness.",
+    Created: new Date("2024-06-13").toISOString(),
+    Modified: new Date("2024-06-13").toISOString(),
+    Author: {
+      Id: 2,
+      Title: "Mooring, James",
+    },
+    Parent: { Id: 2, Title: "Whispers of the Forest" },
+    ParentType: "Story",
+  },
   // Story 3: The Mountain's Tale - Low engagement
   {
     Id: 7,
     Title: "⛰️",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-01-11").toISOString(),
     Modified: new Date("2024-01-11").toISOString(),
     Author: {
@@ -312,6 +354,8 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 8,
     Title: "👍",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2022-05-16").toISOString(),
     Modified: new Date("2022-05-16").toISOString(),
     Author: {
@@ -325,6 +369,8 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 9,
     Title: "💡",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-09-21").toISOString(),
     Modified: new Date("2024-09-21").toISOString(),
     Author: {
@@ -337,6 +383,8 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 10,
     Title: "🎯",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-09-25").toISOString(),
     Modified: new Date("2024-09-25").toISOString(),
     Author: {
@@ -349,8 +397,40 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 11,
     Title: "❤️",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-10-01").toISOString(),
     Modified: new Date("2024-10-01").toISOString(),
+    Author: {
+      Id: 1,
+      Title: "Modukuru, Sateeshsai",
+    },
+    Parent: { Id: 7, Title: "The Art of Digital Transformation in Modern Enterprises" },
+    ParentType: "Story",
+  },
+  {
+    Id: 18,
+    Title: "Excellent breakdown of digital transformation...",
+    EngagementType: "Comment",
+    Content:
+      "Excellent breakdown of digital transformation challenges. The emphasis on cultural change alongside technology is spot on. We've seen similar patterns in our own transformation journey.",
+    Created: new Date("2024-10-02").toISOString(),
+    Modified: new Date("2024-10-02").toISOString(),
+    Author: {
+      Id: 3,
+      Title: "Gupta, Tripti",
+    },
+    Parent: { Id: 7, Title: "The Art of Digital Transformation in Modern Enterprises" },
+    ParentType: "Story",
+  },
+  {
+    Id: 19,
+    Title: "The key components section is particularly usefu...",
+    EngagementType: "Comment",
+    Content:
+      "The key components section is particularly useful. Would love to see a follow-up article diving deeper into the data strategy aspect - that's where many organizations struggle the most.",
+    Created: new Date("2024-10-05").toISOString(),
+    Modified: new Date("2024-10-05").toISOString(),
     Author: {
       Id: 1,
       Title: "Modukuru, Sateeshsai",
@@ -364,6 +444,8 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 12,
     Title: "🎨",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-08-11").toISOString(),
     Modified: new Date("2024-08-11").toISOString(),
     Author: {
@@ -376,6 +458,8 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 13,
     Title: "❤️",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-08-20").toISOString(),
     Modified: new Date("2024-08-20").toISOString(),
     Author: {
@@ -389,6 +473,8 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 14,
     Title: "✨",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date().toISOString(),
     Modified: new Date().toISOString(),
     Author: {
@@ -404,11 +490,27 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
   {
     Id: 15,
     Title: "😀",
+    EngagementType: "Reaction",
+    Content: null,
     Created: new Date("2024-07-21").toISOString(),
     Modified: new Date("2024-07-21").toISOString(),
     Author: {
       Id: 1,
       Title: "Modukuru, Sateeshsai",
+    },
+    Parent: { Id: 12, Title: "Special Characters & Symbols Test: Unicode, Emojis 🚀, and More!" },
+    ParentType: "Story",
+  },
+  {
+    Id: 20,
+    Title: "Great test case for Unicode handling! The emojis...",
+    EngagementType: "Comment",
+    Content: "Great test case for Unicode handling! The emojis and special characters all render perfectly. This is crucial for international audiences and diverse content.",
+    Created: new Date("2024-07-22").toISOString(),
+    Modified: new Date("2024-07-22").toISOString(),
+    Author: {
+      Id: 2,
+      Title: "Mooring, James",
     },
     Parent: { Id: 12, Title: "Special Characters & Symbols Test: Unicode, Emojis 🚀, and More!" },
     ParentType: "Story",

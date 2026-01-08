@@ -2,9 +2,8 @@
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import { cn } from "$lib/utils";
   import { navigate, p, route } from "sv-router/generated";
-  import { getStory, getStoryFiles } from "./get.svelte";
-  import { postNewStory } from "./post";
-  import type { File_ListItem, Story_ListItem } from "$lib/data/types";
+  import { getStory, getStoryFiles, getStoryEngagements, postNewStory, addEngagement, removeEngagement } from "$lib/data/items/stories";
+  import type { File_ListItem, Story_ListItem, Engagement_ListItem } from "$lib/data/types";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { canEditItem } from "$lib/data/global-state.svelte";
   import PenLine from "@lucide/svelte/icons/pen-line";
@@ -13,12 +12,13 @@
   import { getDataProvider } from "$lib/data/data-providers/provider-factory";
   import StoryFileGallery from "./_components/StoryFileGallery.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
-  import { fade, fly, scale, slide } from "svelte/transition";
+  import { fly, scale } from "svelte/transition";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import LineAnimated from "$lib/common-library/utils/components/ui-utils/Line_Animated.svelte";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
+  import { EngagementSection } from "$lib/common-library/integrations/components/engagements";
 
   const { signal } = useAbortController();
 
@@ -36,19 +36,13 @@
   const newStorySubmitState = new SharePointAsyncSubmitState();
 
   async function loadData() {
-    console.log("[index.svelte] loadData called, storyId=", storyId, "params.id=", params.id);
     if (!storyId) {
-      console.log("[index.svelte] storyId is undefined, calling postNewStory...");
       postNewStory(newStorySubmitState);
       return;
     }
 
-    const storyIdIsInvalid = Number.isNaN(+storyId);
-
-    if (storyIdIsInvalid) {
-      navigate("/stories", {
-        replace: true,
-      });
+    if (Number.isNaN(+storyId)) {
+      navigate("/stories", { replace: true });
       return;
     }
 
@@ -87,6 +81,51 @@
     }
   }
 
+  let engagements: Engagement_ListItem[] | undefined = $state();
+  let engagementsLoadState = new SharePointAsyncLoadState();
+  let ReactionSubmissionIsInProgress = $state(false);
+  let CommentSubmissionIsInProgress = $state(false);
+
+  $effect(() => {
+    loadEngagements(storyId);
+  });
+
+  async function loadEngagements(story_Id: string | undefined) {
+    if (story_Id) {
+      engagements = await getStoryEngagements(+story_Id, engagementsLoadState, signal);
+    }
+  }
+
+  async function onAddReaction(emoji: string) {
+    if (!storyId || !story) return;
+    engagements = await addEngagement({
+      parentId: +storyId,
+      parentTitle: story.Title,
+      parentType: "Story",
+      engagementType: "Reaction",
+      content: emoji,
+      engagements,
+      signal,
+    });
+  }
+
+  async function onAddComment(text: string) {
+    if (!storyId || !story) return;
+    engagements = await addEngagement({
+      parentId: +storyId,
+      parentTitle: story.Title,
+      parentType: "Story",
+      engagementType: "Comment",
+      content: text,
+      engagements,
+      signal,
+    });
+  }
+
+  async function onDeleteEngagement(id: number) {
+    engagements = await removeEngagement({ engagementId: id, engagements, signal });
+  }
+
   trackAnalytics();
 </script>
 
@@ -109,8 +148,9 @@
         </Breadcrumb.Root>
 
         <header class="storyHeader mt-4 flex gap-4 justify-between items-start">
-          <div>
-            <h1 class="mt-4 mb-10" in:fly={{ x: -50 }}>{story.Title}</h1>
+          <div class="w-full">
+            <h1 class="mt-4 mb-6" in:fly={{ x: -50 }}>{story.Title}</h1>
+
             <div class="flex gap-2 items-baseline my-4">
               {#if authorProperties}
                 {@const authorFullname = getUserFirstLastNames(authorProperties)}
@@ -134,6 +174,18 @@
           {/if}
         </header>
 
+        <!-- Reactions Section at Top -->
+        <EngagementSection
+          {engagements}
+          {engagementsLoadState}
+          {onAddReaction}
+          {onAddComment}
+          {onDeleteEngagement}
+          bind:ReactionSubmissionIsInProgress
+          bind:CommentSubmissionIsInProgress
+          mode="reactions"
+        />
+
         <img in:scale|global={{ start: 0 }} alt={story.Title} src={"./assets/StoryFiles/" + story.CoverFileName} class="rounded-md mt-2 max-h-75 w-full object-cover object-center" />
 
         <h3 class="">{story.Introduction}</h3>
@@ -151,6 +203,18 @@
             <p>{storyFilesLoadState.error}</p>
           {/if}
         </section>
+
+        <!-- Comments Section at Bottom -->
+        <EngagementSection
+          {engagements}
+          {engagementsLoadState}
+          {onAddReaction}
+          {onAddComment}
+          {onDeleteEngagement}
+          bind:ReactionSubmissionIsInProgress
+          bind:CommentSubmissionIsInProgress
+          mode="comments"
+        />
       </article>
     {:else if storyLoadState?.error}
       <StatusMessage type="error" message={storyLoadState.error} />

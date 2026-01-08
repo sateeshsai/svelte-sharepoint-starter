@@ -7,8 +7,42 @@
   });
   import { p } from "sv-router/generated";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import { getEngagements, groupReactionsByEmoji, getComments, type Engagement_ListItem } from "$lib/common-library/integrations";
+  import { getDataProvider } from "$lib/data/data-providers/provider-factory";
+  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
+  import { SharePointAsyncLoadState } from "$lib/common-library/integrations";
+  import MessageCircle from "@lucide/svelte/icons/message-circle";
 
   const { stories }: { stories: Story_ListItem[] } = $props();
+
+  // Fetch engagements for all stories
+  let allEngagements: Record<number, Engagement_ListItem[]> = $state({});
+
+  async function loadAllEngagements() {
+    const provider = getDataProvider();
+    const loadState = new SharePointAsyncLoadState();
+
+    // Fetch engagements for each story
+    for (const story of stories) {
+      const engagements = await getEngagements(provider, SHAREPOINT_CONFIG.lists.Engagements.name, story.Id, loadState);
+      if (engagements) {
+        allEngagements[story.Id] = engagements;
+      }
+    }
+  }
+
+  $effect(() => {
+    if (stories?.length) {
+      loadAllEngagements();
+    }
+  });
+
+  function getStoryEngagementSummary(storyId: number) {
+    const engagements = allEngagements[storyId] || [];
+    const reactions = groupReactionsByEmoji(engagements);
+    const comments = getComments(engagements);
+    return { reactions, commentCount: comments.length, totalReactions: reactions.reduce((sum, r) => sum + r.count, 0) };
+  }
 </script>
 
 <svelte:boundary>
@@ -17,6 +51,7 @@
   {/snippet}
   <div class="stories grid gap-8 md:grid-cols-2 xl:grid-cols-3" in:slide|global>
     {#each [...stories].sort((a, b) => (new Date(a.Created) > new Date(b.Created) ? -1 : 1)) as story (story.Id)}
+      {@const summary = getStoryEngagementSummary(story.Id)}
       <a
         class="storyItem @container rounded border dark:border-muted-foreground/50 p-3 shadow-lg grid h-full w-full grid-cols-[auto_1fr] items-center gap-4"
         href={p("/stories/:id", {
@@ -32,6 +67,26 @@
         <div class="storyInfo grid gap-2 content-start">
           <p class="font-bold line-clamp-2">{story.Title}</p>
           <p class="text-sm line-clamp-3">{story.Introduction}</p>
+
+          <!-- Engagement Summary -->
+          {#if summary.totalReactions > 0 || summary.commentCount > 0}
+            <div class="flex items-center gap-3 text-xs text-muted-foreground mt-1">
+              {#if summary.totalReactions > 0}
+                <div class="flex items-center gap-1">
+                  {#each summary.reactions.slice(0, 3) as reaction}
+                    <span class="text-sm">{reaction.emoji}</span>
+                  {/each}
+                  <span>{summary.totalReactions}</span>
+                </div>
+              {/if}
+              {#if summary.commentCount > 0}
+                <div class="flex items-center gap-1">
+                  <MessageCircle size={14} />
+                  <span>{summary.commentCount}</span>
+                </div>
+              {/if}
+            </div>
+          {/if}
         </div>
       </a>
     {/each}

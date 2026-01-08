@@ -9,7 +9,7 @@
   import type { Story_ListItem } from "$lib/data/types";
   import type { Filter } from "./_components/StoryFilters.svelte";
   import StoryFilters from "./_components/StoryFilters.svelte";
-  import { getStories } from "./get.svelte";
+  import { getStories } from "$lib/data/items/stories";
   import { SharePointAsyncLoadState, trackAnalytics, poll } from "$lib/common-library/integrations";
   import { getContext, onMount } from "svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";

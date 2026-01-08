@@ -4,7 +4,7 @@
   import { navigating } from "$lib/common-library/integrations/router/router-helpers.svelte";
   import { onMount, setContext } from "svelte";
   import { ModeWatcher } from "mode-watcher";
-  import { getAndStoreCurrentUserInfo } from "./get.svelte";
+  import { getAndStoreCurrentUserInfo } from "$lib/data/items/users";
   import { Toaster } from "svelte-sonner";
   import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import Head from "$lib/common-library/integrations/pwa/Head.svelte";

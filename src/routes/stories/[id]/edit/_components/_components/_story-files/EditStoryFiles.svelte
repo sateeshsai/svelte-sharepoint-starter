@@ -8,11 +8,11 @@
   import StoryFilesInput from "./_components/StoryFilesInput.svelte";
   import Trash from "@lucide/svelte/icons/trash";
   import { cn } from "$lib/utils";
-  import { getStoryFiles } from "$routes/stories/[id]/get.svelte";
+  import { getStoryFiles } from "$lib/data/items/stories";
+  import { deleteStoryFile, updateStoryFile } from "$lib/data/items/files";
   import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import { flip } from "svelte/animate";
   import type { File_ListItem } from "$lib/data/types";
-  import { deleteStoryFile, updateStoryFile } from "./post.svelte";
   import { z } from "zod";
   import { crossfade } from "svelte/transition";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";

@@ -8,7 +8,7 @@
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
 
-  import { renderDocSection, type DocSection } from "../get.svelte";
+  import { renderDocSection, type DocSection } from "$lib/data/items/docs";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
 
   const params = $derived(route.getParams("/docs/:section"));

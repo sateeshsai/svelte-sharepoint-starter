@@ -11,7 +11,7 @@
   import { SharePointAsyncSubmitState } from "$lib/common-library/integrations/error-handling";
   import { ImageCropperState } from "$lib/common-library/utils/components/cropper/cropperState.svelte";
   import type { typeToFlattenedError } from "zod/v3";
-  import { uploadCroppedImage } from "./post.svelte";
+  import { uploadCroppedImage } from "$lib/data/items/files";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
 
   interface Props {

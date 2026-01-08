@@ -131,15 +131,17 @@ export const LOCAL_DATA = {
 
 ```bash
 mkdir -p src/routes/tasks
+mkdir -p src/lib/data/items/tasks
 touch src/routes/tasks/index.svelte
-touch src/routes/tasks/get.svelte.ts
+touch src/lib/data/items/tasks/api.ts
+touch src/lib/data/items/tasks/index.ts
 ```
 
 ---
 
 ## Step 5: Fetch Data (3 minutes)
 
-Create `src/routes/tasks/get.svelte.ts`:
+Create `src/lib/data/items/tasks/api.ts`:
 
 ```typescript
 import { createSelectExpandQueries, type Sharepoint_Get_Operations } from "$lib/common-library/integrations";
@@ -200,7 +202,7 @@ Create `src/routes/tasks/index.svelte`:
 
 ```svelte
 <script lang="ts">
-  import { getTasks } from "./get.svelte";
+  import { getTasks } from "$lib/data/items/tasks";
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
   import type { Task_ListItem } from "$lib/data/types";
@@ -305,7 +307,7 @@ Create `src/routes/tasks/index.svelte`:
 ### Add Create Functionality
 
 ```typescript
-// In get.svelte.ts
+// In api.ts
 export async function createTask(submitState: AsyncSubmitState, taskData: Task_ListItem_Post): Promise<boolean> {
   submitState.setInprogress();
 

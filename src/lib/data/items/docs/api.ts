@@ -1,3 +1,6 @@
+/**
+ * Docs API - Documentation fetching and rendering
+ */
 import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
 import YAML from "js-yaml";
 import { marked } from "marked";

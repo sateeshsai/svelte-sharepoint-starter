@@ -1,14 +1,12 @@
+/**
+ * Files API - File upload and management operations
+ */
 import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
-import { randomInt } from "$lib/common-library/utils/functions/number";
-import { randomIdString } from "$lib/common-library/utils/functions/string";
-import type {
-  Sharepoint_Error_Formatted,
-  Sharepoint_PostItem_SuccessResponse_WithPostedData,
-  Sharepoint_PostItemResponse,
-  Sharepoint_UploadFile_SuccessResponse,
-} from "$lib/common-library/integrations";
-import type { File_ListItem, File_ListItem_Post_ForStory } from "$lib/data/types";
+import { dataUriToFile } from "$lib/common-library/utils/functions/file";
+import { readAndUploadFile, type Sharepoint_Error_Formatted, type Sharepoint_PostItemResponse } from "$lib/common-library/integrations";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
+import { toast } from "svelte-sonner";
+import type { File_ListItem, File_ListItem_Post_ForStory } from "$lib/data/types";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
 /** Response from postListItem */
@@ -19,6 +17,77 @@ export type FileDetailsPostSuccessResponse = File_ListItem_Post_ForStory & {
   Author: { Id: number; Title: string };
   Parent?: { Id: number; Title: string };
 };
+
+// ============================================================================
+// POST/UPLOAD Operations
+// ============================================================================
+
+/** Converts cropped data URI to file and uploads to StoryFiles folder. */
+export async function uploadCroppedImage(dataUri: string, file: File, fileUploadState: AsyncSubmitState) {
+  fileUploadState.setInprogress();
+  const fileToUpload = await dataUriToFile(dataUri, file?.name as string);
+
+  const fileUploadResponse = await readAndUploadFile({
+    siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+    serverRelativeUrl: SHAREPOINT_CONFIG.folders.StoryFiles.rel_path,
+    foldername: SHAREPOINT_CONFIG.folders.StoryFiles.name,
+    file: { name: fileToUpload.name, obj: fileToUpload },
+  });
+
+  if ("error" in fileUploadResponse) {
+    fileUploadState.setError("Error uploading cover art. Error message: " + fileUploadResponse.error);
+    return;
+  }
+
+  fileUploadState.resetForm();
+  return fileUploadResponse;
+}
+
+// ============================================================================
+// PUT/UPDATE Operations
+// ============================================================================
+
+export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Partial<File_ListItem_Post_ForStory>, updateFileState: AsyncSubmitState) {
+  const provider = getDataProvider();
+  const updateResponse = await provider.updateListItem({
+    listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
+    itemId: fileId,
+    body: fileDetailsToUpdate,
+  });
+
+  if (updateResponse && "error" in updateResponse) {
+    updateFileState.setError("Error updating file's sort order. Error message: " + updateResponse.error);
+    return;
+  }
+
+  updateFileState.setSuccess();
+  return updateResponse;
+}
+
+// ============================================================================
+// DELETE Operations
+// ============================================================================
+
+/** Deletes file metadata from Files list (does not delete the actual document library file). */
+export async function deleteStoryFile(fileId: number, deleteFileState: AsyncSubmitState) {
+  deleteFileState.setInprogress();
+  const provider = getDataProvider();
+  const deleteFileResponse = await provider.deleteListItem({
+    siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+    listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
+    itemId: fileId,
+  });
+
+  if (deleteFileResponse && "error" in deleteFileResponse) {
+    deleteFileState.setError("Unable to delete file. Error message: " + deleteFileResponse.error);
+    return;
+  }
+
+  toast.success("File deleted!");
+
+  deleteFileState.setSuccess();
+  return deleteFileResponse;
+}
 
 /**
  * Uploads story files in two phases:

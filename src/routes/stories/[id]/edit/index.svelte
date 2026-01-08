@@ -4,7 +4,7 @@
   import { navigate } from "sv-router/generated";
   import { route } from "sv-router/generated";
   import { canEditItem } from "$lib/data/global-state.svelte";
-  import { getStory } from "../get.svelte";
+  import { getStory } from "$lib/data/items/stories";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";

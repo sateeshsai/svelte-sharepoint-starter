@@ -11,7 +11,7 @@
   import { cn } from "$lib/utils";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { p } from "sv-router/generated";
-  import { updateStory } from "./post.svelte";
+  import { updateStory } from "$lib/data/items/stories";
   import { SharePointAsyncLoadState, SharePointAsyncSubmitState } from "$lib/common-library/integrations/error-handling";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import { slide } from "svelte/transition";

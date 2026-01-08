@@ -80,6 +80,44 @@ export type { AnalyticsEntry_ListItem_Post, AnalyticsEntry_ListItem } from "./an
 export { AnalyticsEntryPostSchema, AnalyticsEntryListSchema } from "./analytics/schemas";
 
 // ============================================================================
+// Engagements (Reactions & Comments)
+// ============================================================================
+
+// Re-export engagement utilities and UI from the new colocated components folder
+export {
+  // Constants
+  EMOJI_REACTIONS,
+  EMOJI_REACTIONS_ARRAY,
+  EMOJI_CATEGORIES,
+  getEmojisByCategory,
+  findEmojiReaction,
+  getEmojiLabel,
+  isValidEmoji,
+  // Schemas
+  EngagementSchema,
+  EngagementListSchema,
+  EngagementPostSchema,
+  createEngagementSchema,
+  createEngagementListSchema,
+  createEngagementPostSchema,
+  validateReactionForPost,
+  validateCommentForPost,
+  validateEngagementForPost,
+  // Type guards
+  isReaction,
+  isComment,
+  // Fetchers
+  getEngagements,
+  postReaction,
+  postComment,
+  deleteEngagement,
+  groupReactionsByEmoji,
+  getComments,
+  getReactions,
+} from "./components/engagements";
+export type { EmojiReaction, EmojiCategory, Engagement_ListItem, Engagement_Post, EmojiReactionCount } from "./components/engagements";
+
+// ============================================================================
 // Router
 // ============================================================================
 

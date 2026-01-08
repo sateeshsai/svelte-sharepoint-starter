@@ -143,7 +143,7 @@ Learn by exploring working implementations in the codebase. Each route demonstra
   >
     <track kind="captions" />
   </video>
-  <div class="overlay col-start-1 row-start-1 bg-gradient-to-r from-white/90">
+  <div class="overlay col-start-1 row-start-1 bg-linear-to-r from-white/90">
     <h2>Batteries-included!</h2>
     <p>Everything you need...</p>
   </div>
@@ -180,7 +180,7 @@ Learn by exploring working implementations in the codebase. Each route demonstra
 **Files:**
 
 - [src/routes/stories/index.svelte](../../src/routes/stories/index.svelte)
-- [src/routes/stories/get.svelte.ts](../../src/routes/stories/get.svelte.ts)
+- [src/lib/data/items/stories/api.ts](../../src/lib/data/items/stories/api.ts)
 - [src/routes/stories/\_components/Stories.svelte](../../src/routes/stories/_components/Stories.svelte)
 - [src/routes/stories/\_components/StoryFilters.svelte](../../src/routes/stories/_components/StoryFilters.svelte)
 
@@ -313,7 +313,7 @@ await getStories(storiesLoadState, lastFetchTimeString, signal, false);
 **Files:**
 
 - [src/routes/stories/[id]/index.svelte](../../src/routes/stories/[id]/index.svelte)
-- [src/routes/stories/[id]/get.svelte.ts](../../src/routes/stories/[id]/get.svelte.ts)
+- [src/lib/data/items/stories/api.ts](../../src/lib/data/items/stories/api.ts)
 - [src/routes/stories/[id]/\_components/StoryFileGallery.svelte](../../src/routes/stories/[id]/_components/StoryFileGallery.svelte)
 
 ### What It Demonstrates
@@ -359,7 +359,7 @@ $effect(() => {
 #### 3. LookUp Column Expansion
 
 ```typescript
-// In get.svelte.ts
+// In api.ts
 const response = await provider.getListItems({
   listName: "Stories",
   operations: [
@@ -630,7 +630,7 @@ const category = $derived(params.category);
 
 - [src/routes/docs/index.svelte](../../src/routes/docs/index.svelte)
 - [src/routes/docs/layout.svelte](../../src/routes/docs/layout.svelte)
-- [src/routes/docs/get.svelte.ts](../../src/routes/docs/get.svelte.ts)
+- [src/lib/data/items/docs/api.ts](../../src/lib/data/items/docs/api.ts)
 - [src/routes/docs/[section]/index.svelte](../../src/routes/docs/[section]/index.svelte)
 
 ### What It Demonstrates

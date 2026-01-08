@@ -43,13 +43,19 @@ export function resetGlobalState(): void {
 }
 
 /** Computed getter - true if current user is an admin */
-export const isAdmin = $derived(global_State.accessRole === "Admin");
+export function isAdmin(): boolean {
+  return global_State.accessRole === "Admin";
+}
 
 /** Computed getter - current user's ID (undefined if not logged in) */
-export const currentUserId = $derived(global_State.currentUser?.Id);
+export function currentUserId(): number | undefined {
+  return global_State.currentUser?.Id;
+}
 
 /** Computed getter - true if user is logged in */
-export const isLoggedIn = $derived(global_State.currentUser !== undefined);
+export function isLoggedIn(): boolean {
+  return global_State.currentUser !== undefined;
+}
 
 /**
  * Check if current user can edit an item

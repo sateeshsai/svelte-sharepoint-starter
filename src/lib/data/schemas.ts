@@ -1,6 +1,11 @@
 import { Sharepoint_Default_Props_Schema, SharepointTitleProps_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "$lib/common-library/integrations/sharepoint-rest-api/data/schemas";
 import { z } from "zod";
 import dayjs from "dayjs";
+import {
+  EngagementListSchema as GenericEngagementListSchema,
+  EngagementPostSchema as GenericEngagementPostSchema,
+  EngagementSchema as GenericEngagementSchema,
+} from "$lib/common-library/integrations";
 
 /**
  * Schema version for migration tracking
@@ -40,23 +45,13 @@ export const storyFilesSchema = z.object({
   files: z.array(FilePostSchema_ForStory).min(1, "Add at least one supporting file."),
 });
 
-/** Engagement schemas - tracks user interactions (likes, views, etc.) */
-export const EngagementSchema = z.strictObject({
-  ParentType: z.enum(["Story"], "Parent type is required."),
-});
-
-export const EngagementListSchema = z.strictObject({
-  ...Sharepoint_Default_Props_Schema.shape,
-  ...EngagementSchema.shape,
-  Author: Sharepoint_Lookup_DefaultProps_Schema,
-  Parent: Sharepoint_Lookup_DefaultProps_Schema,
-});
-
-export const EngagementPostSchema = z.strictObject({
-  ...SharepointTitleProps_Schema.shape,
-  ...EngagementSchema.shape,
-  ParentId: z.number().positive("Parent ID is required."),
-});
+/**
+ * Engagement schemas - tracks user interactions (emoji reactions and comments)
+ * Configured for Story parent type, uses generic schemas from common library
+ */
+export const EngagementSchema = GenericEngagementSchema;
+export const EngagementListSchema = GenericEngagementListSchema;
+export const EngagementPostSchema = GenericEngagementPostSchema;
 
 /** Story schemas - main content items with validation */
 export const StorySchema = z.strictObject({

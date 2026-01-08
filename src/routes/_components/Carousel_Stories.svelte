@@ -5,7 +5,7 @@
   import { cn } from "$lib/utils";
   import Autoplay from "embla-carousel-autoplay";
   import type { Story_ListItem } from "$lib/data/types";
-  import { getStories } from "$routes/stories/get.svelte";
+  import { getStories } from "$lib/data/items/stories";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { p } from "sv-router/generated";
   import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";

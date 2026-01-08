@@ -5,7 +5,7 @@
   import FileUp from "@lucide/svelte/icons/file-up";
   import * as Field from "$lib/components/ui/field/index.js";
   import type { File_ListItem } from "$lib/data/types";
-  import { uploadStoryFiles } from "./post.svelte";
+  import { uploadStoryFiles } from "$lib/data/items/files";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
   let { storyFiles = $bindable(), storyId, fileUploadState = $bindable() }: { storyFiles: File_ListItem[]; storyId: number; fileUploadState: AsyncSubmitState } = $props();
 
