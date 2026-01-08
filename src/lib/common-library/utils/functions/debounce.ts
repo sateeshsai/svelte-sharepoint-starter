@@ -1,18 +1,18 @@
-// @ts-nocheck
-
 /**
  * Delay function execution until after wait time has elapsed since last call
  * Useful for search inputs, window resize handlers, etc.
  * @param callback - Function to debounce
  * @param wait - Delay in milliseconds
+ * @returns Debounced function
  */
-export const debounce = (callback, wait) => {
-  console.log("debounce fn");
-  let timeoutId = null;
-  return (...args) => {
-    window.clearTimeout(timeoutId);
-    timeoutId = window.setTimeout(() => {
+export function debounce<T extends (...args: any[]) => any>(callback: T, wait: number): (...args: Parameters<T>) => void {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  return (...args: Parameters<T>) => {
+    if (timeoutId !== null) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
       callback(...args);
     }, wait);
   };
-};
+}

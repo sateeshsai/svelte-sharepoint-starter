@@ -27,7 +27,7 @@
 <meta name="description" content="..." />
 </svelte:head>
 
-### Move dynamic variables to a seperate file in env.ts. May be even a better name for it.
+### Move dynamic variables to a separate file in env.ts. May be even a better name for it.
 
 ## Examples
 
