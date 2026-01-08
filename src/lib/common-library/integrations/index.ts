@@ -129,7 +129,7 @@ export { navigating } from "./router/router-helpers.svelte";
 
 export { default as Head } from "./pwa/Head.svelte";
 export { default as PWA } from "./pwa/PWA.svelte";
-export { MANIFEST_DATA } from "./pwa/manifest";
+export { generateManifestData, type FixedWebAppManifest } from "./pwa/manifest";
 
 // ============================================================================
 // Rich Text Editor Components

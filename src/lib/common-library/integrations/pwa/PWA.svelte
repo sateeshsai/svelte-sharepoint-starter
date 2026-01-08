@@ -1,79 +1,44 @@
 <script lang="ts">
   import "@khmyznikov/pwa-install";
-  import { getContext, onMount } from "svelte";
-  import type { SharePointConfig } from "../sharepoint-rest-api/config";
-  //@ts-ignore
-  // import System from "svelte-system-info";
-  import { MANIFEST_DATA } from "./manifest";
+  import { onMount } from "svelte";
+  import type { FixedWebAppManifest } from "./manifest";
   import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 
-  const config = getContext<SharePointConfig>("sharePointConfig");
-  const siteRootPath = config.paths.page;
-
-  if ("serviceWorker" in navigator) {
-    if (navigator.serviceWorker.controller) {
-      // console.log("Active service worker found, no need to register");
-    } else {
-      navigator.serviceWorker.register(siteRootPath + "service-worker.js", { scope: siteRootPath }).then(function (reg) {
-        console.log(reg, "Service worker registered");
-      });
-    }
+  interface Props {
+    manifest: FixedWebAppManifest;
+    pagePath: string;
+    installDescription?: string;
   }
 
-  const handlePWAEvent = (message: any) => {
-    // console.log(message);
-  };
+  const { manifest, pagePath, installDescription }: Props = $props();
 
-  const INSTALL_DESCRIPTION = "Install this as an app on your device for easy access.";
+  const DEFAULT_INSTALL_DESCRIPTION = "Install this as an app on your device for easy access.";
 
   onMount(() => {
-    var pwaInstall: any = document.getElementById("pwa-install");
-    pwaInstall.setAttribute("name", MANIFEST_DATA.name);
-    pwaInstall.setAttribute("description", MANIFEST_DATA.description);
-    pwaInstall.setAttribute("install-description", INSTALL_DESCRIPTION);
+    // Register service worker (browser-only)
+    if ("serviceWorker" in navigator && !navigator.serviceWorker.controller) {
+      navigator.serviceWorker
+        .register(pagePath + "service-worker.js", { scope: pagePath })
+        .then((reg) => console.log("Service worker registered", reg))
+        .catch((err) => console.warn("Service worker registration failed", err));
+    }
 
-    const forceStyle = (style: string) => {
-      switch (style) {
-        case "apple-mobile":
-          pwaInstall.isAppleDesktopPlatform = false;
-          pwaInstall.isAppleMobilePlatform = true;
-          break;
-        case "apple-desktop":
-          pwaInstall.isAppleMobilePlatform = false;
-          pwaInstall.isAppleDesktopPlatform = true;
-          break;
-        case "chrome":
-          pwaInstall.isAppleMobilePlatform = false;
-          pwaInstall.isAppleDesktopPlatform = false;
-          break;
-      }
-      pwaInstall.hideDialog();
-      if (!LOCAL_MODE) pwaInstall.showDialog();
+    // Setup PWA install component
+    const pwaInstall = document.getElementById("pwa-install") as HTMLElement & {
+      hideDialog: () => void;
+      showDialog: () => void;
     };
 
-    //TODO: VERIFY - DEVICE SPECIFIC STYLES
-    // forceStyle(System.OSName === "macOS" ? "apple-desktop" : System.OSName === "iOS" ? "apple-mobile" : "chrome");
+    if (!pwaInstall) return;
 
-    //EVENTS
-    pwaInstall.addEventListener("pwa-install-success-event", (event: any) => {
-      handlePWAEvent(event.detail.message);
-    });
-    pwaInstall.addEventListener("pwa-install-fail-event", (event: any) => {
-      handlePWAEvent(event.detail.message);
-    });
-    pwaInstall.addEventListener("pwa-user-choice-result-event", (event: any) => {
-      handlePWAEvent(event.detail.message);
-    });
-    pwaInstall.addEventListener("pwa-install-available-event", (event: any) => {
-      handlePWAEvent(event.detail.message);
-    });
-    pwaInstall.addEventListener("pwa-install-how-to-event", (event: any) => {
-      handlePWAEvent(event.detail.message);
-    });
-    pwaInstall.addEventListener("pwa-install-gallery-event", (event: any) => {
-      handlePWAEvent(event.detail.message);
-    });
+    pwaInstall.setAttribute("name", manifest.name ?? "");
+    pwaInstall.setAttribute("description", manifest.description ?? "");
+    pwaInstall.setAttribute("install-description", installDescription ?? DEFAULT_INSTALL_DESCRIPTION);
+
+    if (!LOCAL_MODE) {
+      pwaInstall.showDialog();
+    }
   });
 </script>
 
-<pwa-install icon={MANIFEST_DATA.icons && MANIFEST_DATA.icons[0].src} id="pwa-install"> </pwa-install>
+<pwa-install icon={manifest.icons?.[0]?.src} id="pwa-install"></pwa-install>

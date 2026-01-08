@@ -75,6 +75,14 @@ export const SHAREPOINT_CONFIG = {
       rel_path: getFolderRelativePath(SHAREPOINT_PATHS.root) + "/assets/StoryFiles",
     },
   },
+  pwa: {
+    name: "Sveltekit + SharePoint starter",
+    short_name: "Starter",
+    description: "A batteries-included starter project.",
+    install_description: "Install this as an app on your device for easy access.",
+    theme_color: "black",
+    background_color: "black",
+  },
   paths: SHAREPOINT_PATHS,
 } satisfies SharePointConfig;
 

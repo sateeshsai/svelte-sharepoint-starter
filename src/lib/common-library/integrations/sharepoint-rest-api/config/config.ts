@@ -43,6 +43,18 @@ export const SharePointConfigSchema = z
         rel_path: z.string().min(1, "Relative path cannot be empty"),
       })
     ),
+    pwa: z
+      .object({
+        name: z.string().min(1, "PWA name required"),
+        short_name: z.string().min(1, "PWA short name required"),
+        description: z.string().min(1, "PWA description required"),
+        install_description: z.string().optional(),
+        theme_color: z.string().default("black"),
+        background_color: z.string().default("black"),
+        icons: z.array(z.any()).optional(),
+        screenshots: z.array(z.object({ src: z.string(), sizes: z.string(), form_factor: z.string().optional() })).optional(),
+      })
+      .optional(),
     siteCollectionUrl: z.string().optional(),
   })
   .passthrough(); // Allow extra properties for flexibility
