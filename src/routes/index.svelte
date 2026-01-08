@@ -7,7 +7,7 @@
   import { global_State } from "$lib/data/global-state.svelte";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import Separator from "$lib/components/ui/separator/separator.svelte";
-  import { FRAMEWORK_FEATURES } from "./data";
+  import { FRAMEWORK_FEATURES_SIMPLE } from "./data";
   import { fade, fly, scale, slide } from "svelte/transition";
   import { IsInViewport } from "runed";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
@@ -61,7 +61,7 @@
 
         {#if inViewport.current}
           <ul class="list-disc ml-4 space-y-1.5 text-pretty text-muted-foreground lg:py-6">
-            {#each FRAMEWORK_FEATURES as benefit, idx}
+            {#each FRAMEWORK_FEATURES_SIMPLE as benefit, idx}
               <li in:fly|global={{ y: -10, delay: 200 + idx * 100 }}>{benefit}</li>
             {/each}
           </ul>

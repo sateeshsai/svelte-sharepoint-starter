@@ -41,7 +41,7 @@
 				style={`color: ${currentColor}; background-color: ${currentHighlight}50;`}
 			>
 				<span>A</span>
-				<ChevronDown class="text-muted-foreground !size-2" />
+				<ChevronDown class="text-muted-foreground size-2!" />
 			</div>
 		</EdraToolTip>
 	</Popover.Trigger>

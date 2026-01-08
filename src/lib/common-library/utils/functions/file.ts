@@ -1,4 +1,13 @@
-/** Convert File object to ArrayBuffer for SharePoint upload */
+/**
+ * Convert File object to ArrayBuffer for SharePoint file upload
+ * Required by SharePoint REST API's readAndUploadFile endpoint
+ * @param file - The File object to convert (from input[type="file"] or drag-drop)
+ * @returns Promise resolving to ArrayBuffer or null on error
+ * @throws Error if file reading fails
+ * @example
+ * const buffer = await fileToArrayBuffer(file);
+ * // Use buffer with SharePoint upload API
+ */
 export async function fileToArrayBuffer(file: File): Promise<ArrayBuffer | null> {
   console.log(file);
   return new Promise((resolve, reject) => {
@@ -21,7 +30,17 @@ export async function fileToArrayBuffer(file: File): Promise<ArrayBuffer | null>
   });
 }
 
-/** Convert data URI to File object (useful for cropped images) */
+/**
+ * Convert data URI to File object
+ * Useful for converting cropped/edited images from canvas back to File for upload
+ * @param dataurl - Data URI string (from canvas.toDataURL() or similar)
+ * @param filename - Desired filename for the resulting File object
+ * @returns File object ready for upload
+ * @example
+ * const canvas = document.querySelector('canvas');
+ * const dataUrl = canvas.toDataURL('image/jpeg');
+ * const file = dataUriToFile(dataUrl, 'cropped-image.jpg');
+ */
 export function dataUriToFile(dataurl: string, filename: string) {
   console.log(dataurl);
   // Split the data URL into the mime type part and the data part
