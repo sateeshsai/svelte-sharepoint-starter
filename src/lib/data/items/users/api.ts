@@ -83,3 +83,31 @@ async function fetchAndSetCurrentUserProperties() {
   //STORE IN GLOBAL STATE
   setUserProperties(userPropertiesResponse.value as Sharepoint_User_Properties);
 }
+
+/**
+ * Fetch user properties by SharePoint user ID
+ * First gets the user to retrieve LoginName, then fetches their profile properties
+ * @param userId - SharePoint user ID
+ * @returns User properties or undefined if not found
+ */
+export async function getUserPropertiesById(userId: number): Promise<Sharepoint_User_Properties | undefined> {
+  const provider = getDataProvider();
+
+  // First get the user by ID to get their LoginName
+  const userResponse = await provider.getUser({
+    siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+    userId: String(userId),
+  });
+
+  if ("error" in userResponse) return undefined;
+
+  // Then use the LoginName to fetch user properties
+  const propsResponse = await provider.getUserProperties({
+    siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
+    accountName: userResponse.LoginName,
+  });
+
+  if ("error" in propsResponse) return undefined;
+
+  return propsResponse;
+}

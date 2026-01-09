@@ -17,7 +17,6 @@
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 
   // Provide config to all child components via Svelte context
-  setContext("test", 2);
   setContext("sharePointConfig", SHAREPOINT_CONFIG);
 
   onMount(() => {

@@ -84,6 +84,7 @@
 <div class={cn("statusMessage h-full grid justify-center gap-2 text-center place-items-center content-center", type === "error" ? "gap-1 text-destructive pb-24 text-balance" : "grid", className)}>
   {@render icon()}
   {@render children()}
+
   {#if type === "error" && showReportButton && errorReportMailtoLink}
     <Popover.Root>
       <Popover.Trigger>

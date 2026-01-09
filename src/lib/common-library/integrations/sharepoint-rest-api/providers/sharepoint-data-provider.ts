@@ -3,12 +3,15 @@ import type { SharePointConfig } from "../config";
 import { getListItems as getListItemsAPI } from "../rest-functions/get/getListItems";
 import { getCurrentUser as getCurrentUserAPI } from "../rest-functions/get/getCurrentUser";
 import { getCurrentUserProperties as getCurrentUserPropertiesAPI } from "../rest-functions/get/getCurrentUserProperties";
+import { getUserProperties as getUserPropertiesAPI } from "../rest-functions/get/getUserProperties";
+import { getUser as getUserAPI } from "../rest-functions/get/getUser";
 import { getFormDigestValue as getFormDigestValueAPI } from "../rest-functions/get/getFormDigestValue";
 import { postListItem as postListItemAPI } from "../rest-functions/post/postListItem";
 import { readAndUploadFile as readAndUploadFileAPI } from "../rest-functions/post/readAndUploadFile";
+import { ensureUserByEmailId as ensureUserByEmailIdAPI } from "../rest-functions/post/ensureUserByEmailId";
 import { updateListItem as updateListItemAPI } from "../rest-functions/update/updateListItem";
 import { deleteListItem as deleteListItemAPI } from "../rest-functions/delete/deleteListItem";
-import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User } from "../data/types";
+import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User, Sharepoint_User_Properties } from "../data/types";
 
 /**
  * SharePointDataProvider - implements DataProvider interface using real SharePoint REST API
@@ -66,6 +69,45 @@ export class SharePointDataProvider implements DataProvider {
       return result;
     }
     return { value: result as Record<string, any> };
+  }
+
+  async getUserProperties<T extends Sharepoint_User_Properties>(options: {
+    siteCollectionUrl?: string;
+    accountName: string;
+    logToConsole?: boolean;
+    signal?: AbortSignal;
+    deduplicationTtlMs?: number;
+  }): Promise<T | Sharepoint_Error_Formatted> {
+    return getUserPropertiesAPI({
+      ...options,
+      siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
+    });
+  }
+
+  async getUser<T extends Sharepoint_User>(options: {
+    siteCollectionUrl?: string;
+    userId: string;
+    logToConsole?: boolean;
+    signal?: AbortSignal;
+    deduplicationTtlMs?: number;
+  }): Promise<T | Sharepoint_Error_Formatted> {
+    return getUserAPI({
+      ...options,
+      siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
+    });
+  }
+
+  async ensureUserByEmailId<T extends Sharepoint_User>(options: {
+    siteCollectionUrl?: string;
+    emailId: string;
+    logToConsole?: boolean;
+    signal?: AbortSignal;
+  }): Promise<T | Sharepoint_Error_Formatted> {
+    const result = await ensureUserByEmailIdAPI({
+      ...options,
+      siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
+    });
+    return result as T | Sharepoint_Error_Formatted;
   }
 
   async getFormDigestValue(options: { siteCollectionUrl?: string; logToConsole?: boolean; signal?: AbortSignal }): Promise<string | Sharepoint_Error_Formatted> {

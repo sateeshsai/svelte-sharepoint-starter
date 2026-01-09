@@ -27,3 +27,6 @@ export {
 
 // Types
 export type { Engagement_ListItem, Engagement_Post, EmojiReaction, EmojiCategory, EmojiReactionCount } from "./engagement-types";
+
+// Local mock data
+export { LOCAL_ENGAGEMENTS } from "./local-data";

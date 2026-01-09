@@ -8,6 +8,7 @@
 
   import { renderDocSection, type DocSection } from "$lib/data/items/docs";
   import { getContext } from "svelte";
+  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
 
   let htmlContent = $state("");
   const loadState = new SharePointAsyncLoadState();
@@ -28,7 +29,7 @@
   }
 </script>
 
-<div class={cn("p-8")}>
+<main>
   <Breadcrumb.Root>
     <Breadcrumb.List class="p-0">
       <Breadcrumb.Item class="pl-0">
@@ -37,7 +38,7 @@
     </Breadcrumb.List>
   </Breadcrumb.Root>
 
-  <div class="prose-sm sm:prose mx-auto dark:prose-invert max-w-4xl mt-8">
+  <div class="prose-sm sm:prose mx-auto dark:prose-invert mt-8">
     <svelte:boundary>
       {#snippet failed(error: any, reset)}
         <ErrorBoundaryMessage customError="Error rendering documentation." {error} {reset} />
@@ -52,4 +53,4 @@
       {/if}
     </svelte:boundary>
   </div>
-</div>
+</main>

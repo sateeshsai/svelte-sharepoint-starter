@@ -98,6 +98,7 @@
       {#snippet failed(error: any, reset)}
         <ErrorBoundaryMessage customError="Error rendering stories page." {error} {reset} />
       {/snippet}
+
       {#if storiesLoadState.loading}
         <StatusMessage type="loading" message="Loading stories..." />
       {:else if storiesLoadState.ready && storiesToShow}

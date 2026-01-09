@@ -1,5 +1,5 @@
 import type { DataProvider } from "./data-provider";
-import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User } from "../data/types";
+import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User, Sharepoint_User_Properties } from "../data/types";
 import type { SharePointConfig } from "../config";
 import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "../data/local-data";
 import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
@@ -352,7 +352,7 @@ export abstract class BaseMockDataProvider implements DataProvider {
 
     // Get mock data from session store (includes any POST/UPDATE/DELETE changes)
     let mockData = [...this.getSessionData(options.listName)]; // Clone to avoid mutation during filtering
-    console.log(`[MockDataProvider] getListItems ${options.listName}, sessionItems=${mockData.length}, ids=[${mockData.map((i) => i.Id).join(",")}]`);
+    // console.log(`[MockDataProvider] getListItems ${options.listName}, sessionItems=${mockData.length}, ids=[${mockData.map((i) => i.Id).join(",")}]`);
 
     // Simulate new entries being created during polling for testing live updates
     // Only for Story list, when cacheResponse is false (polling scenario), and with a Created >= filter
@@ -494,6 +494,91 @@ export abstract class BaseMockDataProvider implements DataProvider {
     // Return the first mock user properties from common-library local data
     const mockProps = LOCAL_SHAREPOINT_USERS_PROPERTIES[0];
     return { value: mockProps as Record<string, any> };
+  }
+
+  async getUserProperties<T extends Sharepoint_User_Properties>(options: {
+    siteCollectionUrl?: string;
+    accountName: string;
+    logToConsole?: boolean;
+    signal?: AbortSignal;
+    deduplicationTtlMs?: number;
+  }): Promise<T | Sharepoint_Error_Formatted> {
+    await this.simulateDelay(300);
+
+    // Extract username from accountName (could be email, emailId, or logonName)
+    let username = options.accountName;
+    if (username.includes("@")) {
+      username = username.split("@")[0];
+    } else if (username.includes("|")) {
+      // Extract from logonName format: "i:0ǵ.t|adfs prod|username"
+      const parts = username.split("|");
+      username = parts[parts.length - 1];
+    }
+    username = username.toLowerCase();
+
+    // Find matching user properties by AccountName or email
+    const mockProps = LOCAL_SHAREPOINT_USERS_PROPERTIES.find((props) => {
+      const accountName = props.AccountName?.toLowerCase() || "";
+      const email = props.Email?.toLowerCase() || "";
+      return accountName.includes(username) || email.includes(username);
+    });
+
+    if (!mockProps) {
+      // Return first user as fallback
+      return LOCAL_SHAREPOINT_USERS_PROPERTIES[0] as unknown as T;
+    }
+
+    return mockProps as unknown as T;
+  }
+
+  async getUser<T extends Sharepoint_User>(options: {
+    siteCollectionUrl?: string;
+    userId: string;
+    logToConsole?: boolean;
+    signal?: AbortSignal;
+    deduplicationTtlMs?: number;
+  }): Promise<T | Sharepoint_Error_Formatted> {
+    await this.simulateDelay(300);
+
+    // Find user by ID
+    const userId = parseInt(options.userId, 10);
+    const mockUser = LOCAL_SHAREPOINT_USERS.find((u) => u.Id === userId);
+
+    if (!mockUser) {
+      return { error: `User with ID ${options.userId} not found` };
+    }
+
+    return mockUser as unknown as T;
+  }
+
+  async ensureUserByEmailId<T extends Sharepoint_User>(options: {
+    siteCollectionUrl?: string;
+    emailId: string;
+    logToConsole?: boolean;
+    signal?: AbortSignal;
+  }): Promise<T | Sharepoint_Error_Formatted> {
+    await this.simulateDelay(400);
+
+    // Extract username from emailId
+    let username = options.emailId;
+    if (username.includes("@")) {
+      username = username.split("@")[0];
+    }
+    username = username.toLowerCase();
+
+    // Find matching user
+    const mockUser = LOCAL_SHAREPOINT_USERS.find((user) => {
+      const loginName = user.LoginName?.toLowerCase() || "";
+      const email = user.Email?.toLowerCase() || "";
+      return loginName.includes(username) || email.includes(username);
+    });
+
+    if (!mockUser) {
+      // Return first user as fallback (ensureUser creates user if not exists)
+      return LOCAL_SHAREPOINT_USERS[0] as unknown as T;
+    }
+
+    return mockUser as unknown as T;
   }
 
   async getFormDigestValue(options: { siteCollectionUrl?: string; logToConsole?: boolean; signal?: AbortSignal }): Promise<string | Sharepoint_Error_Formatted> {

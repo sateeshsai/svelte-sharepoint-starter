@@ -7,6 +7,7 @@
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import type { Snippet } from "svelte";
+  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
 
   const { children }: { children: Snippet } = $props();
   let searchQuery = $state("");
@@ -33,10 +34,10 @@
   });
 </script>
 
-<div class="flex min-h-screen bg-muted/30">
+<div class={cn("flex min-h-screen bg-muted/30", PAGE_UTIL_CLASSES.maxWidth)}>
   <!-- Sidebar -->
   <aside class="w-64 border-r bg-white dark:bg-slate-950 sticky top-0 h-screen overflow-y-auto">
-    <div class="p-6">
+    <div class="p-6 py-8">
       <h1 class="text-xl font-bold mb-6">Documentation</h1>
 
       <!-- Search -->
@@ -72,7 +73,7 @@
   </aside>
 
   <!-- Main Content -->
-  <main class="flex-1 overflow-y-auto">
+  <main class={cn("flex-1 overflow-y-auto", PAGE_UTIL_CLASSES.padding)}>
     {@render children()}
   </main>
 </div>

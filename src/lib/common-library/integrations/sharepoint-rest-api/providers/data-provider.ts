@@ -1,4 +1,4 @@
-import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User } from "../data/types";
+import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User, Sharepoint_User_Properties } from "../data/types";
 
 /**
  * DataProvider interface - abstracts data operations from implementation
@@ -51,6 +51,42 @@ export interface DataProvider {
     signal?: AbortSignal;
     deduplicationTtlMs?: number;
   }): Promise<{ value: Record<string, any> } | Sharepoint_Error_Formatted>;
+
+  /**
+   * Get user properties for a specific user by logonName or emailId
+   * Uses PeopleManager GetPropertiesFor endpoint
+   * @param options - Configuration including accountName (email, emailId, or full logonName)
+   * @returns Promise resolving to user properties or error
+   */
+  getUserProperties<T extends Sharepoint_User_Properties>(options: {
+    siteCollectionUrl?: string;
+    /** Email address (user@domain.com), emailId (username), or full logonName */
+    accountName: string;
+    logToConsole?: boolean;
+    signal?: AbortSignal;
+    deduplicationTtlMs?: number;
+  }): Promise<T | Sharepoint_Error_Formatted>;
+
+  /**
+   * Get a user by their SharePoint ID
+   * @param options - Configuration including userId
+   * @returns Promise resolving to user object or error
+   */
+  getUser<T extends Sharepoint_User>(options: {
+    siteCollectionUrl?: string;
+    userId: string;
+    logToConsole?: boolean;
+    signal?: AbortSignal;
+    deduplicationTtlMs?: number;
+  }): Promise<T | Sharepoint_Error_Formatted>;
+
+  /**
+   * Ensure a user exists in the site by their email address
+   * Creates the user if they don't exist, returns user info if they do
+   * @param options - Configuration including emailId
+   * @returns Promise resolving to user object or error
+   */
+  ensureUserByEmailId<T extends Sharepoint_User>(options: { siteCollectionUrl?: string; emailId: string; logToConsole?: boolean; signal?: AbortSignal }): Promise<T | Sharepoint_Error_Formatted>;
 
   /**
    * Get form digest value for POST/UPDATE/DELETE operations

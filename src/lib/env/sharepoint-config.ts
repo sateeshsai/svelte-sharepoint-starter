@@ -79,7 +79,7 @@ export const SHAREPOINT_CONFIG = {
     },
   },
   pwa: {
-    name: "Sveltekit + SharePoint starter",
+    name: "Svelte + SharePoint starter",
     short_name: "Starter",
     description: "A batteries-included starter project.",
     install_description: "Install this as an app on your device for easy access.",

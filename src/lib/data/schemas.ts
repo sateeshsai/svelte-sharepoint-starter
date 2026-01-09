@@ -12,12 +12,7 @@
 export const SCHEMA_VERSION = "1.0.0";
 
 // Story schemas - re-export from domain folder
-export {
-  StorySchema,
-  StoryListSchema,
-  StoryPostSchema,
-  validateStoryForPost,
-} from "$lib/data/items/stories/schemas";
+export { StorySchema, StoryListSchema, StoryPostSchema, validateStoryForPost } from "$lib/data/items/stories/schemas";
 
 // File schemas - re-export from domain folder
 export {
@@ -32,15 +27,7 @@ export {
 } from "$lib/data/items/files/schemas";
 
 // User schemas - re-export from domain folder
-export {
-  UserSchema,
-  UserListSchema,
-  UserPostSchema,
-} from "$lib/data/items/users/schemas";
+export { UserSchema, UserListSchema, UserPostSchema } from "$lib/data/items/users/schemas";
 
 // Engagement schemas - re-export from common library
-export {
-  EngagementSchema,
-  EngagementListSchema,
-  EngagementPostSchema,
-} from "$lib/common-library/integrations/components/engagements/engagement-schemas";
+export { EngagementSchema, EngagementListSchema, EngagementPostSchema } from "$lib/common-library/integrations/components/engagements/engagement-schemas";

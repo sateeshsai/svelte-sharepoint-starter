@@ -59,7 +59,7 @@
       orientation="horizontal"
     >
       <Carousel.Content>
-        {#each stories as story, idx (story.Id)}
+        {#each [...stories.slice(0, 10)].sort((a, b) => (new Date(a.Created) > new Date(b.Created) ? -1 : 1)) as story, idx (story.Id)}
           <Carousel.Item class="basis-3/4 sm:basis-2/3 xl:basis-1/3">
             <Card.Root class="py-0 overflow-hidden">
               <Card.Content class="p-0">

@@ -3,6 +3,7 @@
   import { cn } from "$lib/utils";
   import { navigate, p, route } from "sv-router/generated";
   import { getStory, getStoryFiles, getStoryEngagements, postNewStory, addEngagement, removeEngagement } from "$lib/data/items/stories";
+  import { getUserPropertiesById } from "$lib/data/items/users";
   import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import type { File_ListItem } from "$lib/data/items/files/schemas";
   import type { Engagement_ListItem } from "$lib/common-library/integrations";
@@ -11,7 +12,6 @@
   import PenLine from "@lucide/svelte/icons/pen-line";
   import { getUserFirstLastNames, type Sharepoint_User_Properties, SharePointAsyncLoadState, SharePointAsyncSubmitState } from "$lib/common-library/integrations";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
-  import { getDataProvider } from "$lib/data/data-providers/provider-factory";
   import StoryFileGallery from "./_components/StoryFileGallery.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { fly, scale } from "svelte/transition";
@@ -67,20 +67,12 @@
   let authorProperties: Sharepoint_User_Properties | undefined = $state();
 
   $effect(() => {
-    loadAuthorProperties(story?.Author.Title);
+    loadAuthorProperties(story?.Author?.Id);
   });
 
-  async function loadAuthorProperties(authorName: string | undefined) {
-    if (!authorName) return;
-
-    const provider = getDataProvider();
-    const response = await provider.getCurrentUserProperties({
-      siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
-    });
-
-    if (!("error" in response)) {
-      authorProperties = response.value as Sharepoint_User_Properties;
-    }
+  async function loadAuthorProperties(authorId: number | undefined) {
+    if (!authorId) return;
+    authorProperties = await getUserPropertiesById(authorId);
   }
 
   let engagements: Engagement_ListItem[] | undefined = $state();
@@ -136,6 +128,7 @@
     {#snippet failed(error: any, reset)}
       <ErrorBoundaryMessage customError="Error rendering story page." {error} {reset} />
     {/snippet}
+
     {#if storyLoadState?.loading}
       <StatusMessage type="loading" message="Loading story..." />
     {:else if storyLoadState.ready && story}

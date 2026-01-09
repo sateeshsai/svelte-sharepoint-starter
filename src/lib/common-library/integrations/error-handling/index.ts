@@ -14,3 +14,6 @@ export { ErrorReportListSchema, ErrorReportPostSchema } from "./error-schemas";
 
 // SharePoint-integrated async state (with error reporting)
 export { SharePointAsyncSubmitState, SharePointAsyncLoadState } from "./sharepoint-async-state.svelte";
+
+// Local mock data
+export { LOCAL_ERROR_REPORTS } from "./local-data";

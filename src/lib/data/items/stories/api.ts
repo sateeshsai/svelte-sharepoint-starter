@@ -4,9 +4,9 @@
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/constants/const";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 import { createSelectExpandQueries, getEngagements, type Sharepoint_Get_Operations, apiError, notFoundError } from "$lib/common-library/integrations";
-import { createNew_Story_ListItem, createNew_File_ListItem, createNew_Story_Post } from "$lib/data/new-items.svelte";
+import { createStoryTemplate, createStoryPost, storyToPost } from "./factory";
+import { createFileTemplate } from "$lib/data/items/files/factory";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-import { convert_Story_ListItem_ToPost } from "$lib/data/convert-items";
 import type { Story_ListItem } from "./schemas";
 import type { File_ListItem } from "$lib/data/items/files/schemas";
 import type { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
@@ -31,7 +31,7 @@ export async function getStories(
   signal?: AbortSignal,
   cacheResponse: boolean = true
 ): Promise<Story_ListItem[] | undefined> {
-  const selectExpand = createSelectExpandQueries(createNew_Story_ListItem());
+  const selectExpand = createSelectExpandQueries(createStoryTemplate());
 
   const operations: Sharepoint_Get_Operations = [
     ["select", selectExpand.select],
@@ -67,7 +67,7 @@ export async function getStories(
 }
 
 export async function getStory(storyId: number, storyLoadState: AsyncLoadState, signal?: AbortSignal) {
-  const selectExpand = createSelectExpandQueries(createNew_Story_ListItem);
+  const selectExpand = createSelectExpandQueries(createStoryTemplate());
   const provider = getDataProvider();
   const fetchResponse = await provider.getListItems<{ value: Story_ListItem[] }>({
     listName: SHAREPOINT_CONFIG.lists.Story.name,
@@ -96,7 +96,7 @@ export async function getStory(storyId: number, storyLoadState: AsyncLoadState, 
 }
 
 export async function getStoryFiles(storyId: number, storyFilesLoadState: AsyncLoadState, signal?: AbortSignal) {
-  const selectExpand = createSelectExpandQueries(createNew_File_ListItem({ ParentId: storyId, ParentType: "Story" }));
+  const selectExpand = createSelectExpandQueries(createFileTemplate({ ParentId: storyId, ParentType: "Story" }));
   const provider = getDataProvider();
   const storyFilesResponse = await provider.getListItems<{ value: File_ListItem[] }>({
     listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
@@ -129,7 +129,7 @@ export async function getStoryEngagements(storyId: number, engagementsLoadState:
 
 /** Creates a new story and navigates to its edit page. */
 export async function postNewStory(newStoryState: AsyncSubmitState) {
-  const newStoryToPost = createNew_Story_Post();
+  const newStoryToPost = createStoryPost();
   const provider = getDataProvider();
   const postNewStoryResponse = await provider.postListItem({
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
@@ -164,7 +164,7 @@ export async function postNewStory(newStoryState: AsyncSubmitState) {
 export async function updateStory(story: Story_ListItem, storySubmissionState: AsyncSubmitState) {
   storySubmissionState.setInprogress();
 
-  const dataToPost = convert_Story_ListItem_ToPost(story);
+  const dataToPost = storyToPost(story);
   const provider = getDataProvider();
 
   const storyUpdateResponse = await provider.updateListItem({

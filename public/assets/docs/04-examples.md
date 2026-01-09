@@ -686,7 +686,7 @@ async function renderDocSection(section: DocSection, loadState: LoadState) {
 #### 3. Prose Styling
 
 ```svelte
-<div class="prose-sm sm:prose mx-auto dark:prose-invert max-w-4xl">
+<div class="prose-sm sm:prose mx-auto dark:prose-invert">
   {@html htmlContent}
 </div>
 ```
