@@ -23,7 +23,7 @@ export { addEngagement, removeEngagement } from "$lib/common-library/integration
 /**
  * Fetch stories from SharePoint/mock data.
  * Supports incremental polling with lastFetchedInPollTimeString filter.
- * 
+ *
  * @param storiesLoadState - State object to track loading/error status. Use AsyncLoadState for auto error reporting.
  * @param lastFetchedInPollTimeString - ISO timestamp to fetch only stories created after this time (for polling)
  * @param signal - AbortSignal from useAbortController() to cancel request on component unmount

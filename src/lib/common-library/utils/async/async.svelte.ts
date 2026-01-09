@@ -2,7 +2,7 @@
  * Framework-agnostic async state management for form submissions
  * Tracks initial, in-progress, success, and error states
  * Use for POST/PUT/DELETE operations
- * 
+ *
  * Base class - extend for integration-specific behavior (e.g., auto error reporting)
  */
 
@@ -89,7 +89,7 @@ export class BaseAsyncSubmitState {
  * Framework-agnostic async state management for data loading
  * Tracks loading, ready, and error states
  * Use for GET operations
- * 
+ *
  * Base class - extend for integration-specific behavior (e.g., auto error reporting)
  */
 export class BaseAsyncLoadState {
