@@ -1,9 +1,9 @@
 import type { DataProvider } from "../../sharepoint-rest-api/providers/data-provider";
 import type { Engagement_ListItem, EmojiReactionCount } from "./engagement-types";
-import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+import type { BaseAsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
 import { apiError } from "$lib/common-library/integrations/error-handling";
 
-export async function getEngagements(provider: DataProvider, listName: string, parentId: number, engagementsLoadState?: AsyncLoadState, signal?: AbortSignal) {
+export async function getEngagements(provider: DataProvider, listName: string, parentId: number, engagementsLoadState?: BaseAsyncLoadState, signal?: AbortSignal) {
   const resp = await provider.getListItems<{ value: Engagement_ListItem[] }>({
     listName,
     operations: [

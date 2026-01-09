@@ -6,7 +6,7 @@
   import { ModeWatcher } from "mode-watcher";
   import { getAndStoreCurrentUserInfo } from "$lib/data/items/users";
   import { Toaster } from "svelte-sonner";
-  import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
+  import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import Head from "$lib/common-library/integrations/pwa/Head.svelte";
   import Header from "./_components/Header.svelte";
   import Footer from "./_components/Footer.svelte";
@@ -23,7 +23,7 @@
     loadData();
   });
 
-  let initialDataLoadState = new SharePointAsyncLoadState();
+  let initialDataLoadState = new AsyncLoadState();
 
   async function loadData() {
     await getAndStoreCurrentUserInfo(initialDataLoadState);

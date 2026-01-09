@@ -6,8 +6,7 @@
   import type { StoryMarkdown } from "./get-stories";
   import type { Filter } from "$routes/stories/_components/StoryFilters.svelte";
   import { getStories } from "./get-stories";
-  import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
-  import { SharePointAsyncLoadState, apiError } from "$lib/common-library/integrations/error-handling";
+  import { AsyncLoadState, apiError } from "$lib/common-library/integrations/error-handling";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import StoryFilters from "$routes/stories/_components/StoryFilters.svelte";
   import * as Sheet from "$lib/components/ui/sheet/index.js";
@@ -16,7 +15,7 @@
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import MarkdownStories from "./_components/MarkdownStories.svelte";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
-  let storiesLoadState = new SharePointAsyncLoadState();
+  let storiesLoadState = new AsyncLoadState();
   let stories: StoryMarkdown[] = $state([]);
 
   onMount(async () => {

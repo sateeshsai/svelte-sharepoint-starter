@@ -4,15 +4,14 @@
   import { p } from "sv-router/generated";
   import { getDocs, type DocSection } from "$lib/data/items/docs";
   import Input from "$lib/components/ui/input/input.svelte";
-  import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
-  import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
+  import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import type { Snippet } from "svelte";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
 
   const { children }: { children: Snippet } = $props();
   let searchQuery = $state("");
   let sections: DocSection[] = $state([]);
-  const docsLoadState = new SharePointAsyncLoadState();
+  const docsLoadState = new AsyncLoadState();
 
   // Expose sections via context for child routes
   setContext<() => DocSection[]>("getDocSections", () => sections);

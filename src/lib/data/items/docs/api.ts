@@ -1,7 +1,7 @@
 /**
  * Docs API - Documentation fetching and rendering
  */
-import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+import type { BaseAsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
 import { notFoundError, apiError } from "$lib/common-library/integrations";
 import YAML from "js-yaml";
 import { marked } from "marked";
@@ -41,7 +41,7 @@ async function getDocIndex(): Promise<string[]> {
   }
 }
 
-export async function getDocs(docsloadState: AsyncLoadState): Promise<DocSection[] | undefined> {
+export async function getDocs(docsloadState: BaseAsyncLoadState): Promise<DocSection[] | undefined> {
   try {
     // Get list of documentation files from index
     const docFiles = await getDocIndex();
@@ -97,7 +97,7 @@ export async function getDocs(docsloadState: AsyncLoadState): Promise<DocSection
  * Fetches markdown file and converts to HTML, removing frontmatter
  * @returns HTML content or undefined on error
  */
-export async function renderDocSection(section: DocSection, loadState: AsyncLoadState): Promise<string | undefined> {
+export async function renderDocSection(section: DocSection, loadState: BaseAsyncLoadState): Promise<string | undefined> {
   try {
     const response = await fetch(`./assets/docs/${section.filename}.md`);
     if (!response.ok) {

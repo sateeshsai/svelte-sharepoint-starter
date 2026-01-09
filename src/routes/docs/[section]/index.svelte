@@ -5,8 +5,7 @@
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
-  import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
-  import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
+  import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
 
   import { renderDocSection, type DocSection } from "$lib/data/items/docs";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
@@ -18,7 +17,7 @@
   const getDocSections = getContext<() => DocSection[]>("getDocSections") || (() => []);
 
   let htmlContent = $state("");
-  const loadState = new SharePointAsyncLoadState();
+  const loadState = new AsyncLoadState();
 
   // Get current section and load its HTML content
   const sections = $derived(getDocSections());

@@ -7,11 +7,13 @@
   });
   import { p } from "sv-router/generated";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
-  import { getEngagements, groupReactionsByEmoji, getComments, type Engagement_ListItem } from "$lib/common-library/integrations";
-  import { getDataProvider } from "$lib/data/data-providers/provider-factory";
-  import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-  import { SharePointAsyncLoadState } from "$lib/common-library/integrations";
+  import { groupReactionsByEmoji, getComments, type Engagement_ListItem } from "$lib/common-library/integrations";
+  import { getStoryEngagements } from "$lib/data/items/stories";
+  import { AsyncLoadState } from "$lib/common-library/integrations";
   import MessageCircle from "@lucide/svelte/icons/message-circle";
+  import { useAbortController } from "$lib/hooks/useAbortController.svelte";
+
+  const { signal } = useAbortController();
 
   const { stories }: { stories: Story_ListItem[] } = $props();
 
@@ -19,12 +21,11 @@
   let allEngagements: Record<number, Engagement_ListItem[]> = $state({});
 
   async function loadAllEngagements() {
-    const provider = getDataProvider();
-    const loadState = new SharePointAsyncLoadState();
+    const loadState = new AsyncLoadState();
 
-    // Fetch engagements for each story
+    // Fetch engagements for each story using domain API
     for (const story of stories) {
-      const engagements = await getEngagements(provider, SHAREPOINT_CONFIG.lists.Engagements.name, story.Id, loadState);
+      const engagements = await getStoryEngagements(story.Id, loadState, signal);
       if (engagements) {
         allEngagements[story.Id] = engagements;
       }

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { FILE_INPUT_ACCEPT_STRINGS } from "$lib/common-library/utils/components/file/file_utils";
   import FileDropZoneWrapper from "$lib/common-library/utils/components/file/FileDropZoneWrapper.svelte";
-  import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+  import { AsyncSubmitState } from "$lib/common-library/integrations/error-handling";
   import FileUp from "@lucide/svelte/icons/file-up";
   import * as Field from "$lib/components/ui/field/index.js";
   import type { File_ListItem } from "$lib/data/items/files/schemas";

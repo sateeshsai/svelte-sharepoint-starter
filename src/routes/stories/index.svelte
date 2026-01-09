@@ -10,7 +10,7 @@
   import type { Filter } from "./_components/StoryFilters.svelte";
   import StoryFilters from "./_components/StoryFilters.svelte";
   import { getStories } from "$lib/data/items/stories";
-  import { SharePointAsyncLoadState, trackAnalytics, poll } from "$lib/common-library/integrations";
+  import { AsyncLoadState, trackAnalytics, poll } from "$lib/common-library/integrations";
   import { getContext, onMount } from "svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { fly } from "svelte/transition";
@@ -20,7 +20,7 @@
 
   const { signal } = useAbortController();
 
-  let storiesLoadState = new SharePointAsyncLoadState();
+  let storiesLoadState = new AsyncLoadState();
   let stories: Story_ListItem[] | undefined = $state();
 
   let stopPolling: ReturnType<typeof poll>;

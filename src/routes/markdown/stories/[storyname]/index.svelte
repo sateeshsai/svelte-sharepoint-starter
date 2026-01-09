@@ -5,8 +5,7 @@
   import { route, p } from "sv-router/generated";
   import { cn } from "$lib/utils";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
-  import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
-  import { SharePointAsyncLoadState, notFoundError, validationError } from "$lib/common-library/integrations/error-handling";
+  import { AsyncLoadState, notFoundError, validationError } from "$lib/common-library/integrations/error-handling";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import LineAnimated from "$lib/common-library/utils/components/ui-utils/Line_Animated.svelte";
@@ -15,7 +14,7 @@
   import StoryFileGallery from "$routes/stories/[id]/_components/StoryFileGallery.svelte";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
 
-  let storyLoadState = new SharePointAsyncLoadState();
+  let storyLoadState = new AsyncLoadState();
   let story: StoryMarkdown | null = $state(null);
 
   const params = $derived(route.getParams("/markdown/stories/:storyname"));

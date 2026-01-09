@@ -1,4 +1,4 @@
-import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+import type { BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 
 /**
  * Context interface for file upload functionality in Edra Rich Text Editor.
@@ -8,10 +8,10 @@ export interface EdraFileUploadContext {
   /**
    * Upload a file and return the URL or error.
    * @param file - The file to upload
-   * @param state - AsyncSubmitState to track upload progress
+   * @param state - BaseAsyncSubmitState to track upload progress
    * @returns Promise with either { url: string } on success or { error: string } on failure
    */
-  upload: (file: File, state: AsyncSubmitState) => Promise<{ url: string } | { error: string }>;
+  upload: (file: File, state: BaseAsyncSubmitState) => Promise<{ url: string } | { error: string }>;
 }
 
 /**

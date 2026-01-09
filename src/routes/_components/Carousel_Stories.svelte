@@ -8,8 +8,11 @@
   import { getStories } from "$lib/data/items/stories";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
   import { p } from "sv-router/generated";
-  import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
+  import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import { useAbortController } from "$lib/hooks/useAbortController.svelte";
+
+  const { signal } = useAbortController();
 
   let api = $state<CarouselAPI>();
 
@@ -28,11 +31,11 @@
 
   const plugin = Autoplay({ delay: autoPlayDelay, stopOnInteraction: true });
 
-  let storiesLoadState = new SharePointAsyncLoadState();
+  let storiesLoadState = new AsyncLoadState();
   let stories: Story_ListItem[] | undefined = $state();
 
   async function loadStories() {
-    stories = await getStories(storiesLoadState);
+    stories = await getStories(storiesLoadState, undefined, signal);
   }
 
   $effect(() => {

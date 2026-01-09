@@ -6,19 +6,20 @@
   import { canEditItem } from "$lib/data/global-state.svelte";
   import { getStory } from "$lib/data/items/stories";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
-  import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
-  import { SharePointAsyncLoadState } from "$lib/common-library/integrations/error-handling";
-  import { onMount } from "svelte";
+  import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import { slide } from "svelte/transition";
   import { cn } from "$lib/utils";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import { useAbortController } from "$lib/hooks/useAbortController.svelte";
+
+  const { signal } = useAbortController();
 
   const params = $derived(route.getParams("/stories/:id/edit"));
   const storyId = $derived(params.id === "new" ? undefined : params.id);
 
-  let storyLoadState = new SharePointAsyncLoadState();
+  let storyLoadState = new AsyncLoadState();
   let story: Story_ListItem | undefined = $state();
   let currentUserCanEdit = $derived(canEditItem(story?.Author?.Id));
 
@@ -39,7 +40,7 @@
       return;
     }
 
-    story = await getStory(+story_Id, storyLoadState);
+    story = await getStory(+story_Id, storyLoadState, signal);
     console.log("[edit/index.svelte] story loaded=", story);
 
     if (story && !currentUserCanEdit) {

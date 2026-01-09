@@ -10,7 +10,7 @@
   import { EMOJI_REACTIONS_ARRAY, groupReactionsByEmoji, getComments, getReactions, type Engagement_ListItem } from "./index";
   import { isOwnEngagement } from "./engagement-handlers";
   import { Confetti } from "svelte-confetti";
-  import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+  import type { BaseAsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import { slide, fade, scale } from "svelte/transition";
   import { elasticOut } from "svelte/easing";
   import { currentUserId } from "$lib/data/global-state.svelte";
@@ -19,7 +19,7 @@
 
   interface Props {
     engagements: Engagement_ListItem[] | undefined;
-    engagementsLoadState: AsyncLoadState;
+    engagementsLoadState: BaseAsyncLoadState;
     onAddReaction: (emoji: string) => Promise<void>;
     onAddComment: (text: string) => Promise<void>;
     onDeleteEngagement: (id: number) => Promise<void>;

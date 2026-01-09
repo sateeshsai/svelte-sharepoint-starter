@@ -1,7 +1,7 @@
 /**
  * Files API - File upload and management operations
  */
-import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+import type { BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { apiError, validationError } from "$lib/common-library/integrations";
 import { dataUriToFile } from "$lib/common-library/utils/functions/file";
 import { readAndUploadFile, type Sharepoint_Error_Formatted, type Sharepoint_PostItemResponse } from "$lib/common-library/integrations";
@@ -24,7 +24,7 @@ export type FileDetailsPostSuccessResponse = File_ListItem_Post_ForStory & {
 // ============================================================================
 
 /** Converts cropped data URI to file and uploads to StoryFiles folder. */
-export async function uploadCroppedImage(dataUri: string, file: File, fileUploadState: AsyncSubmitState) {
+export async function uploadCroppedImage(dataUri: string, file: File, fileUploadState: BaseAsyncSubmitState) {
   fileUploadState.setInprogress();
   const fileToUpload = await dataUriToFile(dataUri, file?.name as string);
 
@@ -48,7 +48,7 @@ export async function uploadCroppedImage(dataUri: string, file: File, fileUpload
 // PUT/UPDATE Operations
 // ============================================================================
 
-export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Partial<File_ListItem_Post_ForStory>, updateFileState: AsyncSubmitState) {
+export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Partial<File_ListItem_Post_ForStory>, updateFileState: BaseAsyncSubmitState) {
   const provider = getDataProvider();
   const updateResponse = await provider.updateListItem({
     listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
@@ -70,7 +70,7 @@ export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Parti
 // ============================================================================
 
 /** Deletes file metadata from Files list (does not delete the actual document library file). */
-export async function deleteStoryFile(fileId: number, deleteFileState: AsyncSubmitState) {
+export async function deleteStoryFile(fileId: number, deleteFileState: BaseAsyncSubmitState) {
   deleteFileState.setInprogress();
   const provider = getDataProvider();
   const deleteFileResponse = await provider.deleteListItem({
@@ -95,7 +95,7 @@ export async function deleteStoryFile(fileId: number, deleteFileState: AsyncSubm
  * 1. Uploads files to StoryFiles document library
  * 2. Creates list items in Files list to track metadata
  */
-export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[], storyId: number, fileUploadState: AsyncSubmitState) {
+export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[], storyId: number, fileUploadState: BaseAsyncSubmitState) {
   fileUploadState.setInprogress();
 
   if (!files?.length) {

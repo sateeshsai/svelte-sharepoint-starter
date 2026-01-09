@@ -2,11 +2,13 @@
  * Framework-agnostic async state management for form submissions
  * Tracks initial, in-progress, success, and error states
  * Use for POST/PUT/DELETE operations
+ * 
+ * Base class - extend for integration-specific behavior (e.g., auto error reporting)
  */
 
 import type { ErrorReportParams } from "$lib/common-library/integrations/error-handling/error-types";
 
-export class AsyncSubmitState {
+export class BaseAsyncSubmitState {
   initial = $state(true);
   attempted = $state(false);
   inProgress = $state(false);
@@ -87,8 +89,10 @@ export class AsyncSubmitState {
  * Framework-agnostic async state management for data loading
  * Tracks loading, ready, and error states
  * Use for GET operations
+ * 
+ * Base class - extend for integration-specific behavior (e.g., auto error reporting)
  */
-export class AsyncLoadState {
+export class BaseAsyncLoadState {
   loading = $state(true);
   ready: boolean = $state(false);
   error: string | undefined = $state("");

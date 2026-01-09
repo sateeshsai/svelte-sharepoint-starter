@@ -4,14 +4,14 @@
  */
 
 import { reportError, type SharePointConfig, type ErrorReportParams } from "$lib/common-library/integrations";
-import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/async";
+import { BaseAsyncLoadState, BaseAsyncSubmitState } from "$lib/common-library/utils/async";
 import { getContext } from "svelte";
 
 /**
  * AsyncSubmitState with automatic SharePoint error reporting
  * Use helper functions: apiError(), validationError(), notFoundError()
  */
-export class SharePointAsyncSubmitState extends AsyncSubmitState {
+export class AsyncSubmitState extends BaseAsyncSubmitState {
   #config: SharePointConfig | null = null;
 
   /**
@@ -38,7 +38,7 @@ export class SharePointAsyncSubmitState extends AsyncSubmitState {
  * AsyncLoadState with automatic SharePoint error reporting
  * Use helper functions: apiError(), validationError(), notFoundError()
  */
-export class SharePointAsyncLoadState extends AsyncLoadState {
+export class AsyncLoadState extends BaseAsyncLoadState {
   #config: SharePointConfig;
 
   constructor() {

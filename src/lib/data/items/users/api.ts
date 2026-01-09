@@ -1,7 +1,7 @@
 /**
  * Users API - All user-related data operations
  */
-import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
+import type { BaseAsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
 import { apiError } from "$lib/common-library/integrations";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 import { setCurrentUser, setAccessRole, setUserProperties } from "$lib/data/global-state.svelte";
@@ -14,7 +14,7 @@ import type { User_ListItem } from "./schemas";
 // GET Operations
 // ============================================================================
 
-export async function getAndStoreCurrentUserInfo(dataLoadState: AsyncLoadState) {
+export async function getAndStoreCurrentUserInfo(dataLoadState: BaseAsyncLoadState) {
   const provider = getDataProvider();
 
   const fetchResponse = await provider.getCurrentUser({

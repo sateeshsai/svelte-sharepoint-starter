@@ -3,7 +3,7 @@
   import { cn } from "$lib/utils";
   import type { Snippet } from "svelte";
   import StatusMessage from "../ui-utils/StatusMessage.svelte";
-  import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+  import { BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import FileIcon from "@lucide/svelte/icons/file";
   import FilesIcon from "@lucide/svelte/icons/files";
   const {
@@ -16,7 +16,7 @@
     message = `Drag and drop ${fileType}${maxFiles > 1 ? "s" : ""} here or click to select`,
     class: className,
     icon = defaultIcon,
-    fileUploadState = new AsyncSubmitState(),
+    fileUploadState = new BaseAsyncSubmitState(),
     children = messageSnippet,
   }: {
     elementId?: string;
@@ -29,7 +29,7 @@
     fileType?: string;
     icon?: Snippet;
     children?: Snippet;
-    fileUploadState: AsyncSubmitState;
+    fileUploadState: BaseAsyncSubmitState;
   } = $props();
 </script>
 

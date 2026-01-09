@@ -2,7 +2,7 @@
   import type { Content, Editor } from "@tiptap/core";
   import { EdraToolBar, EdraDragHandleExtended, EdraEditor, EDRA_FILE_UPLOAD_KEY, type EdraFileUploadContext } from "$lib/common-library/integrations/components/edra-rich-text/shadcn";
   import { setContext } from "svelte";
-  import type { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+  import type { BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import { apiError } from "$lib/common-library/integrations";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
@@ -18,7 +18,7 @@
 
   // Provide file upload context for the rich text editor placeholders
   setContext<EdraFileUploadContext>(EDRA_FILE_UPLOAD_KEY, {
-    upload: async (file: File, state: AsyncSubmitState) => {
+    upload: async (file: File, state: BaseAsyncSubmitState) => {
       state.setInprogress();
 
       if (LOCAL_MODE) {

@@ -3,7 +3,7 @@
 
   import Cropper from "cropperjs";
   import { tick } from "svelte";
-  import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+  import { BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import type { Attachment } from "svelte/attachments";
   import Button from "$lib/components/ui/button/button.svelte";
   import { cn } from "$lib/utils";
@@ -28,7 +28,7 @@
   } = $props();
   let cropper: Cropper;
   let img: HTMLImageElement;
-  const fileUploadState = new AsyncSubmitState();
+  const fileUploadState = new BaseAsyncSubmitState();
 
   function getDataUri() {
     const result = cropper.getCropperSelection();

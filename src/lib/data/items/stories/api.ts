@@ -9,7 +9,7 @@ import { createFileTemplate } from "$lib/data/items/files/factory";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import type { Story_ListItem } from "./schemas";
 import type { File_ListItem } from "$lib/data/items/files/schemas";
-import type { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+import type { BaseAsyncLoadState, BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { toast } from "svelte-sonner";
 import { navigate } from "sv-router/generated";
 
@@ -21,12 +21,17 @@ export { addEngagement, removeEngagement } from "$lib/common-library/integration
 // ============================================================================
 
 /**
- * Fetch stories from SharePoint/mock data
- * Supports incremental polling with lastFetchedInPollTimeString filter
- * @param cacheResponse - Set false for real-time polling
+ * Fetch stories from SharePoint/mock data.
+ * Supports incremental polling with lastFetchedInPollTimeString filter.
+ * 
+ * @param storiesLoadState - State object to track loading/error status. Use AsyncLoadState for auto error reporting.
+ * @param lastFetchedInPollTimeString - ISO timestamp to fetch only stories created after this time (for polling)
+ * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
+ * @param cacheResponse - Set false for real-time polling to bypass cache
+ * @returns Array of stories or undefined on error
  */
 export async function getStories(
-  storiesLoadState: AsyncLoadState,
+  storiesLoadState: BaseAsyncLoadState,
   lastFetchedInPollTimeString?: string | undefined,
   signal?: AbortSignal,
   cacheResponse: boolean = true
@@ -66,7 +71,13 @@ export async function getStories(
   return fetchResponse.value;
 }
 
-export async function getStory(storyId: number, storyLoadState: AsyncLoadState, signal?: AbortSignal) {
+/**
+ * Fetch a single story by ID
+ * @param storyId - Story ID to fetch
+ * @param storyLoadState - State object to track loading/error status. Use AsyncLoadState for auto error reporting.
+ * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
+ */
+export async function getStory(storyId: number, storyLoadState: BaseAsyncLoadState, signal?: AbortSignal) {
   const selectExpand = createSelectExpandQueries(createStoryTemplate());
   const provider = getDataProvider();
   const fetchResponse = await provider.getListItems<{ value: Story_ListItem[] }>({
@@ -95,7 +106,13 @@ export async function getStory(storyId: number, storyLoadState: AsyncLoadState, 
   return fetchResponse.value[0];
 }
 
-export async function getStoryFiles(storyId: number, storyFilesLoadState: AsyncLoadState, signal?: AbortSignal) {
+/**
+ * Fetch files associated with a story
+ * @param storyId - Parent story ID
+ * @param storyFilesLoadState - State object to track loading/error status
+ * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
+ */
+export async function getStoryFiles(storyId: number, storyFilesLoadState: BaseAsyncLoadState, signal?: AbortSignal) {
   const selectExpand = createSelectExpandQueries(createFileTemplate({ ParentId: storyId, ParentType: "Story" }));
   const provider = getDataProvider();
   const storyFilesResponse = await provider.getListItems<{ value: File_ListItem[] }>({
@@ -118,7 +135,13 @@ export async function getStoryFiles(storyId: number, storyFilesLoadState: AsyncL
   return storyFilesResponse.value;
 }
 
-export async function getStoryEngagements(storyId: number, engagementsLoadState: AsyncLoadState, signal?: AbortSignal) {
+/**
+ * Fetch engagements (reactions/comments) for a story
+ * @param storyId - Parent story ID
+ * @param engagementsLoadState - State object to track loading/error status
+ * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
+ */
+export async function getStoryEngagements(storyId: number, engagementsLoadState: BaseAsyncLoadState, signal?: AbortSignal) {
   const provider = getDataProvider();
   return await getEngagements(provider, SHAREPOINT_CONFIG.lists.Engagements.name, storyId, engagementsLoadState, signal);
 }
@@ -128,7 +151,7 @@ export async function getStoryEngagements(storyId: number, engagementsLoadState:
 // ============================================================================
 
 /** Creates a new story and navigates to its edit page. */
-export async function postNewStory(newStoryState: AsyncSubmitState) {
+export async function postNewStory(newStoryState: BaseAsyncSubmitState) {
   const newStoryToPost = createStoryPost();
   const provider = getDataProvider();
   const postNewStoryResponse = await provider.postListItem({
@@ -161,7 +184,7 @@ export async function postNewStory(newStoryState: AsyncSubmitState) {
 // PUT/UPDATE Operations
 // ============================================================================
 
-export async function updateStory(story: Story_ListItem, storySubmissionState: AsyncSubmitState) {
+export async function updateStory(story: Story_ListItem, storySubmissionState: BaseAsyncSubmitState) {
   storySubmissionState.setInprogress();
 
   const dataToPost = storyToPost(story);

@@ -10,7 +10,7 @@
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { canEditItem } from "$lib/data/global-state.svelte";
   import PenLine from "@lucide/svelte/icons/pen-line";
-  import { getUserFirstLastNames, type Sharepoint_User_Properties, SharePointAsyncLoadState, SharePointAsyncSubmitState } from "$lib/common-library/integrations";
+  import { getUserFirstLastNames, type Sharepoint_User_Properties, AsyncLoadState, AsyncSubmitState } from "$lib/common-library/integrations";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
   import StoryFileGallery from "./_components/StoryFileGallery.svelte";
   import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
@@ -27,7 +27,7 @@
   const params = $derived(route.getParams("/stories/:id"));
   const storyId = $derived(params.id.toLowerCase() === "new" || params.id.toLowerCase() === "create" ? undefined : params.id);
 
-  let storyLoadState = new SharePointAsyncLoadState();
+  let storyLoadState = new AsyncLoadState();
   let story: Story_ListItem | undefined = $state();
   let currentUserCanEdit = $derived(canEditItem(story?.Author?.Id));
 
@@ -35,7 +35,7 @@
     loadData();
   });
 
-  const newStorySubmitState = new SharePointAsyncSubmitState();
+  const newStorySubmitState = new AsyncSubmitState();
 
   async function loadData() {
     if (!storyId) {
@@ -52,7 +52,7 @@
   }
 
   let storyFiles: File_ListItem[] | undefined = $state();
-  let storyFilesLoadState = new SharePointAsyncLoadState();
+  let storyFilesLoadState = new AsyncLoadState();
 
   $effect(() => {
     loadStoryFiles(storyId);
@@ -76,7 +76,7 @@
   }
 
   let engagements: Engagement_ListItem[] | undefined = $state();
-  let engagementsLoadState = new SharePointAsyncLoadState();
+  let engagementsLoadState = new AsyncLoadState();
   let ReactionSubmissionIsInProgress = $state(false);
   let CommentSubmissionIsInProgress = $state(false);
 
