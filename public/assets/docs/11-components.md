@@ -82,7 +82,7 @@ The `EdraEditor` component requires `sharepointFileUploadOptions` to be passed f
 
 ```svelte
 <script>
-  import { EdraEditor, EdraToolBar, EdraDragHandleExtended } from "$lib/common-library/integrations/components/edra-rich-text/shadcn";
+  import { EdraEditor, EdraToolBar, EdraDragHandleExtended } from "$lib/common-library/integrations/components/rich-text/edra-rich-text/shadcn";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import type { Content, Editor } from "@tiptap/core";
 
@@ -171,7 +171,7 @@ Drag-and-drop image upload with cropper.
 
 ```svelte
 <script>
-  import ImagePlaceholder from "$lib/common-library/components/edra-rich-text-sharepoint/shadcn/components/ImagePlaceholder.svelte";
+  import ImagePlaceholder from "$lib/common-library/components/rich-text/edra-rich-text-extended/shadcn/components/ImagePlaceholder.svelte";
 
   const imageUploadState = new AsyncSubmitState();
 </script>
@@ -264,13 +264,17 @@ Display error messages with reset button.
 
 #### StatusMessage
 
-Display status messages (info, success, warning, error).
+Display status messages (loading, success, error, message). Pass `errorDetails` from AsyncLoadState to enable the "More Info" dialog with error reporting.
 
 ```svelte
+<StatusMessage type="loading" message="Loading stories..." />
 <StatusMessage type="success" message="Story saved successfully!" />
-<StatusMessage type="error" message={loadState.error} />
-<StatusMessage type="info" message="Loading..." />
+<StatusMessage type="error" message={loadState.error} errorDetails={loadState.errorDetails} />
 ```
+
+#### ErrorReportDialog
+
+Shared dialog component used by StatusMessage and ErrorBoundaryMessage for displaying error details, copying to clipboard, and sending email reports.
 
 #### Breadcrumb Navigation
 

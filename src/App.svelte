@@ -59,7 +59,7 @@
     {/if}
 
     {#if initialDataLoadState?.error}
-      <StatusMessage type="error" message={initialDataLoadState.error} />
+      <StatusMessage type="error" message={initialDataLoadState.error} errorDetails={initialDataLoadState.errorDetails} />
     {/if}
   </div>
 </svelte:boundary>

@@ -75,5 +75,5 @@
 {/if}
 
 {#if fileUploadState.error}
-  <StatusMessage type="error" class="text-destructive" message={fileUploadState.error} />
+  <StatusMessage type="error" class="text-destructive" message={fileUploadState.error} errorDetails={fileUploadState.errorDetails} />
 {/if}

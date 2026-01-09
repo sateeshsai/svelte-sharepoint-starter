@@ -51,15 +51,15 @@
   function submitStory(e: Event) {
     e.preventDefault();
     if (Object.values(storyDataToPost_ValidationErrors?.fieldErrors ?? {}).length) {
-      storySubmissionState.setError(validationError({ userMessage: "Form is incomplete or has invalid inputs. Please check and try again.", context: "StoryEditor" }));
+      storySubmissionState.setError(validationError({ userMessage: "Form is incomplete or has invalid inputs. Please check and try again.", context: "Validating story form" }));
       return;
     }
 
     if (filesValidationErrors.length) {
       if (filesValidationErrors.find((e) => e.path.length > 1)) {
-        storySubmissionState.setError(validationError({ userMessage: "File details are incomplete or have invalid input. Please check and try again.", context: "StoryEditor" }));
+        storySubmissionState.setError(validationError({ userMessage: "File details are incomplete or have invalid input. Please check and try again.", context: "Validating file details" }));
       } else {
-        storySubmissionState.setError(validationError({ userMessage: "Add at least one file.", context: "StoryEditor" }));
+        storySubmissionState.setError(validationError({ userMessage: "Add at least one file.", context: "Validating file details" }));
       }
       return;
     }

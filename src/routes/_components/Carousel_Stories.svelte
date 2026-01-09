@@ -89,6 +89,6 @@
       Slide {current} of {count}
     </div>
   {:else if storiesLoadState.error}
-    <StatusMessage type="error" message={storiesLoadState.error} />
+    <StatusMessage type="error" message={storiesLoadState.error} errorDetails={storiesLoadState.errorDetails} />
   {/if}
 </svelte:boundary>

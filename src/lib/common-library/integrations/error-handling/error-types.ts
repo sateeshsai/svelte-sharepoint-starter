@@ -154,3 +154,38 @@ export function offlineError(params: { context?: string } = {}): ErrorReportPara
 export function isOffline(): boolean {
   return typeof navigator !== "undefined" && !navigator.onLine;
 }
+
+/** Support email config structure from SharePointConfig */
+type SupportEmailConfig = {
+  email: string;
+  subject: string;
+  body: string;
+  cc: string[];
+  bcc: string[];
+};
+
+/**
+ * Create a properly formatted mailto link for error reporting.
+ * Uses encodeURIComponent to properly encode newlines (not URLSearchParams which double-encodes).
+ */
+export function createMailtoLink(support: SupportEmailConfig, errorReport: ErrorReportForUI): string {
+  const bodyLines = [
+    `Site URL: ${errorReport.siteUrl}`,
+    errorReport.context ? `Context: ${errorReport.context}` : "",
+    `Error: ${errorReport.userMessage}`,
+    errorReport.technicalMessage !== errorReport.userMessage ? `Technical: ${errorReport.technicalMessage}` : "",
+    "",
+    support.body,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  // Build mailto params manually - URLSearchParams encodes \n as %0A then again to %250A
+  const params: string[] = [];
+  params.push(`subject=${encodeURIComponent(support.subject)}`);
+  params.push(`body=${encodeURIComponent(bodyLines)}`);
+  if (support.cc.length) params.push(`cc=${encodeURIComponent(support.cc.join(","))}`);
+  if (support.bcc.length) params.push(`bcc=${encodeURIComponent(support.bcc.join(","))}`);
+
+  return `mailto:${support.email}?${params.join("&")}`;
+}

@@ -272,7 +272,7 @@
         {/if}
       </div>
     {:else if engagementsLoadState?.error}
-      <StatusMessage type="error" message={engagementsLoadState.error} />
+      <StatusMessage type="error" message={engagementsLoadState.error} errorDetails={engagementsLoadState.errorDetails} />
     {/if}
   </section>
 {/if}

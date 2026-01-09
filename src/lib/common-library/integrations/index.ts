@@ -138,4 +138,4 @@ export { generateManifestData, type FixedWebAppManifest } from "./pwa/manifest";
 
 // The Edra RTEs are specialized integrations - teams should import from their specific paths
 // if they need to use them. They're not general-purpose utilities.
-// export { EdraEditor, EdraToolBar, EdraDragHandleExtended } from "./components/edra-rich-text/shadcn";
+// export { EdraEditor, EdraToolBar, EdraDragHandleExtended } from "./components/rich-text/edra-rich-text/shadcn";

@@ -139,13 +139,13 @@
         {/each}
 
         {#if updateFileOrderState.error}
-          <StatusMessage type="error" message={updateFileOrderState.error} />
+          <StatusMessage type="error" message={updateFileOrderState.error} errorDetails={updateFileOrderState.errorDetails} />
         {/if}
       </div>
     </Field.Group>
   {/if}
 
   {#if storyFilesLoadState?.error}
-    <StatusMessage type="error" message={storyFilesLoadState.error} />
+    <StatusMessage type="error" message={storyFilesLoadState.error} errorDetails={storyFilesLoadState.errorDetails} />
   {/if}
 </svelte:boundary>

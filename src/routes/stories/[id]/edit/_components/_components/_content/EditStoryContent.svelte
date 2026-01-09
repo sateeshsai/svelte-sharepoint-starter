@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Content, Editor } from "@tiptap/core";
-  import { EdraToolBar, EdraDragHandleExtended, EdraEditor, EDRA_FILE_UPLOAD_KEY, type EdraFileUploadContext } from "$lib/common-library/integrations/components/edra-rich-text/shadcn";
+  import { EdraToolBar, EdraDragHandleExtended, EdraEditor, EDRA_FILE_UPLOAD_KEY, type EdraFileUploadContext } from "$lib/common-library/integrations/components/rich-text/edra-rich-text/shadcn";
   import { setContext } from "svelte";
   import type { BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import { apiError } from "$lib/common-library/integrations";
@@ -38,7 +38,7 @@
       });
 
       if ("error" in response) {
-        state.setError(apiError({ userMessage: "Upload failed", technicalMessage: response.error, context: "EditStoryContent" }));
+        state.setError(apiError({ userMessage: "Upload failed", technicalMessage: response.error, context: "Uploading content image" }));
         return { error: response.error };
       }
 

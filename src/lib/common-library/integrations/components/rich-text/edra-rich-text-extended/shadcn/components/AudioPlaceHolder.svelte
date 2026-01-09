@@ -1,11 +1,11 @@
 <script lang="ts">
   import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
   import type { NodeViewProps } from "@tiptap/core";
-  import Video from "@lucide/svelte/icons/video";
+  import Audio from "@lucide/svelte/icons/audio-lines";
   import { buttonVariants } from "$lib/components/ui/button/button.svelte";
   import { AsyncSubmitState, validationError, apiError } from "$lib/common-library/integrations/error-handling";
   import FileDropZoneWrapper from "$lib/common-library/components/media/FileDropZoneWrapper.svelte";
-  import MediaPlaceHolder from "$lib/common-library/integrations/components/edra-rich-text/components/MediaPlaceHolder.svelte";
+  import MediaPlaceHolder from "$lib/common-library/integrations/components/rich-text/edra-rich-text/components/MediaPlaceHolder.svelte";
   import { randomIdString } from "$lib/common-library/utils/functions/string";
   import { getContext } from "svelte";
   import { EDRA_FILE_UPLOAD_KEY, type EdraFileUploadContext } from "../../../edra-rich-text/context";
@@ -18,7 +18,7 @@
   async function addFile(files: File[]) {
     const file = files?.[0];
     if (!file) {
-      fileUploadState.setError(validationError({ userMessage: "No file selected", context: "VideoPlaceholder" }));
+      fileUploadState.setError(validationError({ userMessage: "No file selected", context: "AudioPlaceholder" }));
       return;
     }
 
@@ -26,7 +26,7 @@
       // Fallback: use local blob URL in dev mode, otherwise prompt for URL
       if (LOCAL_MODE) {
         const fileUrl = URL.createObjectURL(file);
-        editor.chain().focus().setVideo(fileUrl).run();
+        editor.chain().focus().setAudio(fileUrl).run();
       } else {
         handleClick();
       }
@@ -36,36 +36,36 @@
     const result = await uploadContext.upload(file, fileUploadState);
 
     if ("error" in result) {
-      fileUploadState.setError(apiError({ userMessage: "Video upload failed", technicalMessage: result.error, context: "VideoPlaceholder" }));
+      fileUploadState.setError(apiError({ userMessage: "Audio upload failed", technicalMessage: result.error, context: "AudioPlaceholder" }));
       return;
     }
 
-    editor.chain().focus().setVideo(result.url).run();
+    editor.chain().focus().setAudio(result.url).run();
     fileUploadState.resetForm();
   }
 
   function handleClick() {
-    const videoUrl = prompt("Please enter the video URL");
-    if (videoUrl) {
-      editor.chain().focus().setVideo(videoUrl).run();
+    const audioUrl = prompt("Please enter the audio URL");
+    if (audioUrl) {
+      editor.chain().focus().setAudio(audioUrl).run();
     }
   }
 </script>
 
 <!-- onClick={handleClick} -->
-<MediaPlaceHolder class={buttonVariants({ variant: "secondary", class: "my-2 h-full min-h-32 w-full" })} icon={Video} title="Insert a video">
+<MediaPlaceHolder class={buttonVariants({ variant: "secondary", class: "my-2 h-full min-h-32 w-full" })} icon={Audio} title="Insert an audio">
   <div>
     <FileDropZoneWrapper
       elementId={randomIdString()}
       onFileAdd={addFile}
-      accept="video/mp4,video/x-m4v,video/*"
-      fileType="video"
+      accept="audio/*"
+      fileType="audio file"
       maxFiles={1}
       {fileUploadState}
       class="flex h-10 w-full max-w-none grow gap-2 border-none"
     >
       {#snippet icon()}
-        <Video />
+        <Audio />
       {/snippet}
     </FileDropZoneWrapper>
   </div>

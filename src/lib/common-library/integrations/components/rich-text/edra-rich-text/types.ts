@@ -2,7 +2,7 @@ import type { Content, Editor } from "@tiptap/core";
 import type { EditorState } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 import type { Snippet } from "svelte";
-// import type { FileUploadOptions } from "../edra-rich-text-sharepoint/shadcn/components/post.svelte";
+// import type { FileUploadOptions } from "../edra-rich-text-extended/shadcn/components/post.svelte";
 
 export interface EdraEditorProps {
   content?: Content;

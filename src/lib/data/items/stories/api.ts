@@ -60,7 +60,7 @@ export async function getStories(
 
   if ("error" in fetchResponse) {
     if (!lastFetchedInPollTimeString) {
-      storiesLoadState.setError(apiError({ userMessage: "Could not fetch stories", technicalMessage: fetchResponse.error, context: "getStories" }));
+      storiesLoadState.setError(apiError({ userMessage: "Could not fetch stories", technicalMessage: fetchResponse.error, context: "Fetching stories" }));
     } else {
       toast.error("Lives updates failed. Please reload the browser window to see new stories, if any.", { duration: Infinity, dismissable: true, style: "--width:75%" });
     }
@@ -93,12 +93,12 @@ export async function getStory(storyId: number, storyLoadState: BaseAsyncLoadSta
   });
 
   if ("error" in fetchResponse) {
-    storyLoadState.setError(apiError({ userMessage: "Could not fetch story", technicalMessage: fetchResponse.error, context: "getStory" }));
+    storyLoadState.setError(apiError({ userMessage: "Could not fetch story", technicalMessage: fetchResponse.error, context: "Fetching story" }));
     return;
   }
 
   if (!fetchResponse.value.length) {
-    storyLoadState.setError(notFoundError({ userMessage: `No story with Id: ${storyId}. ${RECOMMENDED_ERROR_ACTIONS_FOR_UI.report}`, context: "getStory" }));
+    storyLoadState.setError(notFoundError({ userMessage: `No story with Id: ${storyId}. ${RECOMMENDED_ERROR_ACTIONS_FOR_UI.report}`, context: "Fetching story" }));
     return;
   }
 
@@ -127,7 +127,7 @@ export async function getStoryFiles(storyId: number, storyFilesLoadState: BaseAs
   });
 
   if ("error" in storyFilesResponse) {
-    storyFilesLoadState.setError(apiError({ userMessage: "Could not fetch story files", technicalMessage: storyFilesResponse?.error, context: "getStoryFiles" }));
+    storyFilesLoadState.setError(apiError({ userMessage: "Could not fetch story files", technicalMessage: storyFilesResponse?.error, context: "Fetching story files" }));
     return;
   }
 
@@ -162,13 +162,13 @@ export async function postNewStory(newStoryState: BaseAsyncSubmitState) {
   });
 
   if ("error" in postNewStoryResponse) {
-    newStoryState.setError(apiError({ userMessage: "Could not create a new story", technicalMessage: postNewStoryResponse.error, context: "postNewStory" }));
+    newStoryState.setError(apiError({ userMessage: "Could not create a new story", technicalMessage: postNewStoryResponse.error, context: "Creating story" }));
     return;
   }
 
   const newId = postNewStoryResponse.Id;
   if (!newId) {
-    newStoryState.setError(apiError({ userMessage: "Story created but no Id returned", technicalMessage: "Missing Id in response", context: "postNewStory" }));
+    newStoryState.setError(apiError({ userMessage: "Story created but no Id returned", technicalMessage: "Missing Id in response", context: "Creating story" }));
     return;
   }
 
@@ -198,7 +198,7 @@ export async function updateStory(story: Story_ListItem, storySubmissionState: B
   });
 
   if (storyUpdateResponse && "error" in storyUpdateResponse) {
-    storySubmissionState.setError(apiError({ userMessage: "Error saving story", technicalMessage: storyUpdateResponse.error, context: "updateStory" }));
+    storySubmissionState.setError(apiError({ userMessage: "Error saving story", technicalMessage: storyUpdateResponse.error, context: "Saving story" }));
     return;
   }
 

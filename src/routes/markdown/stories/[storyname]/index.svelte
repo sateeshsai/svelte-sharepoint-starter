@@ -85,7 +85,7 @@
         {/if}
       </article>
     {:else if storyLoadState?.error}
-      <StatusMessage type="error" message={storyLoadState.error} />
+      <StatusMessage type="error" message={storyLoadState.error} errorDetails={storyLoadState.errorDetails} />
     {/if}
   </svelte:boundary>
 </main>

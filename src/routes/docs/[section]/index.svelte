@@ -45,7 +45,7 @@
       </div>
     {:else if loadState.error}
       <div class={cn("p-8")}>
-        <StatusMessage type="error" message={loadState.error || "Failed to load documentation"} />
+        <StatusMessage type="error" message={loadState.error || "Failed to load documentation"} errorDetails={loadState.errorDetails} />
       </div>
     {:else if loadState.ready && sectionData && htmlContent}
       <div class={cn("p-8")}>

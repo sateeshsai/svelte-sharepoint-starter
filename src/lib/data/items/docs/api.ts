@@ -47,7 +47,7 @@ export async function getDocs(docsloadState: BaseAsyncLoadState): Promise<DocSec
     const docFiles = await getDocIndex();
 
     if (docFiles.length === 0) {
-      docsloadState.setError(notFoundError({ userMessage: "No documentation files found in index", context: "getDocs" }));
+      docsloadState.setError(notFoundError({ userMessage: "No documentation files found in index", context: "Loading documentation" }));
       return;
     }
 
@@ -101,7 +101,7 @@ export async function renderDocSection(section: DocSection, loadState: BaseAsync
   try {
     const response = await fetch(`./assets/docs/${section.filename}.md`);
     if (!response.ok) {
-      loadState.setError(apiError({ userMessage: `Failed to fetch documentation file: ${section.filename}`, technicalMessage: response.statusText, context: "renderDocSection" }));
+      loadState.setError(apiError({ userMessage: `Failed to fetch documentation file: ${section.filename}`, technicalMessage: response.statusText, context: "Loading documentation" }));
       return;
     }
 
@@ -114,7 +114,7 @@ export async function renderDocSection(section: DocSection, loadState: BaseAsync
     return htmlContent;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    loadState.setError(apiError({ userMessage: "Failed to load documentation", technicalMessage: errorMessage, context: "renderDocSection" }));
+    loadState.setError(apiError({ userMessage: "Failed to load documentation", technicalMessage: errorMessage, context: "Loading documentation" }));
     return;
   }
 }

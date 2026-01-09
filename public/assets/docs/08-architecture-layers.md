@@ -429,7 +429,7 @@ App layer provides file upload handler via Svelte context:
 ```svelte
 <!-- src/routes/stories/[id]/edit/_components/_content/EditStoryContent.svelte -->
 <script>
-  import { EdraEditor, EDRA_FILE_UPLOAD_KEY, type EdraFileUploadContext } from "$lib/common-library/integrations/components/edra-rich-text/shadcn";
+  import { EdraEditor, EDRA_FILE_UPLOAD_KEY, type EdraFileUploadContext } from "$lib/common-library/integrations/components/rich-text/edra-rich-text/shadcn";
   import { setContext } from "svelte";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { getDataProvider } from "$lib/data/data-providers/provider-factory";

@@ -23,7 +23,7 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: BaseAsyncLoadSta
   });
 
   if ("error" in fetchResponse) {
-    dataLoadState.setError(apiError({ userMessage: "Could not fetch user details", technicalMessage: fetchResponse.error, context: "getAndStoreCurrentUserInfo" }));
+    dataLoadState.setError(apiError({ userMessage: "Could not fetch user details", technicalMessage: fetchResponse.error, context: "Loading user info" }));
     navigator.clipboard.writeText(fetchResponse.error);
     toast.error(fetchResponse.error);
     return;
@@ -46,7 +46,7 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: BaseAsyncLoadSta
 
   if ("error" in userAccessRoleFetchResponse) {
     const errorMessage = "Could not verify user role: " + userAccessRoleFetchResponse.error;
-    dataLoadState.setError(apiError({ userMessage: "Could not verify user role", technicalMessage: userAccessRoleFetchResponse.error, context: "getAndStoreCurrentUserInfo" }));
+    dataLoadState.setError(apiError({ userMessage: "Could not verify user role", technicalMessage: userAccessRoleFetchResponse.error, context: "Verifying user role" }));
     navigator.clipboard.writeText(errorMessage);
     toast.error(errorMessage);
     return;

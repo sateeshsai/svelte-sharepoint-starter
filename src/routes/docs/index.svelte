@@ -46,7 +46,7 @@
       {#if loadState.loading}
         <StatusMessage type="loading" message="Loading documentation..." />
       {:else if loadState.error}
-        <StatusMessage type="error" message={loadState.error} />
+        <StatusMessage type="error" message={loadState.error} errorDetails={loadState.errorDetails} />
       {:else if loadState.ready}
         {@html htmlContent}
       {/if}

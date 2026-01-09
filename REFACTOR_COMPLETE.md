@@ -296,7 +296,7 @@ sharepoint-rest-api/
 4. `src/routes/stories/[id]/edit/_components/_components/_cover-image/post.svelte.ts` - Updated readAndUploadFile import
 5. `src/lib/common-library/integrations/analytics/analytics.ts` - Updated REST operation imports
 6. `src/lib/common-library/integrations/error-handling/report-error.ts` - Updated postListItem import
-7. `src/lib/common-library/integrations/components/edra-rich-text-sharepoint/.../post.svelte.ts` - Updated readAndUploadFile import
+7. `src/lib/common-library/integrations/components/rich-text/edra-rich-text-extended/.../post.svelte.ts` - Updated readAndUploadFile import
 
 ### Internal Import Path Updates
 

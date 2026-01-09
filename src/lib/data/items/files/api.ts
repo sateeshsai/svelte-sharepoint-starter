@@ -36,7 +36,7 @@ export async function uploadCroppedImage(dataUri: string, file: File, fileUpload
   });
 
   if ("error" in fileUploadResponse) {
-    fileUploadState.setError(apiError({ userMessage: "Error uploading cover art", technicalMessage: fileUploadResponse.error, context: "uploadCroppedImage" }));
+    fileUploadState.setError(apiError({ userMessage: "Error uploading cover art", technicalMessage: fileUploadResponse.error, context: "Uploading cover image" }));
     return;
   }
 
@@ -57,7 +57,7 @@ export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Parti
   });
 
   if (updateResponse && "error" in updateResponse) {
-    updateFileState.setError(apiError({ userMessage: "Error updating file's sort order", technicalMessage: updateResponse.error, context: "updateStoryFile" }));
+    updateFileState.setError(apiError({ userMessage: "Error updating file's sort order", technicalMessage: updateResponse.error, context: "Updating file order" }));
     return;
   }
 
@@ -80,7 +80,7 @@ export async function deleteStoryFile(fileId: number, deleteFileState: BaseAsync
   });
 
   if (deleteFileResponse && "error" in deleteFileResponse) {
-    deleteFileState.setError(apiError({ userMessage: "Unable to delete file", technicalMessage: deleteFileResponse.error, context: "deleteStoryFile" }));
+    deleteFileState.setError(apiError({ userMessage: "Unable to delete file", technicalMessage: deleteFileResponse.error, context: "Deleting file" }));
     return;
   }
 
@@ -99,7 +99,7 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
   fileUploadState.setInprogress();
 
   if (!files?.length) {
-    fileUploadState.setError(validationError({ userMessage: "No valid files were selected. Please try again or report the error.", context: "uploadStoryFiles" }));
+    fileUploadState.setError(validationError({ userMessage: "No valid files were selected. Please try again or report the error.", context: "Uploading files" }));
     return;
   }
 
@@ -139,7 +139,7 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
   });
 
   if (fileUploadErrors.length) {
-    fileUploadState.setError(apiError({ userMessage: "Some files failed to upload", technicalMessage: fileUploadErrors.join("\n"), context: "uploadStoryFiles" }));
+    fileUploadState.setError(apiError({ userMessage: "Some files failed to upload", technicalMessage: fileUploadErrors.join("\n"), context: "Uploading files" }));
   }
 
   // 2. POST UPLOADED FILE DETAILS TO FILES LIST
