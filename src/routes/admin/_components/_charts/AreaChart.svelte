@@ -7,7 +7,7 @@
   import { curveNatural } from "d3-shape";
   import ChartContainer from "$lib/components/ui/chart/chart-container.svelte";
   import { cubicInOut } from "svelte/easing";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 
   const chartData = [
     { date: new Date("2024-04-01"), desktop: 222, mobile: 150 },

@@ -5,8 +5,8 @@
   import SmilePlus from "@lucide/svelte/icons/smile-plus";
   import ChevronDown from "@lucide/svelte/icons/chevron-down";
   import Trash2 from "@lucide/svelte/icons/trash-2";
-  import LineAnimated from "$lib/common-library/utils/components/ui-utils/Line_Animated.svelte";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import LineAnimated from "$lib/common-library/components/animation/LineAnimated.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { EMOJI_REACTIONS_ARRAY, groupReactionsByEmoji, getComments, getReactions, type Engagement_ListItem } from "./index";
   import { isOwnEngagement } from "./engagement-handlers";
   import { Confetti } from "svelte-confetti";

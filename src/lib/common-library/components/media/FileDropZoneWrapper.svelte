@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { FileDropZone } from "$lib/common-library/utils/components/blocks/file-drop-zone";
+  import { FileDropZone } from "$lib/common-library/components/media";
   import { cn } from "$lib/utils";
   import type { Snippet } from "svelte";
-  import StatusMessage from "../ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import FileIcon from "@lucide/svelte/icons/file";
   import FilesIcon from "@lucide/svelte/icons/files";

@@ -10,9 +10,9 @@
   import Head from "$lib/common-library/integrations/pwa/Head.svelte";
   import Header from "./_components/Header.svelte";
   import Footer from "./_components/Footer.svelte";
-  import TailwindViewportHelper from "$lib/common-library/utils/components/ui-utils/TailwindViewportHelper.svelte";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import TailwindViewportHelper from "$lib/common-library/components/dev/TailwindViewportHelper.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import ConfigErrorBoundary from "./_components/ConfigErrorBoundary.svelte";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 

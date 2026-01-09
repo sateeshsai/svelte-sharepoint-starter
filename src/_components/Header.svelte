@@ -1,7 +1,7 @@
 <script>
   import TextAlignJustify from "@lucide/svelte/icons/text-align-justify";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
-  import DeloitteLogo from "$lib/common-library/integrations/components/deloitte/DeloitteLogo.svelte";
+  import DeloitteLogo from "$lib/common-library/components/branding/DeloitteLogo.svelte";
   import * as Sheet from "$lib/components/ui/sheet/index.js";
   import NavItems from "./_components/NavItems.svelte";
 

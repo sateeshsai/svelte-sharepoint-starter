@@ -4,7 +4,7 @@
   import { getPictureUrl, getUserFirstLastNames } from "$lib/common-library/integrations/sharepoint-rest-api/utilities/helpers";
   let { sheetIsOpen = $bindable() }: { sheetIsOpen: boolean } = $props();
   import * as Avatar from "$lib/components/ui/avatar/index.js";
-  import LightDarkIcon from "$lib/common-library/utils/components/icons/LightDark_Icon.svelte";
+  import LightDarkIcon from "$lib/common-library/components/icons/LightDarkIcon.svelte";
   import { toggleMode } from "mode-watcher";
   import { global_State } from "$lib/data/global-state.svelte";
   import { isActiveLink } from "sv-router";

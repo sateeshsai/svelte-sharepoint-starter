@@ -6,10 +6,10 @@
   import Autoplay from "embla-carousel-autoplay";
   import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import { getStories } from "$lib/data/items/stories";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { p } from "sv-router/generated";
   import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
 
   const { signal } = useAbortController();

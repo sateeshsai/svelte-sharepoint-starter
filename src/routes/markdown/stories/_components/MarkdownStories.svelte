@@ -7,7 +7,7 @@
   });
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
   import { p } from "sv-router/generated";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 
   const { stories }: { stories: Story_ListItem[] } = $props();
 </script>

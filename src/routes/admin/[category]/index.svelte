@@ -3,7 +3,7 @@
   import { cn } from "$lib/utils";
   import { p, route } from "sv-router/generated";
   import { DASHBOARD_SAMPLE_DATA } from "../_components/data.svelte";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   const params = $derived(route.getParams("/admin/:category"));

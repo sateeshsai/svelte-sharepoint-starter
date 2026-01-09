@@ -2,9 +2,9 @@
   import * as Field from "$lib/components/ui/field/index.js";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
   import ArrowRight from "@lucide/svelte/icons/arrow-right";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import Input from "$lib/components/ui/input/input.svelte";
-  import FilePreview from "$lib/common-library/utils/components/file/FilePreview.svelte";
+  import FilePreview from "$lib/common-library/components/media/FilePreview.svelte";
   import StoryFilesInput from "./_components/StoryFilesInput.svelte";
   import Trash from "@lucide/svelte/icons/trash";
   import { cn } from "$lib/utils";
@@ -15,7 +15,7 @@
   import type { File_ListItem } from "$lib/data/items/files/schemas";
   import { z } from "zod";
   import { crossfade } from "svelte/transition";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 
   const [send, receive] = crossfade({
     duration: (d) => Math.sqrt(d * 200),

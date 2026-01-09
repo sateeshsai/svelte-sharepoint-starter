@@ -5,7 +5,7 @@
   import { BarChart, Highlight, type ChartContextValue } from "layerchart";
   import TrendingUpIcon from "@lucide/svelte/icons/trending-up";
   import { cubicInOut } from "svelte/easing";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 
   const chartData = [
     { month: "January", desktop: 186, mobile: 80 },

@@ -5,13 +5,13 @@
   import { route } from "sv-router/generated";
   import { canEditItem } from "$lib/data/global-state.svelte";
   import { getStory } from "$lib/data/items/stories";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import { slide } from "svelte/transition";
   import { cn } from "$lib/utils";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
 
   const { signal } = useAbortController();

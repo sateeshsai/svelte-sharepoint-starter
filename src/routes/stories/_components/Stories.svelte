@@ -6,7 +6,7 @@
     duration: (d) => Math.sqrt(d * 200),
   });
   import { p } from "sv-router/generated";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { groupReactionsByEmoji, getComments, type Engagement_ListItem } from "$lib/common-library/integrations";
   import { getStoryEngagements } from "$lib/data/items/stories";
   import { AsyncLoadState } from "$lib/common-library/integrations";

@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as Dialog from "$lib/components/ui/dialog/index.js";
   import type { File_ListItem } from "$lib/data/items/files/schemas";
-  import FilePreview from "$lib/common-library/utils/components/file/FilePreview.svelte";
+  import FilePreview from "$lib/common-library/components/media/FilePreview.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
   import { cn } from "$lib/utils";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";

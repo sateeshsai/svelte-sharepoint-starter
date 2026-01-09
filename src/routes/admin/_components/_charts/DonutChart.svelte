@@ -3,7 +3,7 @@
   import TrendingUpIcon from "@lucide/svelte/icons/trending-up";
   import * as Chart from "$lib/components/ui/chart/index.js";
   import * as Card from "$lib/components/ui/card/index.js";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 
   const chartData = [
     { browser: "chrome", visitors: 275, color: "var(--color-chrome)" },

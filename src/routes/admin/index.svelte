@@ -5,7 +5,7 @@
   import LineChart from "./_components/_charts/LineChart.svelte";
   import DonutChart from "./_components/_charts/DonutChart.svelte";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 
   let { children }: { children: Snippet } = $props();
 

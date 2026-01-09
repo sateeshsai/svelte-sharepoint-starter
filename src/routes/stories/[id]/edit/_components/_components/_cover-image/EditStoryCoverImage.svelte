@@ -2,16 +2,16 @@
   import * as Field from "$lib/components/ui/field/index.js";
   import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import Button from "$lib/components/ui/button/button.svelte";
-  import CropperJsWrapper from "$lib/common-library/utils/components/cropper/CropperJsWrapper.svelte";
-  import FileDropZoneWrapper from "$lib/common-library/utils/components/file/FileDropZoneWrapper.svelte";
+  import CropperJsWrapper from "$lib/common-library/components/media/CropperJsWrapper.svelte";
+  import FileDropZoneWrapper from "$lib/common-library/components/media/FileDropZoneWrapper.svelte";
   import Image from "@lucide/svelte/icons/image";
   import PenLine from "@lucide/svelte/icons/pen-line";
   import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
   import { AsyncSubmitState } from "$lib/common-library/integrations/error-handling";
-  import { ImageCropperState } from "$lib/common-library/utils/components/cropper/cropperState.svelte";
+  import { ImageCropperState } from "$lib/common-library/components/media/cropperState.svelte";
   import type { typeToFlattenedError } from "zod/v3";
   import { uploadCroppedImage } from "$lib/data/items/files";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 
   interface Props {
     story: Story_ListItem;
@@ -23,27 +23,27 @@
 
   let fileInMemory: File | undefined = $state();
 
-  export const coverimageCropperState = new ImageCropperState();
+  export const coverImageCropperState = new ImageCropperState();
 
   async function addCoverImage(files: File[]) {
     fileInMemory = files[0];
-    coverimageCropperState.sourceImageSrc = URL.createObjectURL(fileInMemory);
-    coverimageCropperState.showFileDropZone = false;
-    coverimageCropperState.showCropper = true;
+    coverImageCropperState.sourceImageSrc = URL.createObjectURL(fileInMemory);
+    coverImageCropperState.showFileDropZone = false;
+    coverImageCropperState.showCropper = true;
   }
 
   export const coverImageUploadState = new AsyncSubmitState();
 
   async function handleUploadCroppedImage(dataUri: string) {
-    coverimageCropperState.showFileDropZone = true;
-    coverimageCropperState.showCropper = false;
+    coverImageCropperState.showFileDropZone = true;
+    coverImageCropperState.showCropper = false;
 
     const fileUploadSuccessResponse = await uploadCroppedImage(dataUri, fileInMemory as File, coverImageUploadState);
 
     if (coverImageUploadState.success && fileUploadSuccessResponse) {
-      coverimageCropperState.croppedImageDataUri_ForLocalMode = dataUri;
+      coverImageCropperState.croppedImageDataUri_ForLocalMode = dataUri;
       story.CoverFileName = fileUploadSuccessResponse.Name;
-      coverimageCropperState.showFileDropZone = false;
+      coverImageCropperState.showFileDropZone = false;
     }
 
     return;
@@ -58,32 +58,32 @@
   <Field.Field>
     <Field.Label for="story-cover-img" class="flex justify-between">
       <p>Cover image <span class="text-muted-foreground font-light"></span></p>
-      <Button variant="outline" size="icon" class="h-7 w-7.5" onclick={() => (coverimageCropperState.showFileDropZone = true)}>
+      <Button variant="outline" size="icon" class="h-7 w-7.5" onclick={() => (coverImageCropperState.showFileDropZone = true)}>
         <PenLine />
       </Button>
     </Field.Label>
 
-    {#if story.CoverFileName && !coverimageCropperState.showFileDropZone && !coverimageCropperState.showCropper}
+    {#if story.CoverFileName && !coverImageCropperState.showFileDropZone && !coverImageCropperState.showCropper}
       <div class="preview relative h-72" id="story-cover-img">
         <img
           id="image"
-          src={LOCAL_MODE && fileInMemory ? coverimageCropperState.croppedImageDataUri_ForLocalMode : "./assets/images/" + story.CoverFileName}
+          src={LOCAL_MODE && fileInMemory ? coverImageCropperState.croppedImageDataUri_ForLocalMode : "./assets/images/" + story.CoverFileName}
           alt="CropperPic"
           class="bg-muted/30 rounded overflow-hidden h-full w-full object-cover object-center"
         />
       </div>
     {/if}
 
-    {#if coverimageCropperState.showCropper}
+    {#if coverImageCropperState.showCropper}
       <CropperJsWrapper
         handleCropped={(dataUri) => handleUploadCroppedImage(dataUri)}
         id="story-cover-img"
-        bind:showCropper={coverimageCropperState.showCropper}
-        bind:sourceSrc={coverimageCropperState.sourceImageSrc}
+        bind:showCropper={coverImageCropperState.showCropper}
+        bind:sourceSrc={coverImageCropperState.sourceImageSrc}
       />
     {/if}
 
-    {#if coverimageCropperState.showFileDropZone}
+    {#if coverImageCropperState.showFileDropZone}
       <div id="story-cover-img" class="grid min-h-72 rounded-lg border border-dashed border-input">
         <FileDropZoneWrapper elementId="file-upload" fileUploadState={coverImageUploadState} onFileAdd={addCoverImage} accept="image/*" maxFiles={1} fileCount={0}>
           {#snippet icon()}

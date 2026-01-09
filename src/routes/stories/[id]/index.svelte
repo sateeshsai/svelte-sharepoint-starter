@@ -13,12 +13,12 @@
   import { getUserFirstLastNames, type Sharepoint_User_Properties, AsyncLoadState, AsyncSubmitState } from "$lib/common-library/integrations";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
   import StoryFileGallery from "./_components/StoryFileGallery.svelte";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { fly, scale } from "svelte/transition";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
-  import LineAnimated from "$lib/common-library/utils/components/ui-utils/Line_Animated.svelte";
+  import LineAnimated from "$lib/common-library/components/animation/LineAnimated.svelte";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
   import { EngagementSection } from "$lib/common-library/integrations/components/engagements";
 

@@ -8,7 +8,7 @@
   import Button from "$lib/components/ui/button/button.svelte";
   import Separator from "$lib/components/ui/separator/separator.svelte";
   import { cn } from "$lib/utils";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 
   const params = $derived(isActive("/admin/:category/:section") ? route.getParams("/admin/:category/:section") : null);
   const categorySlug = $derived(params ? params.section : null);

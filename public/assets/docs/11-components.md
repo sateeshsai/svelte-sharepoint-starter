@@ -148,7 +148,7 @@ Drag-and-drop file upload with validation.
 
 ```svelte
 <script>
-  import FileDropZoneWrapper from "$lib/common-library/utils/components/file/FileDropZoneWrapper.svelte";
+  import FileDropZoneWrapper from "$lib/common-library/components/media/FileDropZoneWrapper.svelte";
   import { AsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 
   const fileUploadState = new AsyncSubmitState();
@@ -185,7 +185,7 @@ Image cropping component.
 
 ```svelte
 <script>
-  import CropperJsWrapper from "$lib/common-library/utils/components/cropper/CropperJsWrapper.svelte";
+  import CropperJsWrapper from "$lib/common-library/components/media/CropperJsWrapper.svelte";
 
   const cropState = new AsyncSubmitState();
 </script>
@@ -205,15 +205,16 @@ Data filtering UI components for lists.
 
 ```svelte
 <script>
-  import StoryFilters from "$lib/routes/stories/_components/StoryFilters.svelte";
+  import ToggleFilters, { type Filter } from "$lib/common-library/components/filters/ToggleFilters.svelte";
 
-  let filters = $state({
-    Tags: { selected: [] },
-    Year: { selected: [] },
+  let filter: Filter = $state({
+    category: "Tags",
+    options: ["Frontend", "Backend", "Design"],
+    selected: [],
   });
 </script>
 
-<StoryFilters bind:filters />
+<ToggleFilters bind:filter />
 ```
 
 **Used in:** Stories page (`src/routes/stories/index.svelte`)

@@ -1,5 +1,5 @@
 <script>
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { cn } from "$lib/utils";
   import { DASHBOARD_SAMPLE_DATA } from "$routes/admin/_components/data.svelte";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";

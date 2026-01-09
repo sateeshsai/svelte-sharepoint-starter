@@ -208,8 +208,8 @@ Create `src/routes/tasks/index.svelte`:
   import type { Task_ListItem } from "$lib/data/types";
   import { cn } from "$lib/utils";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 
   const { signal } = useAbortController();
   let tasks: Task_ListItem[] = $state([]);

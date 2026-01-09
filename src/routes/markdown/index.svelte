@@ -3,7 +3,7 @@
   import { cn } from "$lib/utils";
   import ComponentsInMarkdown from "./_components-in-markdown.md";
   import SimpleMarkdown from "./_components-in-markdown.md";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 </script>
 
 <main class={cn("prose-sm sm:prose  mx-auto dark:prose-invert", PAGE_UTIL_CLASSES.padding, PAGE_UTIL_CLASSES.maxWidth)}>

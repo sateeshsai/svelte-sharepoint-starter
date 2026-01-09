@@ -7,14 +7,14 @@
   import type { Filter } from "$routes/stories/_components/StoryFilters.svelte";
   import { getStories } from "./get-stories";
   import { AsyncLoadState, apiError } from "$lib/common-library/integrations/error-handling";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import StoryFilters from "$routes/stories/_components/StoryFilters.svelte";
   import * as Sheet from "$lib/components/ui/sheet/index.js";
   import Label from "$lib/components/ui/label/label.svelte";
   import { fly } from "svelte/transition";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import MarkdownStories from "./_components/MarkdownStories.svelte";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   let storiesLoadState = new AsyncLoadState();
   let stories: StoryMarkdown[] = $state([]);
 

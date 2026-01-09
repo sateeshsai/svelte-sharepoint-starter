@@ -3,8 +3,8 @@
   import { cn } from "$lib/utils";
   import { p, route } from "sv-router/generated";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
 
   import { renderDocSection, type DocSection } from "$lib/data/items/docs";

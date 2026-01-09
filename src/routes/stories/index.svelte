@@ -12,9 +12,9 @@
   import { getStories } from "$lib/data/items/stories";
   import { AsyncLoadState, trackAnalytics, poll } from "$lib/common-library/integrations";
   import { getContext, onMount } from "svelte";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { fly } from "svelte/transition";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
   import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 

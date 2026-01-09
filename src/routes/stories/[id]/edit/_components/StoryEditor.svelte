@@ -12,18 +12,18 @@
   import { fileToPost } from "$lib/data/items/files/factory";
   import { z } from "zod";
   import { cn } from "$lib/utils";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { p } from "sv-router/generated";
   import { updateStory } from "$lib/data/items/stories";
   import { AsyncLoadState, AsyncSubmitState, validationError } from "$lib/common-library/integrations/error-handling";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import { slide } from "svelte/transition";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
-  import { ImageCropperState } from "$lib/common-library/utils/components/cropper/cropperState.svelte";
+  import { ImageCropperState } from "$lib/common-library/components/media/cropperState.svelte";
   import EditStoryFiles from "./_components/_story-files/EditStoryFiles.svelte";
   import EditStoryCoverImage from "./_components/_cover-image/EditStoryCoverImage.svelte";
   import EditStoryContent from "./_components/_content/EditStoryContent.svelte";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 
   let { story = $bindable() }: { story: Story_ListItem } = $props();
 
@@ -45,15 +45,6 @@
   });
 
   let fileInMemory: File | undefined = $state();
-
-  export const coverimageCropperState = new ImageCropperState();
-
-  async function addCoverImage(files: File[]) {
-    fileInMemory = files[0];
-    coverimageCropperState.sourceImageSrc = URL.createObjectURL(fileInMemory);
-    coverimageCropperState.showFileDropZone = false;
-    coverimageCropperState.showCropper = true;
-  }
 
   const storySubmissionState = new AsyncSubmitState();
 

@@ -11,7 +11,7 @@
   import { fade, fly, scale, slide } from "svelte/transition";
   import { IsInViewport } from "runed";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { getContext } from "svelte";
 
   let targetNode = $state<HTMLElement>()!;

@@ -6,13 +6,13 @@
   import { cn } from "$lib/utils";
   import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import { AsyncLoadState, notFoundError, validationError } from "$lib/common-library/integrations/error-handling";
-  import StatusMessage from "$lib/common-library/utils/components/ui-utils/StatusMessage.svelte";
+  import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
-  import LineAnimated from "$lib/common-library/utils/components/ui-utils/Line_Animated.svelte";
+  import LineAnimated from "$lib/common-library/components/animation/LineAnimated.svelte";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
   import { scale, fly } from "svelte/transition";
   import StoryFileGallery from "$routes/stories/[id]/_components/StoryFileGallery.svelte";
-  import ErrorBoundaryMessage from "$lib/common-library/utils/components/ui-utils/ErrorBoundaryMessage.svelte";
+  import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
 
   let storyLoadState = new AsyncLoadState();
   let story: StoryMarkdown | null = $state(null);
