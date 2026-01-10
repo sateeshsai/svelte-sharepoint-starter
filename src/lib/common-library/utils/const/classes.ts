@@ -85,7 +85,3 @@ export type PaddingVariant = keyof typeof SECTION_CLASSES.padding;
 /**
  * @deprecated Use SECTION_CLASSES instead. Kept for backward compatibility.
  */
-export const PAGE_UTIL_CLASSES = {
-  maxWidth: SECTION_CLASSES.maxWidth.standard,
-  padding: SECTION_CLASSES.padding.standard,
-};
