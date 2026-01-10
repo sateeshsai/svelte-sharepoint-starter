@@ -37,10 +37,10 @@
     {/snippet}
 
     {#if storyLoadState?.loading}
-      <StatusMessage type="loading" message="Loading story" />
+      <StatusMessage type="loading" message="Loading story..." />
     {:else if storyLoadState.ready && story}
-      <Prose as="article" variant="withLinks" class="max-w-5xl w-full text-pretty">
-        <SectionHeader variant="page" class="mt-4 mb-4">
+      <Prose as="article" variant="withLinks" class="w-full text-pretty">
+        <SectionHeader variant="page" class="mt-4 mb-6">
           {#snippet breadcrumbsSnippet()}
             <a class="p-0 flex gap-2 items-center no-underline!" href={p("/markdown/stories")}>
               <ArrowLeft size="24" class="bg-muted/50 border p-1 rounded" />
