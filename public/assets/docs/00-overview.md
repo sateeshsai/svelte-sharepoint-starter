@@ -286,6 +286,6 @@ Ready to get started? Continue to:
 
 ## Support & Feedback
 
-**Contact:** smodukuru@deloitte.com  
+**Contact:** sateesh.modukuru@yourdomain.com  
 **Status:** Beta 1.0.0 - Production Ready  
 **Updates:** Check back regularly for improvements

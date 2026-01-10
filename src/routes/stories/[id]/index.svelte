@@ -195,7 +195,7 @@
               <div class="flex gap-2 items-baseline my-4">
                 {#if authorProperties}
                   {@const authorFullname = getUserFirstLastNames(authorProperties)}
-                  <p class="my-0!"><a href="https://people.deloitte/profile/{authorProperties.Email.split('@')[0]}" target="_blank">{authorFullname?.first} {authorFullname?.last}</a></p>
+                  <p class="my-0!"><a href="https://yourdomain/profileapi/{authorProperties.Email.split('@')[0]}" target="_blank">{authorFullname?.first} {authorFullname?.last}</a></p>
                   |
                 {/if}
                 <time class="text-sm text-muted-foreground" datetime={new Date(story.Modified).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}

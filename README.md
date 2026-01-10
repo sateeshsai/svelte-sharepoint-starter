@@ -131,15 +131,9 @@ This is an internal starter for team collaboration. When making improvements:
 
 ## 📞 Support
 
-**Contact:** smodukuru@deloitte.com  
+**Contact:** sateesh.modukuru@gmail.com  
 **Status:** Beta 1.0.0 - Production Ready  
 **Repository:** Internal team use
-
----
-
-## 📝 License
-
-Internal Deloitte project - Not for external distribution
 
 ---
 

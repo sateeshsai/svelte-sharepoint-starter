@@ -1,6 +1,6 @@
 import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 
-const ROOT_FOLDER_PATH_RELATIVE_TO_SITE_COLLECTION_URL = "pages/builder-test/"; //https://americas.internal.deloitteonline.com/sites/sitename/<root folder relative path>/pagename.html
+const ROOT_FOLDER_PATH_RELATIVE_TO_SITE_COLLECTION_URL = "pages/builder-test/"; //https://tenant.com/sites/sitename/<root folder relative path>/pagename.html
 
 /**
  * URL Parsing Logic

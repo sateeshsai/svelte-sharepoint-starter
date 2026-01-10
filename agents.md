@@ -11,12 +11,13 @@ Important: `getContext()` can ONLY be called during component initialization, NO
 Standards:
 Variable names should be succinct, meaningful, unambiguous. Maintainability and ease of use is important. Always use correct semantic html, thinking of the larger context. Pay attention of data loading and submission patterns. We use Shad-Cn svelte components in components/ui. Use them where appropriate but don't force fit. Network requests fetching and submitting page’s data should be at the top most route which uses that data in respective post.ts or get.ts functions. Always validate submissions inside the component using the post variant of an item schema before posting to lists. We don’t validate incoming data. Big pieces of constant data should be next to the user component as data.ts.
 Naming conventions for data layer (`$lib/data/items/`):
+
 - Types: `Xxx_ListItem` (GET data), `Xxx_PostItem` (POST data)
 - Schemas: `Xxx_Schema` (core), `XxxListItem_Schema` (GET), `XxxPostItem_Schema` (POST)
 - Factory functions: `createXxxListItem`, `createXxxPostItem`, `xxxListItemToPostItem`
 - Domain modules should be self-contained. Cross-domain schemas (e.g., `FilePostItem_ForStory_Schema`) live in the consumer's module (stories/) not the source (files/).
-Important:
-Assume we are in LOCAL_MODE. Get a solid understanding of the code base. Pay attention to detail, recheck understanding by reviewing files on how things connect with each other instead of assuming. Provide subjective ones, if any, in a separate section, don't nitpick too much though. Run pnpm check to verify when it makes sense to do so. Always be concise and focus on important details than grammar. Ask clarifying questions, only if needed.
+  Important:
+  Assume we are in LOCAL_MODE. Get a solid understanding of the code base. Pay attention to detail, recheck understanding by reviewing files on how things connect with each other instead of assuming. Provide subjective ones, if any, in a separate section, don't nitpick too much though. Run pnpm check to verify when it makes sense to do so. Always be concise and focus on important details than grammar. Ask clarifying questions, only if needed.
 
 Comment plan:
 JS Doc Comments should be meaningful, concise, and more importantly helpful to the developers using the code base. Okay to have more detailed info library code, if it’s helpful. Comments should be about our specific implementations and patterns, than something the user can look up online.

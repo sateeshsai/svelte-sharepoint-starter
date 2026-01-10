@@ -6,13 +6,13 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
     AccountName: "i:0ǵ.t|adfs prod|smodukuru",
     DirectReports: [],
     DisplayName: "Modukuru, Sateeshsai",
-    Email: "smodukuru@deloitte.com",
+    Email: "sateesh.modukuru@yourdomain.com",
     ExtendedManagers: [],
     ExtendedReports: ["i:0ǵ.t|adfs prod|smodukuru"],
     IsFollowed: false,
     LatestPost: null,
     Peers: [],
-    PersonalUrl: "https://people.deloitteresources.com/Person.aspx?accountname=i%3A0%C7%B5%2Et%7Cadfs%20prod%7Csmodukuru",
+    PersonalUrl: "",
     PictureUrl: null,
     Title: "V-Exec. Mngr, MK Marketing",
     UserProfileProperties: [
@@ -128,7 +128,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "PublicSiteRedirect",
-        Value: "https://people.deloitteresources.com/_layouts/Deloitte.peoplenetwork.api/index.aspx?p%5BidType%5D=adfs&p%5Bid%5D=i%3A0%C7%B5.t%7Cadfs%7Csmodukuru",
+        Value: "",
         ValueType: "Edm.String",
       },
       {
@@ -158,7 +158,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "SPS-SipAddress",
-        Value: "smodukuru@deloitte.com",
+        Value: "sateesh.modukuru@yourdomain.com",
         ValueType: "Edm.String",
       },
       {
@@ -243,7 +243,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "SPS-UserPrincipalName",
-        Value: "smodukuru@deloitte.com",
+        Value: "sateesh.modukuru@yourdomain.com",
         ValueType: "Edm.String",
       },
       {
@@ -283,7 +283,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "SPS-DistinguishedName",
-        Value: "CN=Modukuru\\, Sateesh [smodukuru],OU=Users,OU=Practice Office,DC=us,DC=deloitte,DC=com",
+        Value: "",
         ValueType: "Edm.String",
       },
       {
@@ -303,7 +303,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "WorkEmail",
-        Value: "smodukuru@deloitte.com",
+        Value: "sateesh.modukuru@yourdomain.com",
         ValueType: "Edm.String",
       },
       {
@@ -532,19 +532,19 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
         ValueType: "Edm.String",
       },
     ],
-    UserUrl: "https://people.deloitteresources.com/Person.aspx?accountname=i%3A0%C7%B5%2Et%7Cadfs%20prod%7Csmodukuru",
+    UserUrl: "",
   },
   {
     AccountName: "i:0ǵ.t|adfs prod|jmooring",
     DirectReports: [],
     DisplayName: "Mooring, James",
-    Email: "jmooring@deloitte.com",
+    Email: "jmooring@yourdomain.com",
     ExtendedManagers: [],
     ExtendedReports: ["i:0ǵ.t|adfs prod|jmooring"],
     IsFollowed: false,
     LatestPost: null,
     Peers: [],
-    PersonalUrl: "https://people.deloitteresources.com/Person.aspx?accountname=i%3A0%C7%B5%2Et%7Cadfs%20prod%7Csmodukuru",
+    PersonalUrl: "",
     PictureUrl: null,
     Title: "Sr. Mngr, MK Marketing",
     UserProfileProperties: [
@@ -660,7 +660,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "PublicSiteRedirect",
-        Value: "https://people.deloitteresources.com/_layouts/Deloitte.peoplenetwork.api/index.aspx?p%5BidType%5D=adfs&p%5Bid%5D=i%3A0%C7%B5.t%7Cadfs%7Csmodukuru",
+        Value: "",
         ValueType: "Edm.String",
       },
       {
@@ -690,7 +690,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "SPS-SipAddress",
-        Value: "smodukuru@deloitte.com",
+        Value: "sateesh.modukuru@yourdomain.com",
         ValueType: "Edm.String",
       },
       {
@@ -775,7 +775,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "SPS-UserPrincipalName",
-        Value: "smodukuru@deloitte.com",
+        Value: "sateesh.modukuru@yourdomain.com",
         ValueType: "Edm.String",
       },
       {
@@ -815,7 +815,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "SPS-DistinguishedName",
-        Value: "CN=Modukuru\\, Sateesh [smodukuru],OU=Users,OU=Practice Office,DC=us,DC=deloitte,DC=com",
+        Value: "",
         ValueType: "Edm.String",
       },
       {
@@ -835,7 +835,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "WorkEmail",
-        Value: "smodukuru@deloitte.com",
+        Value: "sateesh.modukuru@yourdomain.com",
         ValueType: "Edm.String",
       },
       {
@@ -1064,7 +1064,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
         ValueType: "Edm.String",
       },
     ],
-    UserUrl: "https://people.deloitteresources.com/Person.aspx?accountname=i%3A0%C7%B5%2Et%7Cadfs%20prod%7Csmodukuru",
+    UserUrl: "",
   },
 ];
 
@@ -1075,7 +1075,7 @@ export const LOCAL_SHAREPOINT_USERS = [
     LoginName: "i:0ǵ.t|adfs prod|smodukuru",
     Title: "Modukuru, Sateeshsai",
     PrincipalType: 1,
-    Email: "smodukuru@deloitte.com",
+    Email: "sateesh.modukuru@yourdomain.com",
     IsShareByEmailGuestUser: false,
     IsSiteAdmin: true,
     UserId: {
@@ -1089,7 +1089,7 @@ export const LOCAL_SHAREPOINT_USERS = [
     LoginName: "i:0ǵ.t|adfs prod|jmooring",
     Title: "Mooring, James",
     PrincipalType: 1,
-    Email: "jmooring@deloitte.com",
+    Email: "jmooring@yourdomain.com",
     IsShareByEmailGuestUser: false,
     IsSiteAdmin: true,
     UserId: {

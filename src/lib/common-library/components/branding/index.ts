@@ -3,4 +3,4 @@
  *
  * Brand-specific logos and visual identity components.
  */
-export { default as DeloitteLogo } from "./DeloitteLogo.svelte";
+export { default as Logo } from "./Logo.svelte";

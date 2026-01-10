@@ -22,11 +22,11 @@ export const SHAREPOINT_CONFIG = {
     version: "Version 1",
     emails: {
       support: {
-        email: "smodukuru@deloitte.com",
+        email: "sateesh.modukuru@yourdomain.com",
         subject: "Site name: support request",
         body: "Please describe the issue you are facing, along with any additional details and screenshots",
         cc: [""],
-        bcc: ["smodukuru@deloitte.com"],
+        bcc: ["sateesh.modukuru@yourdomain.com"],
       },
     },
   },

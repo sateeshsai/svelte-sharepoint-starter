@@ -116,12 +116,12 @@
   --breakpoint-4xl: 150rem;
   --text-2xs: 0.7rem;
 
-  /* DELOITTE FONTS */
+  /* BRAND FONTS */
   --font-sans: "Open Sans", sans-serif;
   --font-serif: "STIX Two Text", serif;
   --font-sans--font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   --font-sans--font-variation-settings: "opsz" 32;
-  /* DELOITTE COLORS */
+  /* BRAND COLORS */
   --color-dgreen-100: oklch(89.891% 0.10916 108.999);
   --color-dgreen-200: oklch(83.363% 0.19003 115.751);
   --color-dgreen-300: oklch(73.088% 0.1796 128.284);

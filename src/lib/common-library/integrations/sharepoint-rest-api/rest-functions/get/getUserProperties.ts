@@ -26,7 +26,7 @@ function toLogonName(emailOrLogonName: string): string {
  *
  * @example
  * // By email
- * getUserProperties({ siteCollectionUrl, accountName: "smodukuru@deloitte.com" })
+ * getUserProperties({ siteCollectionUrl, accountName: "sateesh.modukuru@yourdomain.com" })
  *
  * // By emailId (username portion)
  * getUserProperties({ siteCollectionUrl, accountName: "smodukuru" })

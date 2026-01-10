@@ -10,7 +10,7 @@
  * - `animation/` - LineAnimated
  * - `filters/` - FilterCombobox, ToggleFilters
  * - `icons/` - LightDarkIcon
- * - `branding/` - DeloitteLogo
+ * - `branding/` - Logo
  * - `dev/` - TailwindViewportHelper
  * - `samples/` - CarouselSample
  *

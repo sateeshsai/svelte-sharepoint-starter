@@ -66,7 +66,7 @@ export const SHAREPOINT_CONFIG = {
     version: "Version 1",
     emails: {
       support: {
-        email: "your-email@deloitte.com",
+        email: "your-email@yourdomain.com",
         subject: "Your Project: support request",
         // ...
       },

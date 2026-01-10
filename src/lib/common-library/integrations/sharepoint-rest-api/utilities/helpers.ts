@@ -42,10 +42,10 @@ export function createSelectExpandQueries(obj: Record<string, any>) {
 }
 
 /**
- * Get user profile picture URL from Deloitte's internal API
+ * Get user profile picture URL from 's internal API
  * @param emailAdress - User's email address
  * @returns URL to profile picture
- * @example getPictureUrl("jdoe@deloitte.com")
+ * @example getPictureUrl("jdoe@yourdomain.com")
  */
 export function getPictureUrl(emailAdress: string) {
   // Add your API URL here
