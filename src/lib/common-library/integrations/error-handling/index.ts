@@ -1,6 +1,6 @@
 /**
  * Error handling integration exports
- * Includes error reporting and SharePoint-integrated async state classes
+ * Includes error reporting and error type helpers
  */
 
 // Error reporting
@@ -11,9 +11,6 @@ export type { ErrorReport_ListItem_Post, ErrorReport_ListItem, ErrorReportParams
 export { apiError, validationError, notFoundError, boundaryError, unknownError, offlineError, isOffline, createErrorReportForUI, createMailtoLink } from "./error-types";
 export { ERROR_TYPES } from "./error-schemas";
 export { ErrorReportListSchema, ErrorReportPostSchema } from "./error-schemas";
-
-// SharePoint-integrated async state (with error reporting)
-export { AsyncSubmitState, AsyncLoadState } from "./sharepoint-async-state.svelte";
 
 // Local mock data
 export { LOCAL_ERROR_REPORTS } from "./local-data";

@@ -10,7 +10,7 @@
   import { cn } from "$lib/utils";
   import { getStoryFiles } from "$lib/data/items/stories";
   import { deleteStoryFile, updateStoryFile } from "$lib/data/items/files";
-  import { AsyncLoadState, AsyncSubmitState } from "$lib/common-library/integrations/error-handling";
+  import { createLoadState, createSubmitState, type AsyncLoadState } from "$lib/data/async-state.svelte";
   import { flip } from "svelte/animate";
   import type { File_ListItem } from "$lib/data/items/files/schemas";
   import { z } from "zod";
@@ -45,8 +45,8 @@
 
   const storyFilesSorted: File_ListItem[] = $derived([...(storyFiles ?? [])]?.sort((a, b) => (a.FileOrder > b.FileOrder ? 1 : -1)) ?? []);
 
-  let fileUploadState = $state(new AsyncSubmitState());
-  let updateFileOrderState = $state(new AsyncSubmitState());
+  let fileUploadState = $state(createSubmitState());
+  let updateFileOrderState = $state(createSubmitState());
 
   async function updateFileOrder(direction: "left" | "right", fileId: number) {
     const fileToReorder = storyFiles?.find((f) => f.Id === fileId)!;
@@ -63,7 +63,7 @@
     }
   }
 
-  let deleteFileState = $state(new AsyncSubmitState());
+  let deleteFileState = $state(createSubmitState());
 </script>
 
 <svelte:boundary>

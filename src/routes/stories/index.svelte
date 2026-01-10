@@ -7,7 +7,8 @@
 
   import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import { getStories } from "$lib/data/items/stories";
-  import { AsyncLoadState, trackAnalytics, poll } from "$lib/common-library/integrations";
+  import { createLoadState } from "$lib/data/async-state.svelte";
+  import { trackAnalytics, poll } from "$lib/common-library/integrations";
   import { getContext, onMount } from "svelte";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { fly } from "svelte/transition";
@@ -19,7 +20,7 @@
 
   const { signal } = useAbortController();
 
-  let storiesLoadState = new AsyncLoadState();
+  let storiesLoadState = createLoadState();
   let stories: Story_ListItem[] | undefined = $state();
 
   let stopPolling: ReturnType<typeof poll>;

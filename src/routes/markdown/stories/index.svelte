@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import ListFilter from "@lucide/svelte/icons/list-filter";
   import { getMarkdownStories, type StoryMarkdown } from "$lib/data/items/stories-markdown";
-  import { AsyncLoadState, apiError } from "$lib/common-library/integrations/error-handling";
+  import { createLoadState } from "$lib/data/async-state.svelte";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import * as Sheet from "$lib/components/ui/sheet/index.js";
   import Label from "$lib/components/ui/label/label.svelte";
@@ -12,7 +12,7 @@
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { Section, SectionHeader } from "$lib/common-library/components/layout";
   import ToggleFilters, { type Filter } from "$lib/common-library/components/filters/ToggleFilters.svelte";
-  let storiesLoadState = new AsyncLoadState();
+  let storiesLoadState = createLoadState();
   let stories: StoryMarkdown[] = $state([]);
 
   const filters: Record<"Tags" | "Year", Filter> = $derived.by(() => {
@@ -35,11 +35,9 @@
 
   onMount(async () => {
     storiesLoadState.setLoading();
-    try {
-      stories = await getMarkdownStories();
-      storiesLoadState.setReady();
-    } catch (error) {
-      storiesLoadState.setError(apiError({ userMessage: "Failed to load stories", technicalMessage: error instanceof Error ? error.message : String(error), context: "MarkdownStoriesPage" }));
+    const result = await getMarkdownStories(storiesLoadState);
+    if (result) {
+      stories = result;
     }
   });
 

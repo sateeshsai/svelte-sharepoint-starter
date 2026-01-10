@@ -9,7 +9,7 @@
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { groupReactionsByEmoji, getComments, type Engagement_ListItem } from "$lib/common-library/integrations";
   import { getStoryEngagements } from "$lib/data/items/stories";
-  import { AsyncLoadState } from "$lib/common-library/integrations";
+  import { createLoadState } from "$lib/data/async-state.svelte";
   import MessageCircle from "@lucide/svelte/icons/message-circle";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
 
@@ -21,7 +21,7 @@
   let allEngagements: Record<number, Engagement_ListItem[]> = $state({});
 
   async function loadAllEngagements() {
-    const loadState = new AsyncLoadState();
+    const loadState = createLoadState();
 
     // Fetch engagements for each story using domain API
     for (const story of stories) {

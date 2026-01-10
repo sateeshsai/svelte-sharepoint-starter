@@ -6,7 +6,7 @@
   import { canEditItem } from "$lib/data/global-state.svelte";
   import { getStory } from "$lib/data/items/stories";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
-  import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
+  import { createLoadState } from "$lib/data/async-state.svelte";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import { slide } from "svelte/transition";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
@@ -18,7 +18,7 @@
   const params = $derived(route.getParams("/stories/:id/edit"));
   const storyId = $derived(params.id === "new" ? undefined : params.id);
 
-  let storyLoadState = new AsyncLoadState();
+  let storyLoadState = createLoadState();
   let story: Story_ListItem | undefined = $state();
   let currentUserCanEdit = $derived(canEditItem(story?.Author?.Id));
 

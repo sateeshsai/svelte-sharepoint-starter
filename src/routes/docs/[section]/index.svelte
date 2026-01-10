@@ -3,7 +3,7 @@
   import { p, route } from "sv-router/generated";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
-  import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
+  import { createLoadState } from "$lib/data/async-state.svelte";
 
   import { renderDocSection, type DocSection } from "$lib/data/items/docs";
   import { Section, SectionHeader, Prose } from "$lib/common-library/components/layout";
@@ -15,7 +15,7 @@
   const getDocSections = getContext<() => DocSection[]>("getDocSections") || (() => []);
 
   let htmlContent = $state("");
-  const loadState = new AsyncLoadState();
+  const loadState = createLoadState();
 
   // Get current section and load its HTML content
   const sections = $derived(getDocSections());

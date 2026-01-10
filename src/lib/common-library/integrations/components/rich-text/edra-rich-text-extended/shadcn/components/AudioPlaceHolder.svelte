@@ -3,7 +3,8 @@
   import type { NodeViewProps } from "@tiptap/core";
   import Audio from "@lucide/svelte/icons/audio-lines";
   import { buttonVariants } from "$lib/components/ui/button/button.svelte";
-  import { AsyncSubmitState, validationError, apiError } from "$lib/common-library/integrations/error-handling";
+  import { BaseAsyncSubmitState, ASYNC_STATE_CONTEXT_KEY, type AsyncStateFactory } from "$lib/common-library/utils/async";
+  import { validationError, apiError } from "$lib/common-library/integrations/error-handling";
   import { FileDropZoneWrapper } from "$lib/common-library/components/media";
   import MediaPlaceHolder from "$lib/common-library/integrations/components/rich-text/edra-rich-text/components/MediaPlaceHolder.svelte";
   import { randomIdString } from "$lib/common-library/utils/functions/string";
@@ -12,8 +13,9 @@
 
   const { editor }: NodeViewProps = $props();
   const uploadContext = getContext<EdraFileUploadContext | undefined>(EDRA_FILE_UPLOAD_KEY);
+  const asyncFactory = getContext<AsyncStateFactory | undefined>(ASYNC_STATE_CONTEXT_KEY);
 
-  const fileUploadState = new AsyncSubmitState();
+  const fileUploadState = asyncFactory?.createSubmitState() ?? new BaseAsyncSubmitState();
 
   async function addFile(files: File[]) {
     const file = files?.[0];

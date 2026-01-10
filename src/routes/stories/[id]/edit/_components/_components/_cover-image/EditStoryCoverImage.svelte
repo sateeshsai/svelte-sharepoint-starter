@@ -6,7 +6,7 @@
   import Image from "@lucide/svelte/icons/image";
   import PenLine from "@lucide/svelte/icons/pen-line";
   import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
-  import { AsyncSubmitState } from "$lib/common-library/integrations/error-handling";
+  import { createSubmitState, type AsyncSubmitState } from "$lib/data/async-state.svelte";
   import type { typeToFlattenedError } from "zod/v3";
   import { uploadCroppedImage } from "$lib/data/items/files";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
@@ -30,7 +30,7 @@
     coverImageCropperState.showCropper = true;
   }
 
-  export const coverImageUploadState = new AsyncSubmitState();
+  export const coverImageUploadState = createSubmitState();
 
   async function handleUploadCroppedImage(dataUri: string) {
     coverImageCropperState.showFileDropZone = true;

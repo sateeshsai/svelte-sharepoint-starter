@@ -15,7 +15,8 @@
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { p } from "sv-router/generated";
   import { updateStory } from "$lib/data/items/stories";
-  import { AsyncLoadState, AsyncSubmitState, validationError } from "$lib/common-library/integrations/error-handling";
+  import { createLoadState, createSubmitState } from "$lib/data/async-state.svelte";
+  import { validationError } from "$lib/common-library/integrations/error-handling";
   import { slide } from "svelte/transition";
   import { ImageCropperState } from "$lib/common-library/components/media";
   import EditStoryFiles from "./_components/_story-files/EditStoryFiles.svelte";
@@ -32,7 +33,7 @@
     return storyDataToPost_ValidationResult.error ? z.flattenError(storyDataToPost_ValidationResult.error) : undefined;
   });
 
-  let storyFilesLoadState = $state(new AsyncLoadState());
+  let storyFilesLoadState = $state(createLoadState());
   let storyFiles: File_ListItem[] | undefined = $state();
 
   let filesValidationErrors: z.core.$ZodIssue[] = $derived.by(() => {
@@ -45,7 +46,7 @@
 
   let fileInMemory: File | undefined = $state();
 
-  const storySubmissionState = new AsyncSubmitState();
+  const storySubmissionState = createSubmitState();
 
   function submitStory(e: Event) {
     e.preventDefault();
@@ -66,7 +67,7 @@
     updateStory(story, storySubmissionState);
   }
 
-  export const coverImageUploadState = new AsyncSubmitState();
+  export const coverImageUploadState = createSubmitState();
 </script>
 
 <article in:slide|global class={cn("stories h-full")}>

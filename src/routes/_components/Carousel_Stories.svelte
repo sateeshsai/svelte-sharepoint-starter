@@ -8,7 +8,7 @@
   import { getStories } from "$lib/data/items/stories";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { p } from "sv-router/generated";
-  import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
+  import { createLoadState } from "$lib/data/async-state.svelte";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
 
@@ -31,7 +31,7 @@
 
   const plugin = Autoplay({ delay: autoPlayDelay, stopOnInteraction: true });
 
-  let storiesLoadState = new AsyncLoadState();
+  let storiesLoadState = createLoadState();
   let stories: Story_ListItem[] | undefined = $state();
 
   async function loadStories() {

@@ -2,7 +2,8 @@
   import { onMount } from "svelte";
   import { getMarkdownStory, type StoryMarkdown } from "$lib/data/items/stories-markdown";
   import { route, p } from "sv-router/generated";
-  import { AsyncLoadState, notFoundError, validationError } from "$lib/common-library/integrations/error-handling";
+  import { createLoadState } from "$lib/data/async-state.svelte";
+  import { validationError } from "$lib/common-library/integrations/error-handling";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import LineAnimated from "$lib/common-library/components/animation/LineAnimated.svelte";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
@@ -11,8 +12,8 @@
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { Section, SectionHeader, Prose } from "$lib/common-library/components/layout";
 
-  let storyLoadState = new AsyncLoadState();
-  let story: StoryMarkdown | null = $state(null);
+  let storyLoadState = createLoadState();
+  let story: StoryMarkdown | undefined = $state(undefined);
 
   const params = $derived(route.getParams("/markdown/stories/:storyname"));
   const slug = $derived(params.storyname);
@@ -25,12 +26,7 @@
       return;
     }
 
-    story = await getMarkdownStory(slug);
-    if (!story) {
-      storyLoadState.setError(notFoundError({ userMessage: `Story "${slug}" not found`, context: "StoryMarkdownPage" }));
-    } else {
-      storyLoadState.setReady();
-    }
+    story = await getMarkdownStory(slug, storyLoadState);
   });
 </script>
 

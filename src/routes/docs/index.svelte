@@ -1,14 +1,14 @@
 <script lang="ts">
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
-  import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
+  import { createLoadState } from "$lib/data/async-state.svelte";
 
   import { renderDocSection, type DocSection } from "$lib/data/items/docs";
   import { getContext } from "svelte";
   import { SectionHeader, Prose } from "$lib/common-library/components/layout";
 
   let htmlContent = $state("");
-  const loadState = new AsyncLoadState();
+  const loadState = createLoadState();
   // Get sections from layout context
   const getDocSections = getContext<() => DocSection[]>("getDocSections") || (() => []);
 

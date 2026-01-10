@@ -6,7 +6,7 @@
   import { ModeWatcher } from "mode-watcher";
   import { getAndStoreCurrentUserInfo } from "$lib/data/items/users";
   import { Toaster } from "svelte-sonner";
-  import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
+  import { createLoadState, initAsyncStateContext } from "$lib/data/async-state.svelte";
   import Head from "$lib/common-library/integrations/pwa/Head.svelte";
   import Header from "./_components/Header.svelte";
   import Footer from "./_components/Footer.svelte";
@@ -22,6 +22,9 @@
   // Provide config to all child components via Svelte context
   setContext("sharePointConfig", SHAREPOINT_CONFIG);
 
+  // Provide async state factory to common-library components
+  initAsyncStateContext();
+
   // Initialize IndexedDB cache with app + site-specific prefix to prevent data leakage
   // Format: {shortname}_{siteCollection} - unique per project AND per SharePoint site
   const siteCollection = SHAREPOINT_PATHS.site_collection.split("/").pop() || "local";
@@ -32,7 +35,7 @@
     loadData();
   });
 
-  let initialDataLoadState = new AsyncLoadState();
+  let initialDataLoadState = createLoadState();
 
   async function loadData() {
     await getAndStoreCurrentUserInfo(initialDataLoadState);
