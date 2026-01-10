@@ -53,8 +53,7 @@ export const PROSE_CLASSES = {
   /** Standard prose with dark mode support */
   standard: "prose-sm sm:prose mx-auto dark:prose-invert",
   /** Prose with styled links (underline, muted decoration) */
-  withLinks:
-    "prose-sm sm:prose mx-auto dark:prose-invert prose-a:underline prose-a:decoration-muted-foreground prose-a:decoration-1 prose-a:underline-offset-3",
+  withLinks: "prose-sm sm:prose mx-auto dark:prose-invert prose-a:underline prose-a:decoration-muted-foreground prose-a:decoration-1 prose-a:underline-offset-3",
 } as const;
 
 /** Type for prose variants */
@@ -90,6 +89,9 @@ export const HEADING_LEVEL_MAP = {
 
 /** Type for heading variants */
 export type HeadingVariant = keyof typeof HEADING_CLASSES;
+
+/** Type for heading HTML elements (h1-h6) */
+export type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 
 /** Type for max-width variants */
 export type MaxWidthVariant = keyof typeof SECTION_CLASSES.maxWidth;

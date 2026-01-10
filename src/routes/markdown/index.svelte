@@ -8,16 +8,16 @@
 
 <Section as="main">
   <Prose>
-  <svelte:boundary>
-    {#snippet failed(error: any, reset)}
-      <ErrorBoundaryMessage customError="Error rendering Markdown samples page." {error} {reset} />
-    {/snippet}
+    <svelte:boundary>
+      {#snippet failed(error: any, reset)}
+        <ErrorBoundaryMessage customError="Error rendering Markdown samples page." {error} {reset} />
+      {/snippet}
 
-    <h1 class={HEADING_CLASSES.page}>Simple Markdown</h1>
-    <SimpleMarkdown />
+      <h1 class={HEADING_CLASSES.page}>Simple Markdown</h1>
+      <SimpleMarkdown />
 
-    <h1 class={HEADING_CLASSES.page}>Components in Markdown</h1>
-    <ComponentsInMarkdown />
-  </svelte:boundary>
+      <h1 class={HEADING_CLASSES.page}>Components in Markdown</h1>
+      <ComponentsInMarkdown />
+    </svelte:boundary>
   </Prose>
 </Section>

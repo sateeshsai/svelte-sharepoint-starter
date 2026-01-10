@@ -46,7 +46,7 @@
 -->
 <script lang="ts">
   import { cn } from "$lib/utils";
-  import { HEADING_CLASSES, HEADING_LEVEL_MAP, type HeadingVariant } from "$lib/common-library/utils";
+  import { HEADING_CLASSES, HEADING_LEVEL_MAP, type HeadingVariant, type HeadingLevel } from "$lib/common-library/utils";
   import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
@@ -60,7 +60,7 @@
     /** Typography variant. Determines default heading level and styles */
     variant?: HeadingVariant;
     /** Override the heading element (h1-h6). Inferred from variant if not set */
-    as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+    as?: HeadingLevel;
     /** Breadcrumb items. Last item is treated as current page (no link). Ignored if breadcrumbs slot is used */
     breadcrumbs?: BreadcrumbItem[];
     /** Additional classes for the heading element */
