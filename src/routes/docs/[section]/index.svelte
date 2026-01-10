@@ -6,8 +6,7 @@
   import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
 
   import { renderDocSection, type DocSection } from "$lib/data/items/docs";
-  import { Section, SectionHeader } from "$lib/common-library/components/layout";
-  import { SECTION_CLASSES } from "$lib/common-library/utils";
+  import { Section, SectionHeader, Prose } from "$lib/common-library/components/layout";
 
   const params = $derived(route.getParams("/docs/:section"));
   const sectionSlug = $derived(params.section);
@@ -50,9 +49,9 @@
       <div class="p-8">
         <SectionHeader variant="subsection" breadcrumbs={[{ label: "Documentation", href: p("/docs") }, { label: sectionData.label }]}></SectionHeader>
 
-        <section class={SECTION_CLASSES.prose.standard}>
+        <Prose as="section">
           {@html htmlContent}
-        </section>
+        </Prose>
       </div>
     {:else}
       <div class="p-8">

@@ -47,7 +47,7 @@
 
     <Separator class="bg-muted" />
 
-    <Section bind:node={targetNode} fullBleed background="bg-muted/80 dark:bg-muted/30" class={cn("relative overflow-hidden grid lg:grid-cols-2", SECTION_CLASSES.gap.md)}>
+    <Section bind:node={targetNode} fullBleedBg background="bg-muted/80 dark:bg-muted/30" class={cn("relative overflow-hidden grid lg:grid-cols-2", SECTION_CLASSES.gap.md)}>
       <div class="videoWrapper overflow-hidden grid rounded-lg" in:scale|global={{ start: 0 }}>
         <video muted autoplay src="./assets/videos/Batteries_941611483.mp4" class="h-full w-full col-start-1 row-start-1 object-cover">
           <track kind="captions" />

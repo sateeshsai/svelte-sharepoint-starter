@@ -419,7 +419,7 @@ Custom gradient definitions in `src/lib/common-library/css/gradients.css`
 
 ### Utility Classes
 
-Layout utility classes in `src/lib/common-library/utils/const/classes.ts`:
+Layout utility classes in `src/lib/common-library/utils/styling/classes.ts`:
 
 ```ts
 // Section layout utilities
@@ -437,10 +437,12 @@ export const SECTION_CLASSES = {
     horizontal: "px-6 md:px-8",
   },
   gap: { sm: "gap-4", md: "gap-6 lg:gap-8", lg: "gap-8 lg:gap-12" },
-  prose: {
-    standard: "prose-sm sm:prose mx-auto dark:prose-invert",
-    withLinks: "prose-sm sm:prose mx-auto dark:prose-invert prose-a:underline...",
-  },
+};
+
+// Prose/typography utilities (used by Prose component)
+export const PROSE_CLASSES = {
+  standard: "prose-sm sm:prose mx-auto dark:prose-invert",
+  withLinks: "prose-sm sm:prose mx-auto dark:prose-invert prose-a:underline...",
 };
 
 // Heading styles
@@ -456,7 +458,7 @@ export const HEADING_CLASSES = {
 
 ```svelte
 <script>
-  import { SECTION_CLASSES, HEADING_CLASSES } from "$lib/common-library/utils";
+  import { SECTION_CLASSES, HEADING_CLASSES, PROSE_CLASSES } from "$lib/common-library/utils";
   import { cn } from "$lib/utils";
 </script>
 
@@ -469,7 +471,7 @@ export const HEADING_CLASSES = {
 
 ```svelte
 <script>
-  import { Section, SectionHeader } from "$lib/common-library/components/layout";
+  import { Section, SectionHeader, Prose } from "$lib/common-library/components/layout";
 </script>
 
 <Section maxWidth="standard" padding="standard">
@@ -478,8 +480,15 @@ export const HEADING_CLASSES = {
 </Section>
 
 <!-- Full-bleed background with constrained content -->
-<Section fullBleed background="bg-muted/80 dark:bg-muted/30">
+<Section fullBleedBg background="bg-muted/80 dark:bg-muted/30">
   <h2>Content here is max-w-7xl, background is full-width</h2>
+</Section>
+
+<!-- Prose for markdown/rich text content -->
+<Section>
+  <Prose variant="withLinks">
+    {@html markdownContent}
+  </Prose>
 </Section>
 ```
 

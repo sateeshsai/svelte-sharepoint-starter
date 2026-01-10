@@ -10,8 +10,7 @@
   import { scale, fly } from "svelte/transition";
   import StoryFileGallery from "$routes/stories/[id]/_components/StoryFileGallery.svelte";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
-  import { Section, SectionHeader } from "$lib/common-library/components/layout";
-  import { SECTION_CLASSES } from "$lib/common-library/utils";
+  import { Section, SectionHeader, Prose } from "$lib/common-library/components/layout";
 
   let storyLoadState = new AsyncLoadState();
   let story: StoryMarkdown | null = $state(null);
@@ -45,7 +44,7 @@
     {#if storyLoadState?.loading}
       <StatusMessage type="loading" message="Loading story" />
     {:else if storyLoadState.ready && story}
-      <article class={SECTION_CLASSES.prose.withLinks + " max-w-5xl w-full text-pretty prose"}>
+      <Prose as="article" variant="withLinks" class="max-w-5xl w-full text-pretty">
         <SectionHeader variant="page" class="mt-4 mb-4">
           {#snippet breadcrumbsSnippet()}
             <a class="p-0 flex gap-2 items-center no-underline!" href={p("/markdown/stories")}>
@@ -81,7 +80,7 @@
             <StoryFileGallery folderPath="./assets/StoryFiles/" files={story.Files} />
           </section>
         {/if}
-      </article>
+      </Prose>
     {:else if storyLoadState?.error}
       <StatusMessage type="error" message={storyLoadState.error} errorDetails={storyLoadState.errorDetails} />
     {/if}

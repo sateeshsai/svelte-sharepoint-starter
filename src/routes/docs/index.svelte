@@ -5,8 +5,7 @@
 
   import { renderDocSection, type DocSection } from "$lib/data/items/docs";
   import { getContext } from "svelte";
-  import { SectionHeader } from "$lib/common-library/components/layout";
-  import { SECTION_CLASSES } from "$lib/common-library/utils";
+  import { SectionHeader, Prose } from "$lib/common-library/components/layout";
 
   let htmlContent = $state("");
   const loadState = new AsyncLoadState();
@@ -30,7 +29,7 @@
 <main>
   <SectionHeader variant="subsection" breadcrumbs={[{ label: "Documentation" }]}></SectionHeader>
 
-  <div class={SECTION_CLASSES.prose.standard + " mt-8"}>
+  <Prose class="mt-8">
     <svelte:boundary>
       {#snippet failed(error: any, reset)}
         <ErrorBoundaryMessage customError="Error rendering documentation." {error} {reset} />
@@ -44,5 +43,5 @@
         {@html htmlContent}
       {/if}
     </svelte:boundary>
-  </div>
+  </Prose>
 </main>

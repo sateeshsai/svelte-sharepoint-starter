@@ -5,8 +5,8 @@
  *
  * @example
  * ```typescript
- * import { SECTION_CLASSES, HEADING_CLASSES } from "$lib/common-library/utils";
+ * import { SECTION_CLASSES, HEADING_CLASSES, PROSE_CLASSES } from "$lib/common-library/utils";
  * ```
  */
 
-export * from "./const/classes";
+export * from "./styling";

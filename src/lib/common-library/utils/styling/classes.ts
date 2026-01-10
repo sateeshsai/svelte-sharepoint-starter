@@ -36,14 +36,29 @@ export const SECTION_CLASSES = {
     md: "gap-6 lg:gap-8",
     lg: "gap-8 lg:gap-12",
   },
-  /** Prose/typography presets for markdown content */
-  prose: {
-    /** Standard prose with dark mode support */
-    standard: "prose-sm sm:prose mx-auto dark:prose-invert",
-    /** Prose with styled links (underline, muted decoration) */
-    withLinks: "prose-sm sm:prose mx-auto dark:prose-invert prose-a:underline prose-a:decoration-muted-foreground prose-a:decoration-1 prose-a:underline-offset-3",
-  },
 } as const;
+
+/**
+ * Prose/typography presets for markdown and rich text content.
+ * Used by the Prose component, but can also be applied directly with `cn()`.
+ *
+ * @example
+ * ```svelte
+ * <article class={PROSE_CLASSES.standard}>
+ *   {@html markdownContent}
+ * </article>
+ * ```
+ */
+export const PROSE_CLASSES = {
+  /** Standard prose with dark mode support */
+  standard: "prose-sm sm:prose mx-auto dark:prose-invert",
+  /** Prose with styled links (underline, muted decoration) */
+  withLinks:
+    "prose-sm sm:prose mx-auto dark:prose-invert prose-a:underline prose-a:decoration-muted-foreground prose-a:decoration-1 prose-a:underline-offset-3",
+} as const;
+
+/** Type for prose variants */
+export type ProseVariant = keyof typeof PROSE_CLASSES;
 
 /**
  * Heading style presets for consistent typography hierarchy.

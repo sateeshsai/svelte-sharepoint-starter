@@ -18,8 +18,7 @@
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
   import { EngagementSection } from "$lib/common-library/integrations/components/engagements";
-  import { Section, SectionHeader } from "$lib/common-library/components/layout";
-  import { SECTION_CLASSES } from "$lib/common-library/utils";
+  import { Section, SectionHeader, Prose } from "$lib/common-library/components/layout";
 
   const { signal } = useAbortController();
 
@@ -131,7 +130,7 @@
     {#if storyLoadState?.loading}
       <StatusMessage type="loading" message="Loading story..." />
     {:else if storyLoadState.ready && story}
-      <article class={SECTION_CLASSES.prose.withLinks + " max-w-5xl w-full text-pretty"}>
+      <Prose as="article" variant="withLinks" class="max-w-5xl w-full text-pretty">
         <SectionHeader variant="page" class="mt-4 mb-6">
           {#snippet breadcrumbsSnippet()}
             <a class="p-0 flex gap-2 items-center no-underline!" href={p("/stories")}>
@@ -209,7 +208,7 @@
           bind:CommentSubmissionIsInProgress
           mode="comments"
         />
-      </article>
+      </Prose>
     {:else if storyLoadState?.error}
       <StatusMessage type="error" message={storyLoadState.error} errorDetails={storyLoadState.errorDetails} />
     {/if}
