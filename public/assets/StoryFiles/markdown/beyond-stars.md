@@ -1,5 +1,5 @@
 ---
-Title: Beyond the Stars
+Title: Beyond Stars
 Introduction: A journey through cosmic wonder and discovery
 CoverFileName: 3.avif
 Tags: space,adventure,sci-fi

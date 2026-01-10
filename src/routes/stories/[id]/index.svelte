@@ -74,10 +74,16 @@
     authorProperties = await getUserPropertiesById(authorId);
   }
 
-  let engagements: Engagement_ListItem[] | undefined = $state();
   let engagementsLoadState = createLoadState();
   let ReactionSubmissionIsInProgress = $state(false);
   let CommentSubmissionIsInProgress = $state(false);
+
+  // Separate tracking for poll data (others) and user's own engagements
+  let othersEngagements: Engagement_ListItem[] = $state([]);
+  let userEngagements: Engagement_ListItem[] = $state([]);
+
+  // Combined engagements for display
+  let engagements = $derived([...othersEngagements, ...userEngagements]);
 
   // Poll for engagement updates - starts automatically when storyId is set
   let stopPolling: (() => void) | undefined;
@@ -91,10 +97,14 @@
 
     if (storyId) {
       engagementsLoadState.setLoading();
+      // Reset user engagements when changing stories
+      userEngagements = [];
+
       stopPolling = pollStoryEngagements(
         +storyId,
         (data) => {
-          engagements = data;
+          // Poll returns only others' engagements (filtered in pollStoryEngagements)
+          othersEngagements = data;
         },
         engagementsLoadState
       );
@@ -110,32 +120,41 @@
 
   async function onAddReaction(emoji: string) {
     if (!storyId || !story) return;
-    engagements = await addEngagement({
+    // Pass only userEngagements - handler replaces user's existing reaction
+    const result = await addEngagement({
       parentId: +storyId,
       parentTitle: story.Title,
-      parentType: "Story",
       engagementType: "Reaction",
       content: emoji,
-      engagements,
+      engagements: userEngagements,
       signal,
     });
+    if (result) userEngagements = result;
   }
 
   async function onAddComment(text: string) {
     if (!storyId || !story) return;
-    engagements = await addEngagement({
+    const result = await addEngagement({
       parentId: +storyId,
       parentTitle: story.Title,
-      parentType: "Story",
       engagementType: "Comment",
       content: text,
-      engagements,
+      engagements: userEngagements,
       signal,
     });
+    if (result) userEngagements = result;
   }
 
   async function onDeleteEngagement(id: number) {
-    engagements = await removeEngagement({ engagementId: id, engagements, signal });
+    // Find which list contains this engagement
+    const inUserEngagements = userEngagements.some((e) => e.Id === id);
+    if (inUserEngagements) {
+      const result = await removeEngagement({ engagementId: id, engagements: userEngagements, signal });
+      if (result) userEngagements = result;
+    } else {
+      // Shouldn't happen - users can only delete their own engagements
+      console.warn("Attempted to delete engagement not in user's list:", id);
+    }
   }
 
   trackAnalytics();

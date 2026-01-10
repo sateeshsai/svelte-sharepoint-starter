@@ -7,6 +7,8 @@
   import { getAndStoreCurrentUserInfo } from "$lib/data/items/users";
   import { Toaster } from "svelte-sonner";
   import { createLoadState, initAsyncStateContext } from "$lib/data/async-state.svelte";
+  import { initEngagementContext } from "$lib/common-library/integrations/components/engagements";
+  import { currentUserId } from "$lib/data/global-state.svelte";
   import Head from "$lib/common-library/integrations/pwa/Head.svelte";
   import Header from "./_components/Header.svelte";
   import Footer from "./_components/Footer.svelte";
@@ -24,6 +26,9 @@
 
   // Provide async state factory to common-library components
   initAsyncStateContext();
+
+  // Provide user info to engagement components (library isolation pattern)
+  initEngagementContext({ getCurrentUserId: currentUserId });
 
   // Initialize IndexedDB cache with app + site-specific prefix to prevent data leakage
   // Format: {shortname}_{siteCollection} - unique per project AND per SharePoint site

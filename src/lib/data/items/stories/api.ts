@@ -7,19 +7,70 @@ import { createSelectExpandQueries, getEngagements, pollEngagements, type Sharep
 import { createStoryTemplate, createStoryPost, storyToPost } from "./factory";
 import { createFileTemplate } from "$lib/data/items/files/factory";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
+import { global_State } from "$lib/data/global-state.svelte";
 import type { Story_ListItem } from "./schemas";
 import type { File_ListItem } from "$lib/data/items/files/schemas";
 import type { BaseAsyncLoadState, BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { getCachedOrFetch, invalidateCacheByList } from "$lib/common-library/utils/cache";
 import { toast } from "svelte-sonner";
 import { navigate } from "sv-router/generated";
-
-// Re-export engagement handlers for convenience
-export { addEngagement, removeEngagement } from "$lib/common-library/integrations/components/engagements";
+import { addEngagement as addEngagementBase, removeEngagement as removeEngagementBase } from "$lib/common-library/integrations/components/engagements";
 
 // Cache key for stories list
 const STORIES_CACHE_KEY = "stories-list";
 const STORIES_CACHE_MAX_AGE = 60 * 60 * 1000; // 1 hour
+
+// ============================================================================
+// Engagement Wrappers (inject app-layer dependencies)
+// ============================================================================
+
+type StoryEngagementType = "Reaction" | "Comment";
+
+interface AddStoryEngagementParams {
+  parentId: number;
+  parentTitle: string;
+  engagementType: StoryEngagementType;
+  content: string;
+  engagements: Engagement_ListItem[] | undefined;
+  signal?: AbortSignal;
+}
+
+interface RemoveStoryEngagementParams {
+  engagementId: number;
+  engagements: Engagement_ListItem[] | undefined;
+  signal?: AbortSignal;
+}
+
+/**
+ * Add engagement to a story. Wraps common-library handler with app dependencies.
+ */
+export async function addEngagement(params: AddStoryEngagementParams): Promise<Engagement_ListItem[] | undefined> {
+  const currentUser = global_State.currentUser;
+  if (!currentUser) return params.engagements;
+
+  return addEngagementBase({
+    provider: getDataProvider(),
+    listName: SHAREPOINT_CONFIG.lists.Engagements.name,
+    parentType: "Story",
+    currentUser: { Id: currentUser.Id, Title: currentUser.Title },
+    ...params,
+  });
+}
+
+/**
+ * Remove engagement from a story. Wraps common-library handler with app dependencies.
+ */
+export async function removeEngagement(params: RemoveStoryEngagementParams): Promise<Engagement_ListItem[] | undefined> {
+  const currentUser = global_State.currentUser;
+  if (!currentUser) return params.engagements;
+
+  return removeEngagementBase({
+    provider: getDataProvider(),
+    listName: SHAREPOINT_CONFIG.lists.Engagements.name,
+    userId: currentUser.Id,
+    ...params,
+  });
+}
 
 // ============================================================================
 // GET Operations
@@ -193,8 +244,10 @@ export async function getStoryEngagements(storyId: number, engagementsLoadState:
 /**
  * Poll for engagement updates on a story
  * Automatically uses appropriate interval (5s LOCAL_MODE, 20s SharePoint)
+ * Filters out current user's engagements from poll results (user's own reactions
+ * are already known through optimistic updates, avoiding visual duplicates)
  * @param storyId - Parent story ID
- * @param onUpdate - Callback with latest engagements array
+ * @param onUpdate - Callback with latest engagements array (excludes current user's)
  * @param loadState - Optional state object to track loading/error status
  * @returns Stop function to halt polling
  * @example
@@ -203,7 +256,15 @@ export async function getStoryEngagements(storyId: number, engagementsLoadState:
  */
 export function pollStoryEngagements(storyId: number, onUpdate: (engagements: Engagement_ListItem[]) => void, loadState?: BaseAsyncLoadState): () => void {
   const provider = getDataProvider();
-  return pollEngagements(provider, SHAREPOINT_CONFIG.lists.Engagements.name, storyId, onUpdate, loadState);
+  const currentUserId = global_State.currentUser?.Id;
+
+  // Wrap onUpdate to filter out current user's engagements
+  const filteredOnUpdate = (engagements: Engagement_ListItem[]) => {
+    const filtered = currentUserId ? engagements.filter((e) => e.Author.Id !== currentUserId) : engagements;
+    onUpdate(filtered);
+  };
+
+  return pollEngagements(provider, SHAREPOINT_CONFIG.lists.Engagements.name, storyId, filteredOnUpdate, loadState);
 }
 
 // ============================================================================

@@ -2,18 +2,19 @@
   import { Button } from "$lib/components/ui/button";
   import { Textarea } from "$lib/components/ui/textarea";
   import * as Popover from "$lib/components/ui/popover";
+  import * as Accordion from "$lib/components/ui/accordion";
+  import * as Dialog from "$lib/components/ui/dialog";
   import SmilePlus from "@lucide/svelte/icons/smile-plus";
-  import ChevronDown from "@lucide/svelte/icons/chevron-down";
   import Trash2 from "@lucide/svelte/icons/trash-2";
   import LineAnimated from "$lib/common-library/components/animation/LineAnimated.svelte";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { EMOJI_REACTIONS_ARRAY, groupReactionsByEmoji, getComments, getReactions, type Engagement_ListItem } from "./index";
   import { isOwnEngagement } from "./engagement-handlers";
+  import { getEngagementContext } from "./engagement-context";
   import { Confetti } from "svelte-confetti";
   import type { BaseAsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import { slide, fade, scale } from "svelte/transition";
   import { elasticOut } from "svelte/easing";
-  import { currentUserId } from "$lib/data/global-state.svelte";
 
   type SectionMode = "reactions" | "comments";
 
@@ -40,13 +41,17 @@
     mode,
   }: Props = $props();
 
+  const ctx = getEngagementContext();
+
   let commentText = $state("");
-  let isCommentsOpen = $state(true);
   let showAllReactions = $state(false);
   let showConfetti = $state(false);
   let lastReactionEmoji = $state<string | null>(null);
   let newReactionPopOverOpen = $state(false);
   let deletingId = $state<number | null>(null);
+  let deleteDialogOpen = $state(false);
+  let pendingDeleteId = $state<number | null>(null);
+  let accordionValue = $state("comments");
 
   let reactionCounts = $derived.by(() => {
     if (!engagements) return [];
@@ -68,9 +73,9 @@
     return reactionCounts.slice(0, 7);
   });
 
-  /** Find if current user has reacted with this emoji */
+  /** Find if current user has reacted with this specific emoji */
   function userHasReaction(emoji: string): Engagement_ListItem | undefined {
-    const userId = currentUserId();
+    const userId = ctx.getCurrentUserId();
     return reactions.find((r) => r.Title === emoji && r.Author.Id === userId);
   }
 
@@ -112,10 +117,23 @@
     CommentSubmissionIsInProgress = false;
   }
 
-  async function handleDeleteComment(id: number) {
-    deletingId = id;
-    await onDeleteEngagement(id);
+  function openDeleteDialog(id: number) {
+    pendingDeleteId = id;
+    deleteDialogOpen = true;
+  }
+
+  async function confirmDeleteComment() {
+    if (pendingDeleteId === null) return;
+    deletingId = pendingDeleteId;
+    deleteDialogOpen = false;
+    await onDeleteEngagement(pendingDeleteId);
     deletingId = null;
+    pendingDeleteId = null;
+  }
+
+  function cancelDeleteDialog() {
+    deleteDialogOpen = false;
+    pendingDeleteId = null;
   }
 </script>
 
@@ -211,68 +229,80 @@
       <StatusMessage type="loading" message="Loading comments..." />
     {:else if engagementsLoadState.ready && engagements}
       <div class="border rounded-lg">
-        <button
-          onclick={() => (isCommentsOpen = !isCommentsOpen)}
-          class="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
-          aria-expanded={isCommentsOpen}
-          aria-controls="comments-content"
-        >
-          <h2 id="comments-heading" class="text-xl font-semibold">
-            Comments {#if comments.length > 0}({comments.length}){/if}
-          </h2>
-          <ChevronDown size={20} class="transition-transform duration-300 ease-in-out text-muted-foreground" style="transform: rotate({isCommentsOpen ? 180 : 0}deg)" />
-        </button>
-
-        {#if isCommentsOpen}
-          <div id="comments-content" class="px-4 pb-4" transition:slide={{ duration: 300 }}>
-            <form onsubmit={handleSubmitComment} class="mb-6">
-              <div class="space-y-3">
-                <Textarea bind:value={commentText} placeholder="Share your thoughts..." rows={3} disabled={CommentSubmissionIsInProgress} class="resize-none" aria-label="Comment text" />
-                <div class="flex justify-end">
-                  <Button type="submit" disabled={CommentSubmissionIsInProgress || !commentText.trim()} size="sm">
-                    {CommentSubmissionIsInProgress ? "Posting..." : "Post Comment"}
-                  </Button>
+        <Accordion.Root type="single" bind:value={accordionValue}>
+          <Accordion.Item value="comments" class="border-0">
+            <Accordion.Trigger class="px-4 text-xl font-semibold w-full">
+              Comments {#if comments.length > 0}({comments.length}){/if}
+            </Accordion.Trigger>
+            <Accordion.Content class="px-4">
+              <form onsubmit={handleSubmitComment} class="mb-6">
+                <div class="space-y-3">
+                  <Textarea bind:value={commentText} placeholder="Share your thoughts..." rows={3} disabled={CommentSubmissionIsInProgress} class="resize-none" aria-label="Comment text" />
+                  <div class="flex justify-end">
+                    <Button type="submit" disabled={CommentSubmissionIsInProgress || !commentText.trim()} size="sm">
+                      {CommentSubmissionIsInProgress ? "Posting..." : "Post Comment"}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
 
-            {#if comments.length > 0}
-              <ul class="space-y-4" role="list">
-                {#each comments as comment (comment.Id)}
-                  {@const isOwn = isOwnEngagement(comment)}
-                  <li class="border rounded-lg p-4 bg-card" transition:slide={{ duration: 200 }}>
-                    <header class="flex items-start justify-between mb-2">
-                      <span class="text-sm font-medium">{comment.Author.Title}</span>
-                      <div class="flex items-center gap-2">
-                        <time class="text-xs text-muted-foreground" datetime={comment.Created}>
-                          {new Date(comment.Created).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                        </time>
-                        {#if isOwn}
-                          <button
-                            type="button"
-                            onclick={() => handleDeleteComment(comment.Id)}
-                            disabled={deletingId === comment.Id}
-                            class="text-muted-foreground hover:text-destructive transition-colors p-1 -m-1"
-                            title="Delete comment"
-                            aria-label="Delete comment"
-                          >
-                            <Trash2 size={14} class={deletingId === comment.Id ? "animate-pulse" : ""} />
-                          </button>
-                        {/if}
-                      </div>
-                    </header>
-                    <p class="text-sm">{comment.Content}</p>
-                  </li>
-                {/each}
-              </ul>
-            {:else}
-              <p class="text-sm text-muted-foreground">No comments yet. Start the conversation!</p>
-            {/if}
-          </div>
-        {/if}
+              {#if comments.length > 0}
+                <ul class="space-y-4" role="list">
+                  {#each comments as comment (comment.Id)}
+                    {@const isOwn = isOwnEngagement(comment)}
+                    <li class="group border rounded-lg p-4 transition-colors {isOwn ? 'bg-primary/5 border-primary/20' : 'bg-card'}" transition:slide={{ duration: 200 }}>
+                      <header class="flex items-start justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                          <span class="text-sm font-medium">{comment.Author.Title}</span>
+                          {#if isOwn}
+                            <span class="text-xs text-primary/70 font-medium">(You)</span>
+                          {/if}
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <time class="text-xs text-muted-foreground" datetime={comment.Created}>
+                            {new Date(comment.Created).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          </time>
+                          {#if isOwn}
+                            <button
+                              type="button"
+                              onclick={() => openDeleteDialog(comment.Id)}
+                              disabled={deletingId === comment.Id}
+                              class="text-muted-foreground hover:text-destructive transition-all p-1 -m-1 opacity-0 group-hover:opacity-100 focus:opacity-100"
+                              title="Delete comment"
+                              aria-label="Delete comment"
+                            >
+                              <Trash2 size={14} class={deletingId === comment.Id ? "animate-pulse" : ""} />
+                            </button>
+                          {/if}
+                        </div>
+                      </header>
+                      <p class="text-sm">{comment.Content}</p>
+                    </li>
+                  {/each}
+                </ul>
+              {:else}
+                <p class="text-sm text-muted-foreground">No comments yet. Start the conversation!</p>
+              {/if}
+            </Accordion.Content>
+          </Accordion.Item>
+        </Accordion.Root>
       </div>
     {:else if engagementsLoadState?.error}
       <StatusMessage type="error" message={engagementsLoadState.error} errorDetails={engagementsLoadState.errorDetails} />
     {/if}
   </section>
+
+  <!-- Delete Confirmation Dialog -->
+  <Dialog.Root bind:open={deleteDialogOpen}>
+    <Dialog.Content>
+      <Dialog.Header>
+        <Dialog.Title>Delete Comment</Dialog.Title>
+        <Dialog.Description>Are you sure you want to delete this comment? This action cannot be undone.</Dialog.Description>
+      </Dialog.Header>
+      <Dialog.Footer>
+        <Button variant="outline" onclick={cancelDeleteDialog}>Cancel</Button>
+        <Button variant="destructive" onclick={confirmDeleteComment}>Delete</Button>
+      </Dialog.Footer>
+    </Dialog.Content>
+  </Dialog.Root>
 {/if}

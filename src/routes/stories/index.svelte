@@ -53,6 +53,7 @@
       // This ensures next poll gets items created after this timestamp
       lastFetchTimeString = currentFetchTimeString;
       stories = stories ? [...stories, ...storiesFromDB] : storiesFromDB;
+      stopPolling();
     }, pollInterval);
   }
 
@@ -61,12 +62,12 @@
       const tagsFilterValidate =
         !filters.Tags.selected.length || filters.Tags.selected.reduce((acc, selectedTag) => (story.Tags.toLowerCase().includes(selectedTag.toLowerCase()) ? true : acc), false);
       const yearFilterValidate = !filters.Year.selected.length || filters.Year.selected.reduce((acc, selectedYear) => (new Date(story.Created).getFullYear() === +selectedYear ? true : acc), false);
-
-      return tagsFilterValidate && yearFilterValidate;
+      const authorFilterValidate = !filters.Author.selected.length || filters.Author.selected.reduce((acc, selectedAuthor) => (story.Author.Title === selectedAuthor ? true : acc), false);
+      return tagsFilterValidate && yearFilterValidate && authorFilterValidate;
     })
   );
 
-  const filters: Record<"Tags" | "Year", Filter> = $derived.by(() => {
+  const filters: Record<"Tags" | "Year" | "Author", Filter> = $derived.by(() => {
     const _filters = $state({
       Tags: {
         category: "Tags",
@@ -80,6 +81,12 @@
         ],
         selected: [],
         description: "Stories tagged with the selected keywords",
+      },
+      Author: {
+        category: "Author",
+        options: [...new Set(stories?.map((s) => s.Author.Title))],
+        selected: [],
+        description: "Stories published in the selected years",
       },
       Year: {
         category: "Year",

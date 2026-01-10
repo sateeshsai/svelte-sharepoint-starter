@@ -1,14 +1,18 @@
-// UI Component
+// UI Components
 export { default as EngagementSection } from "./EngagementSection.svelte";
+export { default as EngagementSummary } from "./EngagementSummary.svelte";
 
 // Constants (emojis, categories)
 export * from "./engagement-constants";
+
+// Context (for library isolation - app layer must init in App.svelte)
+export { ENGAGEMENT_CONTEXT_KEY, getEngagementContext, initEngagementContext, type EngagementContext } from "./engagement-context";
 
 // Data fetchers (low-level API calls)
 export { getEngagements, pollEngagements, postReaction, postComment, deleteEngagement, groupReactionsByEmoji, getComments, getReactions } from "./engagement-api";
 
 // Handlers (high-level with optimistic updates, shared across routes)
-export { addEngagement, removeEngagement, findUserReaction, isOwnEngagement } from "./engagement-handlers";
+export { addEngagement, removeEngagement, isOwnEngagement } from "./engagement-handlers";
 
 // Schemas and validation
 export {

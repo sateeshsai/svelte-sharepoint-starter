@@ -1,5 +1,5 @@
 ---
-Title: The Mountain's Tale
+Title: The Mountain Tale
 Introduction: A story about adventure in the high peaks
 CoverFileName: 1.avif
 Tags: adventure,nature,mountains

@@ -1,5 +1,14 @@
 /**
  * Engagement Local Data - Mock data for LOCAL_MODE development
+ *
+ * Mock Users (match LOCAL_USER in global-state):
+ * - Id 1: "Patel, Priya" (current user in LOCAL_MODE)
+ * - Id 2: "Johnson, Michael"
+ * - Id 3: "Sharma, Anjali"
+ * - Id 4: "Williams, Sarah"
+ * - Id 5: "Reddy, Vikram"
+ *
+ * Note: Each user has at most ONE reaction per story (replace behavior).
  */
 import type { Engagement_ListItem } from "./engagement-schemas";
 
@@ -14,7 +23,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-03-16").toISOString(),
     Author: {
       Id: 1,
-      Title: "Modukuru, Sateeshsai",
+      Title: "Patel, Priya",
     },
     Parent: { Id: 1, Title: "Beyond the Stars" },
     ParentType: "Story",
@@ -28,7 +37,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-03-17").toISOString(),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Johnson, Michael",
     },
     Parent: { Id: 1, Title: "Beyond the Stars" },
     ParentType: "Story",
@@ -42,21 +51,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-03-18").toISOString(),
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
-    },
-    Parent: { Id: 1, Title: "Beyond the Stars" },
-    ParentType: "Story",
-  },
-  {
-    Id: 4,
-    Title: "❤️",
-    EngagementType: "Reaction",
-    Content: null,
-    Created: new Date("2024-03-19").toISOString(),
-    Modified: new Date("2024-03-19").toISOString(),
-    Author: {
-      Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Sharma, Anjali",
     },
     Parent: { Id: 1, Title: "Beyond the Stars" },
     ParentType: "Story",
@@ -70,7 +65,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-03-20").toISOString(),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Johnson, Michael",
     },
     Parent: { Id: 1, Title: "Beyond the Stars" },
     ParentType: "Story",
@@ -85,7 +80,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-06-11").toISOString(),
     Author: {
       Id: 1,
-      Title: "Modukuru, Sateeshsai",
+      Title: "Patel, Priya",
     },
     Parent: { Id: 2, Title: "Whispers of the Forest" },
     ParentType: "Story",
@@ -99,7 +94,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-06-12").toISOString(),
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Sharma, Anjali",
     },
     Parent: { Id: 2, Title: "Whispers of the Forest" },
     ParentType: "Story",
@@ -113,7 +108,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-06-13").toISOString(),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Johnson, Michael",
     },
     Parent: { Id: 2, Title: "Whispers of the Forest" },
     ParentType: "Story",
@@ -128,7 +123,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-01-11").toISOString(),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Johnson, Michael",
     },
     Parent: { Id: 3, Title: "The Mountain's Tale" },
     ParentType: "Story",
@@ -143,7 +138,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2022-05-16").toISOString(),
     Author: {
       Id: 1,
-      Title: "Modukuru, Sateeshsai",
+      Title: "Patel, Priya",
     },
     Parent: { Id: 6, Title: "Inactive Story for Testing" },
     ParentType: "Story",
@@ -158,7 +153,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-09-21").toISOString(),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Johnson, Michael",
     },
     Parent: { Id: 7, Title: "The Art of Digital Transformation in Modern Enterprises" },
     ParentType: "Story",
@@ -172,7 +167,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-09-25").toISOString(),
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Sharma, Anjali",
     },
     Parent: { Id: 7, Title: "The Art of Digital Transformation in Modern Enterprises" },
     ParentType: "Story",
@@ -186,7 +181,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-10-01").toISOString(),
     Author: {
       Id: 1,
-      Title: "Modukuru, Sateeshsai",
+      Title: "Patel, Priya",
     },
     Parent: { Id: 7, Title: "The Art of Digital Transformation in Modern Enterprises" },
     ParentType: "Story",
@@ -201,7 +196,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-10-02").toISOString(),
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Sharma, Anjali",
     },
     Parent: { Id: 7, Title: "The Art of Digital Transformation in Modern Enterprises" },
     ParentType: "Story",
@@ -216,7 +211,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-10-05").toISOString(),
     Author: {
       Id: 1,
-      Title: "Modukuru, Sateeshsai",
+      Title: "Patel, Priya",
     },
     Parent: { Id: 7, Title: "The Art of Digital Transformation in Modern Enterprises" },
     ParentType: "Story",
@@ -231,7 +226,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-08-11").toISOString(),
     Author: {
       Id: 1,
-      Title: "Modukuru, Sateeshsai",
+      Title: "Patel, Priya",
     },
     Parent: { Id: 9, Title: "Rich Media Story with Multiple Images and Complex Formatting" },
     ParentType: "Story",
@@ -245,7 +240,21 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-08-20").toISOString(),
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Sharma, Anjali",
+    },
+    Parent: { Id: 9, Title: "Rich Media Story with Multiple Images and Complex Formatting" },
+    ParentType: "Story",
+  },
+  {
+    Id: 21,
+    Title: "👏",
+    EngagementType: "Reaction",
+    Content: null,
+    Created: new Date("2024-08-22").toISOString(),
+    Modified: new Date("2024-08-22").toISOString(),
+    Author: {
+      Id: 4,
+      Title: "Williams, Sarah",
     },
     Parent: { Id: 9, Title: "Rich Media Story with Multiple Images and Complex Formatting" },
     ParentType: "Story",
@@ -260,7 +269,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date().toISOString(),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Johnson, Michael",
     },
     Parent: { Id: 10, Title: "Very Recent Story" },
     ParentType: "Story",
@@ -275,7 +284,7 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-07-21").toISOString(),
     Author: {
       Id: 1,
-      Title: "Modukuru, Sateeshsai",
+      Title: "Patel, Priya",
     },
     Parent: { Id: 12, Title: "Special Characters & Symbols Test: Unicode, Emojis 🚀, and More!" },
     ParentType: "Story",
@@ -289,7 +298,21 @@ export const LOCAL_ENGAGEMENTS: Engagement_ListItem[] = [
     Modified: new Date("2024-07-22").toISOString(),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Johnson, Michael",
+    },
+    Parent: { Id: 12, Title: "Special Characters & Symbols Test: Unicode, Emojis 🚀, and More!" },
+    ParentType: "Story",
+  },
+  {
+    Id: 22,
+    Title: "🔥",
+    EngagementType: "Reaction",
+    Content: null,
+    Created: new Date("2024-07-23").toISOString(),
+    Modified: new Date("2024-07-23").toISOString(),
+    Author: {
+      Id: 5,
+      Title: "Reddy, Vikram",
     },
     Parent: { Id: 12, Title: "Special Characters & Symbols Test: Unicode, Emojis 🚀, and More!" },
     ParentType: "Story",

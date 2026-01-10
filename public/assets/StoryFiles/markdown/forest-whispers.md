@@ -1,5 +1,5 @@
 ---
-Title: Whispers of the Forest
+Title: Forest Whispers
 Introduction: An enchanting tale from deep within ancient woods
 CoverFileName: 2.avif
 Tags: magic,nature,forest

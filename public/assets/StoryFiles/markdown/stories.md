@@ -1,3 +1,3 @@
-- mountain-tale
+- the-mountain-tale
 - forest-whispers
 - beyond-stars
