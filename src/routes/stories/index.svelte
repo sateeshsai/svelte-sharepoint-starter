@@ -3,8 +3,7 @@
   import Stories from "./_components/Stories.svelte";
   import * as Sheet from "$lib/components/ui/sheet/index.js";
   import Label from "$lib/components/ui/label/label.svelte";
-  import { cn } from "$lib/utils";
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
+  import { Section, SectionHeader } from "$lib/common-library/components/layout";
 
   import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import type { Filter } from "./_components/StoryFilters.svelte";
@@ -92,7 +91,7 @@
   trackAnalytics();
 </script>
 
-<main class={cn("grid", PAGE_UTIL_CLASSES.padding, PAGE_UTIL_CLASSES.maxWidth)}>
+<Section as="main">
   <section class="stories h-full min-h-[50dvh]">
     <svelte:boundary>
       {#snippet failed(error: any, reset)}
@@ -102,29 +101,31 @@
       {#if storiesLoadState.loading}
         <StatusMessage type="loading" message="Loading stories..." />
       {:else if storiesLoadState.ready && storiesToShow}
-        <div class="titleHeader flex justify-between mb-10 items-center" in:fly={{ y: -10 }}>
-          <h1 class="text-3xl font-light">Stories</h1>
-          <div class="filters">
-            <Sheet.Root>
-              <Sheet.Trigger class="border p-1 aspect-square rounded">
-                <ListFilter size={20} class="text-muted-foreground" />
-              </Sheet.Trigger>
-              <Sheet.Content class="z-100">
-                <Sheet.Header>
-                  <Sheet.Title class="text-lg">Filters</Sheet.Title>
-                  <Sheet.Description>Filter stories</Sheet.Description>
-                </Sheet.Header>
-                <div class="grid gap-6 px-4">
-                  {#each filtersArray as filter, idx}
-                    <div class="filterCategory">
-                      <Label class="mb-1.5 text-base ">{filter.category}</Label>
-                      <StoryFilters type="multiple" bind:filter={filtersArray[idx]} />
-                    </div>
-                  {/each}
-                </div>
-              </Sheet.Content>
-            </Sheet.Root>
-          </div>
+        <div in:fly={{ y: -10 }}>
+          <SectionHeader variant="page">
+            {#snippet actions()}
+              <Sheet.Root>
+                <Sheet.Trigger class="border p-1 aspect-square rounded">
+                  <ListFilter size={20} class="text-muted-foreground" />
+                </Sheet.Trigger>
+                <Sheet.Content class="z-100">
+                  <Sheet.Header>
+                    <Sheet.Title class="text-lg">Filters</Sheet.Title>
+                    <Sheet.Description>Filter stories</Sheet.Description>
+                  </Sheet.Header>
+                  <div class="grid gap-6 px-4">
+                    {#each filtersArray as filter, idx}
+                      <div class="filterCategory">
+                        <Label class="mb-1.5 text-base ">{filter.category}</Label>
+                        <StoryFilters type="multiple" bind:filter={filtersArray[idx]} />
+                      </div>
+                    {/each}
+                  </div>
+                </Sheet.Content>
+              </Sheet.Root>
+            {/snippet}
+            Stories
+          </SectionHeader>
         </div>
 
         <Stories stories={storiesToShow} />
@@ -135,4 +136,4 @@
       {/if}
     </svelte:boundary>
   </section>
-</main>
+</Section>

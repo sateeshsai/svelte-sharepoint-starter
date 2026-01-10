@@ -1,7 +1,5 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { cn } from "$lib/utils";
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import ListFilter from "@lucide/svelte/icons/list-filter";
   import type { StoryMarkdown } from "./get-stories";
   import type { Filter } from "$routes/stories/_components/StoryFilters.svelte";
@@ -15,6 +13,7 @@
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import MarkdownStories from "./_components/MarkdownStories.svelte";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
+  import { Section, SectionHeader } from "$lib/common-library/components/layout";
   let storiesLoadState = new AsyncLoadState();
   let stories: StoryMarkdown[] = $state([]);
 
@@ -64,7 +63,7 @@
   trackAnalytics();
 </script>
 
-<main class={cn("grid", PAGE_UTIL_CLASSES.padding, PAGE_UTIL_CLASSES.maxWidth)}>
+<Section as="main">
   <svelte:boundary>
     {#snippet failed(error: any, reset)}
       <ErrorBoundaryMessage customError="Error rendering stories page (from Markdown)." {error} {reset} />
@@ -73,29 +72,31 @@
       {#if storiesLoadState.loading}
         <StatusMessage type="loading" message="Loading stories" />
       {:else if storiesLoadState.ready && stories}
-        <div class="titleHeader flex justify-between mb-10 items-center" in:fly={{ y: -10 }}>
-          <h1 class="text-3xl font-light">Markdown Stories</h1>
-          <div class="filters">
-            <Sheet.Root>
-              <Sheet.Trigger class="border p-1 aspect-square rounded">
-                <ListFilter size={20} class="text-muted-foreground" />
-              </Sheet.Trigger>
-              <Sheet.Content class="z-100">
-                <Sheet.Header>
-                  <Sheet.Title class="text-lg">Filters</Sheet.Title>
-                  <Sheet.Description>Filter stories</Sheet.Description>
-                </Sheet.Header>
-                <div class="grid gap-6 px-4">
-                  {#each filtersArray as filter, idx}
-                    <div class="filterCategory">
-                      <Label class="mb-1.5 text-base ">{filter.category}</Label>
-                      <StoryFilters type="multiple" bind:filter={filtersArray[idx]} />
-                    </div>
-                  {/each}
-                </div>
-              </Sheet.Content>
-            </Sheet.Root>
-          </div>
+        <div in:fly={{ y: -10 }}>
+          <SectionHeader variant="page">
+            {#snippet actions()}
+              <Sheet.Root>
+                <Sheet.Trigger class="border p-1 aspect-square rounded">
+                  <ListFilter size={20} class="text-muted-foreground" />
+                </Sheet.Trigger>
+                <Sheet.Content class="z-100">
+                  <Sheet.Header>
+                    <Sheet.Title class="text-lg">Filters</Sheet.Title>
+                    <Sheet.Description>Filter stories</Sheet.Description>
+                  </Sheet.Header>
+                  <div class="grid gap-6 px-4">
+                    {#each filtersArray as filter, idx}
+                      <div class="filterCategory">
+                        <Label class="mb-1.5 text-base ">{filter.category}</Label>
+                        <StoryFilters type="multiple" bind:filter={filtersArray[idx]} />
+                      </div>
+                    {/each}
+                  </div>
+                </Sheet.Content>
+              </Sheet.Root>
+            {/snippet}
+            Markdown Stories
+          </SectionHeader>
         </div>
 
         {#if storiesToShow}
@@ -108,4 +109,4 @@
       {/if}
     </section>
   </svelte:boundary>
-</main>
+</Section>

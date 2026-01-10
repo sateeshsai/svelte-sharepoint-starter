@@ -50,7 +50,7 @@
 
 <div class="z-50 size-full rounded-md border border-input bg-background">
   {#if editor && !editor.isDestroyed}
-    <EdraToolBar class="flex flex-wrap [&_button]:w-auto  [&_button]:grow  items-center lg:overflow-x-auto border-b border-dashed bg-secondary/50 p-0.5" {editor} />
+    <EdraToolBar class="flex gap-1.5 flex-wrap justify-between [&_button]:w-auto    items-center lg:overflow-x-auto border-b border-dashed bg-secondary/50 px-1.5" {editor} />
     <EdraDragHandleExtended {editor} />
   {/if}
   <EdraEditor bind:editor {content} class="h-120 max-h-screen overflow-y-scroll pl-6 pr-5 py-4 prose-sm prose-video:mb-0 text-foreground max-w-none" {onUpdate}></EdraEditor>

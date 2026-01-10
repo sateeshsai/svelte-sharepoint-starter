@@ -1,13 +1,12 @@
 <script lang="ts">
-  import { cn } from "$lib/utils";
-  import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
 
   import { renderDocSection, type DocSection } from "$lib/data/items/docs";
   import { getContext } from "svelte";
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
+  import { SectionHeader } from "$lib/common-library/components/layout";
+  import { SECTION_CLASSES } from "$lib/common-library/utils";
 
   let htmlContent = $state("");
   const loadState = new AsyncLoadState();
@@ -29,15 +28,9 @@
 </script>
 
 <main>
-  <Breadcrumb.Root>
-    <Breadcrumb.List class="p-0">
-      <Breadcrumb.Item class="pl-0">
-        <Breadcrumb.Page>Documentation</Breadcrumb.Page>
-      </Breadcrumb.Item>
-    </Breadcrumb.List>
-  </Breadcrumb.Root>
+  <SectionHeader variant="subsection" breadcrumbs={[{ label: "Documentation" }]}></SectionHeader>
 
-  <div class="prose-sm sm:prose mx-auto dark:prose-invert mt-8">
+  <div class={SECTION_CLASSES.prose.standard + " mt-8"}>
     <svelte:boundary>
       {#snippet failed(error: any, reset)}
         <ErrorBoundaryMessage customError="Error rendering documentation." {error} {reset} />

@@ -4,6 +4,7 @@
  * Reusable UI components organized by category.
  *
  * Categories:
+ * - `layout/` - Section, SectionHeader
  * - `feedback/` - StatusMessage, ErrorBoundaryMessage
  * - `media/` - FilePreview, FileDropZone, MediaGallery, CropperJsWrapper
  * - `animation/` - LineAnimated
@@ -15,6 +16,7 @@
  *
  * @example
  * ```typescript
+ * import { Section, SectionHeader } from "$lib/common-library/components/layout";
  * import { StatusMessage } from "$lib/common-library/components/feedback";
  * import { FilePreview, MediaGallery } from "$lib/common-library/components/media";
  * import { ToggleFilters, type Filter } from "$lib/common-library/components/filters";
@@ -22,6 +24,7 @@
  */
 
 // Re-export all categories
+export * from "./layout";
 export * from "./feedback";
 export * from "./animation";
 export * from "./dev";

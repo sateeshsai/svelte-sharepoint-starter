@@ -1,14 +1,13 @@
 <script lang="ts">
   import { getContext } from "svelte";
-  import { cn } from "$lib/utils";
   import { p, route } from "sv-router/generated";
-  import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
 
   import { renderDocSection, type DocSection } from "$lib/data/items/docs";
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
+  import { Section, SectionHeader } from "$lib/common-library/components/layout";
+  import { SECTION_CLASSES } from "$lib/common-library/utils";
 
   const params = $derived(route.getParams("/docs/:section"));
   const sectionSlug = $derived(params.section);
@@ -34,41 +33,31 @@
   }
 </script>
 
-<main class={cn(PAGE_UTIL_CLASSES.padding, PAGE_UTIL_CLASSES.maxWidth, "max-w-fit")}>
+<Section as="main" maxWidth="narrow" padding="compact" class="max-w-fit">
   <svelte:boundary>
     {#snippet failed(error: any, reset)}
       <ErrorBoundaryMessage customError="Error rendering documentation." {error} {reset} />
     {/snippet}
     {#if loadState.loading}
-      <div class={cn("p-8")}>
+      <div class="p-8">
         <StatusMessage type="loading" message="Loading documentation..." />
       </div>
     {:else if loadState.error}
-      <div class={cn("p-8")}>
+      <div class="p-8">
         <StatusMessage type="error" message={loadState.error || "Failed to load documentation"} errorDetails={loadState.errorDetails} />
       </div>
     {:else if loadState.ready && sectionData && htmlContent}
-      <div class={cn("p-8")}>
-        <Breadcrumb.Root>
-          <Breadcrumb.List class="p-0">
-            <Breadcrumb.Item class="pl-0">
-              <Breadcrumb.Link href={p("/docs")}>Documentation</Breadcrumb.Link>
-            </Breadcrumb.Item>
-            <Breadcrumb.Separator />
-            <Breadcrumb.Item>
-              <Breadcrumb.Page>{sectionData.label}</Breadcrumb.Page>
-            </Breadcrumb.Item>
-          </Breadcrumb.List>
-        </Breadcrumb.Root>
+      <div class="p-8">
+        <SectionHeader variant="subsection" breadcrumbs={[{ label: "Documentation", href: p("/docs") }, { label: sectionData.label }]}></SectionHeader>
 
-        <section class="docHTML prose-sm sm:prose mx-auto dark:prose-invert">
+        <section class={SECTION_CLASSES.prose.standard}>
           {@html htmlContent}
         </section>
       </div>
     {:else}
-      <div class={cn("p-8")}>
+      <div class="p-8">
         <StatusMessage type="error" message={`Documentation section not found: ${sectionSlug}`} />
       </div>
     {/if}
   </svelte:boundary>
-</main>
+</Section>

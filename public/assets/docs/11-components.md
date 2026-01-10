@@ -419,27 +419,88 @@ Custom gradient definitions in `src/lib/common-library/css/gradients.css`
 
 ### Utility Classes
 
-Common utility classes in `src/lib/common-library/utils/const/classes.ts`
+Layout utility classes in `src/lib/common-library/utils/const/classes.ts`:
 
 ```ts
-export const PAGE_UTIL_CLASSES = {
-  padding: "p-8 sm:p-16 lg:p-20",
-  maxWidth: "max-w-7xl",
-  gap: "gap-6 lg:gap-8",
+// Section layout utilities
+export const SECTION_CLASSES = {
+  maxWidth: {
+    narrow: "max-w-4xl justify-self-center w-full", // 56rem - reading/forms
+    standard: "max-w-7xl justify-self-center w-full", // 80rem - default
+    wide: "max-w-screen-xl justify-self-center w-full",
+    full: "w-full",
+  },
+  appShell: "max-w-screen-4xl mx-auto", // Outermost container
+  padding: {
+    compact: "px-4 py-8 md:px-6 lg:py-10",
+    standard: "px-6 py-14 lg:py-16 md:px-8",
+    horizontal: "px-6 md:px-8",
+  },
+  gap: { sm: "gap-4", md: "gap-6 lg:gap-8", lg: "gap-8 lg:gap-12" },
+  prose: {
+    standard: "prose-sm sm:prose mx-auto dark:prose-invert",
+    withLinks: "prose-sm sm:prose mx-auto dark:prose-invert prose-a:underline...",
+  },
+};
+
+// Heading styles
+export const HEADING_CLASSES = {
+  hero: "text-5xl xl:text-6xl font-thin tracking-tight",
+  page: "text-3xl font-light",
+  section: "text-xl font-semibold",
+  subsection: "font-medium text-sm",
 };
 ```
 
-Usage:
+**Using constants directly:**
 
 ```svelte
 <script>
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
+  import { SECTION_CLASSES, HEADING_CLASSES } from "$lib/common-library/utils";
   import { cn } from "$lib/utils";
 </script>
 
-<section class={cn(PAGE_UTIL_CLASSES.padding, PAGE_UTIL_CLASSES.maxWidth)}>
-  <!-- Content -->
+<section class={cn(SECTION_CLASSES.padding.standard, SECTION_CLASSES.maxWidth.standard)}>
+  <h1 class={HEADING_CLASSES.page}>Page Title</h1>
 </section>
+```
+
+**Using Section component:**
+
+```svelte
+<script>
+  import { Section, SectionHeader } from "$lib/common-library/components/layout";
+</script>
+
+<Section maxWidth="standard" padding="standard">
+  <SectionHeader variant="page">Page Title</SectionHeader>
+  <!-- Content -->
+</Section>
+
+<!-- Full-bleed background with constrained content -->
+<Section fullBleed background="bg-muted/80 dark:bg-muted/30">
+  <h2>Content here is max-w-7xl, background is full-width</h2>
+</Section>
+```
+
+**SectionHeader with breadcrumbs and actions:**
+
+```svelte
+<SectionHeader
+  variant="page"
+  breadcrumbs={[
+    { label: "Home", href: "/" },
+    { label: "Stories" }
+  ]}
+>
+  {#snippet actions()}
+    <Button>Add New</Button>
+  {/snippet}
+  {#snippet intro()}
+    <p>Browse all stories below.</p>
+  {/snippet}
+  All Stories
+</SectionHeader>
 ```
 
 ---

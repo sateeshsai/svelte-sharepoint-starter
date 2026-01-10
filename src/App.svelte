@@ -15,6 +15,7 @@
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import ConfigErrorBoundary from "./_components/ConfigErrorBoundary.svelte";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
+  import { SECTION_CLASSES } from "$lib/common-library/utils";
 
   // Provide config to all child components via Svelte context
   setContext("sharePointConfig", SHAREPOINT_CONFIG);
@@ -46,8 +47,8 @@
   <Toaster richColors closeButton position="top-right" />
 
   <!-- PAGE -->
-  <div class="grainy-gradient fixed top-0 left-[50%] w-full h-full -z-10 max-w-screen-4xl translate-x-[-50%]"></div>
-  <div class="min-h-screen grid max-w-screen-4xl mx-auto">
+  <div class={cn("grainy-gradient fixed top-0 left-[50%] w-full h-full -z-10 translate-x-[-50%]", SECTION_CLASSES.appShell)}></div>
+  <div class={cn("min-h-screen grid", SECTION_CLASSES.appShell)}>
     {#if initialDataLoadState?.loading}
       <StatusMessage type="loading" message="Loading..." />
     {:else if initialDataLoadState?.ready}

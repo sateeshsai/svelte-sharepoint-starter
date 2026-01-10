@@ -6,7 +6,7 @@
   import Input from "$lib/components/ui/input/input.svelte";
   import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import type { Snippet } from "svelte";
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
+  import { SECTION_CLASSES, HEADING_CLASSES } from "$lib/common-library/utils";
 
   const { children }: { children: Snippet } = $props();
   let searchQuery = $state("");
@@ -33,11 +33,11 @@
   });
 </script>
 
-<div class={cn("flex min-h-screen bg-muted/30", PAGE_UTIL_CLASSES.maxWidth)}>
+<div class={cn("flex min-h-screen bg-muted/30", SECTION_CLASSES.maxWidth.standard)}>
   <!-- Sidebar -->
   <aside class="w-64 border-r bg-white dark:bg-slate-950 sticky top-0 h-screen overflow-y-auto">
     <div class="p-6 py-8">
-      <h1 class="text-xl font-bold mb-6">Documentation</h1>
+      <h1 class={cn(HEADING_CLASSES.section, "mb-6")}>Documentation</h1>
 
       <!-- Search -->
       <div class="mb-6">
@@ -72,7 +72,7 @@
   </aside>
 
   <!-- Main Content -->
-  <main class={cn("flex-1 overflow-y-auto", PAGE_UTIL_CLASSES.padding)}>
+  <main class={cn("flex-1 overflow-y-auto", SECTION_CLASSES.padding.standard)}>
     {@render children()}
   </main>
 </div>

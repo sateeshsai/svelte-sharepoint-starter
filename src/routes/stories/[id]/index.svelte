@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
-  import { cn } from "$lib/utils";
   import { navigate, p, route } from "sv-router/generated";
   import { getStory, getStoryFiles, getStoryEngagements, postNewStory, addEngagement, removeEngagement } from "$lib/data/items/stories";
   import { getUserPropertiesById } from "$lib/data/items/users";
@@ -15,12 +13,13 @@
   import StoryFileGallery from "./_components/StoryFileGallery.svelte";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { fly, scale } from "svelte/transition";
-  import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import LineAnimated from "$lib/common-library/components/animation/LineAnimated.svelte";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
   import { EngagementSection } from "$lib/common-library/integrations/components/engagements";
+  import { Section, SectionHeader } from "$lib/common-library/components/layout";
+  import { SECTION_CLASSES } from "$lib/common-library/utils";
 
   const { signal } = useAbortController();
 
@@ -123,7 +122,7 @@
   trackAnalytics();
 </script>
 
-<main class={cn("grid justify-center", PAGE_UTIL_CLASSES.padding, PAGE_UTIL_CLASSES.maxWidth)}>
+<Section as="main" class="grid justify-center">
   <svelte:boundary>
     {#snippet failed(error: any, reset)}
       <ErrorBoundaryMessage customError="Error rendering story page." {error} {reset} />
@@ -132,42 +131,42 @@
     {#if storyLoadState?.loading}
       <StatusMessage type="loading" message="Loading story..." />
     {:else if storyLoadState.ready && story}
-      <article class="storyContainer prose-sm prose-a:underline prose-a:decoration-muted-foreground prose-a:decoration-1 prose-a:underline-offset-3 max-w-5xl w-full dark:prose-invert text-pretty">
-        <Breadcrumb.Root>
-          <Breadcrumb.Item>
-            <Breadcrumb.Link class="p-0 flex gap-2 items-center no-underline!" href={p("/stories")}>
+      <article class={SECTION_CLASSES.prose.withLinks + " max-w-5xl w-full text-pretty"}>
+        <SectionHeader variant="page" class="mt-4 mb-6">
+          {#snippet breadcrumbsSnippet()}
+            <a class="p-0 flex gap-2 items-center no-underline!" href={p("/stories")}>
               <ArrowLeft size="24" class="bg-muted/50 border p-1 rounded" />
               Back to Stories
-            </Breadcrumb.Link>
-          </Breadcrumb.Item>
-        </Breadcrumb.Root>
-
-        <header class="storyHeader mt-4 flex gap-4 justify-between items-start">
-          <div class="w-full">
-            <h1 class="mt-4 mb-6" in:fly={{ x: -50 }}>{story.Title}</h1>
-
-            <div class="flex gap-2 items-baseline my-4">
-              {#if authorProperties}
-                {@const authorFullname = getUserFirstLastNames(authorProperties)}
-                <p class="my-0!"><a href="https://people.deloitte/profile/{authorProperties.Email.split('@')[0]}" target="_blank">{authorFullname?.first} {authorFullname?.last}</a></p>
-                |
-              {/if}
-              <time class="text-sm text-muted-foreground" datetime={new Date(story.Modified).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
-                >{new Date(story.Modified).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}</time
+            </a>
+          {/snippet}
+          {#snippet actions()}
+            {#if currentUserCanEdit && story}
+              <a
+                title="Edit story"
+                class="text-muted-foreground rounded border border-muted-foreground aspect-square w-7 grid place-items-center"
+                href={SHAREPOINT_CONFIG.paths.page + "#/stories/" + story.Id + "/edit"}
               >
-            </div>
-          </div>
-          {#if currentUserCanEdit}
-            <a
-              title="Edit story"
-              class="text-muted-foreground rounded border border-muted-foreground aspect-square w-7 grid place-items-center"
-              href={SHAREPOINT_CONFIG.paths.page + "#/stories/" + story.Id + "/edit"}
-            >
-              <PenLine size={16} />
-              <span class="sr-only">Edit story</span></a
-            >
-          {/if}
-        </header>
+                <PenLine size={16} />
+                <span class="sr-only">Edit story</span>
+              </a>
+            {/if}
+          {/snippet}
+          {#snippet intro()}
+            {#if story}
+              <div class="flex gap-2 items-baseline my-4">
+                {#if authorProperties}
+                  {@const authorFullname = getUserFirstLastNames(authorProperties)}
+                  <p class="my-0!"><a href="https://people.deloitte/profile/{authorProperties.Email.split('@')[0]}" target="_blank">{authorFullname?.first} {authorFullname?.last}</a></p>
+                  |
+                {/if}
+                <time class="text-sm text-muted-foreground" datetime={new Date(story.Modified).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}
+                  >{new Date(story.Modified).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}</time
+                >
+              </div>
+            {/if}
+          {/snippet}
+          <span in:fly={{ x: -50 }}>{story.Title}</span>
+        </SectionHeader>
 
         <!-- Reactions Section at Top -->
         <EngagementSection
@@ -215,4 +214,4 @@
       <StatusMessage type="error" message={storyLoadState.error} errorDetails={storyLoadState.errorDetails} />
     {/if}
   </svelte:boundary>
-</main>
+</Section>

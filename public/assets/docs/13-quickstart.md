@@ -206,10 +206,10 @@ Create `src/routes/tasks/index.svelte`:
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
   import type { Task_ListItem } from "$lib/data/types";
-  import { cn } from "$lib/utils";
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
+  import { Section, SectionHeader } from "$lib/common-library/components/layout";
+  import { cn } from "$lib/utils";
 
   const { signal } = useAbortController();
   let tasks: Task_ListItem[] = $state([]);
@@ -247,8 +247,8 @@ Create `src/routes/tasks/index.svelte`:
     <ErrorBoundaryMessage customError="Error loading tasks" {error} {reset} />
   {/snippet}
 
-  <main class={cn(PAGE_UTIL_CLASSES.padding, PAGE_UTIL_CLASSES.maxWidth)}>
-    <h1 class="text-3xl font-bold mb-6">Tasks</h1>
+  <Section as="main">
+    <SectionHeader variant="page">Tasks</SectionHeader>
 
     <StatusMessage state={loadState} />
 
@@ -277,7 +277,7 @@ Create `src/routes/tasks/index.svelte`:
     {:else if loadState.ready}
       <p class="text-muted-foreground">No tasks yet. Add your first task!</p>
     {/if}
-  </main>
+  </Section>
 </svelte:boundary>
 ```
 

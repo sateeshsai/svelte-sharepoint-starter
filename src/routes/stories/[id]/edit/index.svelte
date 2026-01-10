@@ -9,10 +9,9 @@
   import { AsyncLoadState } from "$lib/common-library/integrations/error-handling";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import { slide } from "svelte/transition";
-  import { cn } from "$lib/utils";
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
+  import { Section } from "$lib/common-library/components/layout";
 
   const { signal } = useAbortController();
 
@@ -57,7 +56,7 @@
 </script>
 
 <main>
-  <article class={cn("stories h-full", PAGE_UTIL_CLASSES.padding, PAGE_UTIL_CLASSES.maxWidth)}>
+  <Section as="article" class="stories h-full">
     <svelte:boundary>
       {#snippet failed(error: any, reset)}
         <ErrorBoundaryMessage customError="Error rendering story editor page." {error} {reset} />
@@ -72,5 +71,5 @@
         <StatusMessage type="error" message={storyLoadState.error} errorDetails={storyLoadState.errorDetails} />
       {/if}
     </svelte:boundary>
-  </article>
+  </Section>
 </main>

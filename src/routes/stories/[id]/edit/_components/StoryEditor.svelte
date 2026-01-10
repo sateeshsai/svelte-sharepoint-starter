@@ -16,14 +16,13 @@
   import { p } from "sv-router/generated";
   import { updateStory } from "$lib/data/items/stories";
   import { AsyncLoadState, AsyncSubmitState, validationError } from "$lib/common-library/integrations/error-handling";
-  import { PAGE_UTIL_CLASSES } from "$lib/common-library/utils/const/classes";
   import { slide } from "svelte/transition";
-  import * as Breadcrumb from "$lib/components/ui/breadcrumb/index.js";
   import { ImageCropperState } from "$lib/common-library/components/media/cropperState.svelte";
   import EditStoryFiles from "./_components/_story-files/EditStoryFiles.svelte";
   import EditStoryCoverImage from "./_components/_cover-image/EditStoryCoverImage.svelte";
   import EditStoryContent from "./_components/_content/EditStoryContent.svelte";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
+  import { SectionHeader } from "$lib/common-library/components/layout";
 
   let { story = $bindable() }: { story: Story_ListItem } = $props();
 
@@ -78,23 +77,16 @@
 
     {#if !storySubmissionState.success}
       <form onsubmit={submitStory} class={cn("max-w-4xl w-full justify-self-center", storySubmissionState.inProgress ? "select-none prose-sm pointer-events-none opacity-50 blur" : null)}>
-        <Breadcrumb.Root>
-          <Breadcrumb.List>
-            <Breadcrumb.Item>
-              <Breadcrumb.Link href={p("/stories")}>Stories</Breadcrumb.Link>
-            </Breadcrumb.Item>
-            <Breadcrumb.Separator />
-            <Breadcrumb.Item>
-              <Breadcrumb.Link href={p("/stories/:id", { params: { id: String(story.Id) } })}>{story.Title}</Breadcrumb.Link>
-            </Breadcrumb.Item>
-            <Breadcrumb.Separator />
-            <Breadcrumb.Item>
-              <Breadcrumb.Page>Edit</Breadcrumb.Page>
-            </Breadcrumb.Item>
-          </Breadcrumb.List>
-        </Breadcrumb.Root>
-        <h1 class="text-2xl font-light my-8">Story editor</h1>
-        <p class="mb-8">Form instructions here. Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+        <SectionHeader
+          variant="page"
+          class="my-8"
+          breadcrumbs={[{ label: "Stories", href: p("/stories") }, { label: story.Title, href: p("/stories/:id", { params: { id: String(story.Id) } }) }, { label: "Edit" }]}
+        >
+          {#snippet intro()}
+            <p class="mb-8">Form instructions here. Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+          {/snippet}
+          Story editor
+        </SectionHeader>
         <div class="grid gap-6">
           <Field.Set class="grid gap-6">
             <Field.Field>
