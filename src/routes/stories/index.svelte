@@ -6,8 +6,6 @@
   import { Section, SectionHeader } from "$lib/common-library/components/layout";
 
   import type { Story_ListItem } from "$lib/data/items/stories/schemas";
-  import type { Filter } from "./_components/StoryFilters.svelte";
-  import StoryFilters from "./_components/StoryFilters.svelte";
   import { getStories } from "$lib/data/items/stories";
   import { AsyncLoadState, trackAnalytics, poll } from "$lib/common-library/integrations";
   import { getContext, onMount } from "svelte";
@@ -16,6 +14,8 @@
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
   import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
+  import type { Filter } from "$lib/common-library/components/filters";
+  import ToggleFilters from "$lib/common-library/components/filters/ToggleFilters.svelte";
 
   const { signal } = useAbortController();
 
@@ -69,7 +69,14 @@
     const _filters = $state({
       Tags: {
         category: "Tags",
-        options: [...new Set(stories?.map((s) => s.Tags?.replaceAll(" ", "").split(",")).flat())],
+        options: [
+          ...new Set(
+            stories
+              ?.map((s) => s.Tags?.replaceAll(" ", "").split(","))
+              .flat()
+              .filter((t) => t)
+          ),
+        ],
         selected: [],
         description: "Stories tagged with the selected keywords",
       },
@@ -117,7 +124,7 @@
                     {#each filtersArray as filter, idx}
                       <div class="filterCategory">
                         <Label class="mb-1.5 text-base ">{filter.category}</Label>
-                        <StoryFilters type="multiple" bind:filter={filtersArray[idx]} />
+                        <ToggleFilters type="multiple" bind:filter={filtersArray[idx]} />
                       </div>
                     {/each}
                   </div>

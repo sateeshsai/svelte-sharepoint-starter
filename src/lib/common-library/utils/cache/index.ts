@@ -20,4 +20,4 @@
  * ```
  */
 
-export { getCachedOrFetch, invalidateCache, invalidateCacheByList, clearAllCache, getCacheStats, type GetCachedOrFetchOptions, type CachedResult } from "./dexie-cache";
+export { initCacheDatabase, getCachedOrFetch, invalidateCache, invalidateCacheByList, clearAllCache, getCacheStats, type GetCachedOrFetchOptions, type CachedResult } from "./dexie-cache.svelte";

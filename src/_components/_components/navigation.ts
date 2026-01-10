@@ -13,6 +13,11 @@ export const NAVIGATION_MENU_ITEMS: { name: string; route: ReturnType<typeof p>;
     route: "/stories",
   },
   {
+    name: "Markdown stories",
+    // route: p("/stories"),
+    route: "/markdown/stories",
+  },
+  {
     name: "Create",
     // route: p("/stories/:id", { params: { id: "new" } }),
     route: "/stories/new",

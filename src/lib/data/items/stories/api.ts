@@ -218,7 +218,7 @@ export async function postNewStory(newStoryState: BaseAsyncSubmitState) {
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
     listName: SHAREPOINT_CONFIG.lists.Story.name,
     body: newStoryToPost,
-    logToConsole: true,
+    // logToConsole: true,
   });
 
   if ("error" in postNewStoryResponse) {

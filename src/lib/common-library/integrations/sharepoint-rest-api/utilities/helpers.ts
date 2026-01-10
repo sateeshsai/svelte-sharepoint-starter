@@ -48,7 +48,8 @@ export function createSelectExpandQueries(obj: Record<string, any>) {
  * @example getPictureUrl("jdoe@deloitte.com")
  */
 export function getPictureUrl(emailAdress: string) {
-  return `https://horizonbolt.deloitte.com/api/empdetails?profilepic&emailId=${emailAdress}`;
+  // Add your API URL here
+  return `https://www.<yourpictureapi>.com?email=${emailAdress}`;
 }
 
 /**

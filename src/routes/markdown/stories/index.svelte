@@ -2,10 +2,8 @@
   import { onMount } from "svelte";
   import ListFilter from "@lucide/svelte/icons/list-filter";
   import { getMarkdownStories, type StoryMarkdown } from "$lib/data/items/stories-markdown";
-  import type { Filter } from "$routes/stories/_components/StoryFilters.svelte";
   import { AsyncLoadState, apiError } from "$lib/common-library/integrations/error-handling";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
-  import StoryFilters from "$routes/stories/_components/StoryFilters.svelte";
   import * as Sheet from "$lib/components/ui/sheet/index.js";
   import Label from "$lib/components/ui/label/label.svelte";
   import { fly } from "svelte/transition";
@@ -13,8 +11,27 @@
   import MarkdownStories from "./_components/MarkdownStories.svelte";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { Section, SectionHeader } from "$lib/common-library/components/layout";
+  import ToggleFilters, { type Filter } from "$lib/common-library/components/filters/ToggleFilters.svelte";
   let storiesLoadState = new AsyncLoadState();
   let stories: StoryMarkdown[] = $state([]);
+
+  const filters: Record<"Tags" | "Year", Filter> = $derived.by(() => {
+    const _filters = $state({
+      Tags: {
+        category: "Tags",
+        options: [...new Set(stories?.map((s) => s.Tags?.replaceAll(" ", "").split(",")).flat())],
+        selected: [],
+        description: "Stories tagged with the selected keywords",
+      },
+      Year: {
+        category: "Year",
+        options: [...new Set(stories?.map((s) => s.Modified).map((d) => new Date(d).getFullYear().toString()))],
+        selected: [],
+        description: "Stories published in the selected years",
+      },
+    });
+    return _filters;
+  });
 
   onMount(async () => {
     storiesLoadState.setLoading();
@@ -35,24 +52,6 @@
       return tagsFilterValidate && yearFilterValidate;
     })
   );
-
-  const filters: Record<"Tags" | "Year", Filter> = $derived.by(() => {
-    const _filters = $state({
-      Tags: {
-        category: "Tags",
-        options: [...new Set(stories?.map((s) => s.Tags?.replaceAll(" ", "").split(",")).flat())],
-        selected: [],
-        description: "Stories tagged with the selected keywords",
-      },
-      Year: {
-        category: "Year",
-        options: [...new Set(stories?.map((s) => s.Modified).map((d) => new Date(d).getFullYear().toString()))],
-        selected: [],
-        description: "Stories published in the selected years",
-      },
-    });
-    return _filters;
-  });
 
   const filtersArray = $derived.by(() => {
     const _filtersArray = $state(Object.values(filters));
@@ -87,7 +86,7 @@
                     {#each filtersArray as filter, idx}
                       <div class="filterCategory">
                         <Label class="mb-1.5 text-base ">{filter.category}</Label>
-                        <StoryFilters type="multiple" bind:filter={filtersArray[idx]} />
+                        <ToggleFilters type="multiple" bind:filter={filtersArray[idx]} />
                       </div>
                     {/each}
                   </div>

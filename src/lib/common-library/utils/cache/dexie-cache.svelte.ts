@@ -4,8 +4,14 @@
  * Provides persistent caching with stale-while-revalidate pattern.
  * Use for large datasets (like Stories) that benefit from offline-first loading.
  *
+ * IMPORTANT: Call initCacheDatabase(siteName) on app boot before using cache functions.
+ *
  * @example
  * ```typescript
+ * // On app boot
+ * initCacheDatabase("my-site-collection");
+ *
+ * // Then use cache
  * const result = await getCachedOrFetch({
  *   cacheKey: "stories-list",
  *   fetchFn: () => getStoriesFromAPI(),
@@ -25,19 +31,48 @@ interface CacheEntry<T = unknown> {
   listName?: string; // For invalidation by list
 }
 
-// Dexie database for cache
+// Dexie database for cache - initialized lazily with site prefix
 class CacheDatabase extends Dexie {
   cache!: EntityTable<CacheEntry, "key">;
 
-  constructor() {
-    super("AppCache");
+  constructor(siteName: string) {
+    // Sanitize site name for valid IndexedDB name (alphanumeric, dashes, underscores)
+    const safeSiteName = siteName.replace(/[^a-zA-Z0-9_-]/g, "_") || "default";
+    const dbName = `AppCache_${safeSiteName}`;
+    super(dbName);
     this.version(1).stores({
       cache: "key, listName, timestamp",
     });
+    console.log(`[DexieCache] Database initialized: ${dbName}`);
   }
 }
 
-const db = new CacheDatabase();
+let db: CacheDatabase | null = null;
+
+/**
+ * Initialize the cache database with a site-specific prefix.
+ * Call this once on app boot before using any cache functions.
+ * Database name will be: AppCache_{siteName}
+ *
+ * @param siteName - Site identifier (e.g., site collection name from SharePoint)
+ */
+export function initCacheDatabase(siteName: string): void {
+  if (db) {
+    console.warn("[DexieCache] Database already initialized, skipping re-initialization");
+    return;
+  }
+  db = new CacheDatabase(siteName);
+}
+
+/**
+ * Get the database instance, throwing if not initialized
+ */
+function getDb(): CacheDatabase {
+  if (!db) {
+    throw new Error("[DexieCache] Database not initialized. Call initCacheDatabase(siteName) on app boot.");
+  }
+  return db;
+}
 
 export interface GetCachedOrFetchOptions<T> {
   /** Unique cache key */
@@ -129,7 +164,9 @@ export async function getCachedOrFetch<T>(options: GetCachedOrFetchOptions<T>): 
  */
 async function getCacheEntry<T>(key: string): Promise<CacheEntry<T> | undefined> {
   try {
-    return (await db.cache.get(key)) as CacheEntry<T> | undefined;
+    const entry = (await getDb().cache.get(key)) as CacheEntry<T> | undefined;
+    console.log(`[DexieCache] Get cache entry: key=${key}, found=${!!entry}`);
+    return entry;
   } catch (error) {
     console.warn("[DexieCache] Failed to get cache entry:", error);
     return undefined;
@@ -141,12 +178,16 @@ async function getCacheEntry<T>(key: string): Promise<CacheEntry<T> | undefined>
  */
 async function setCacheEntry<T>(key: string, data: T, listName?: string): Promise<void> {
   try {
-    await db.cache.put({
+    console.log(`[DexieCache] Setting cache entry: key=${key}, listName=${listName}`);
+    // Use $state.snapshot to strip Proxies (from Svelte reactivity or dev warnings)
+    const clonedData = $state.snapshot(data);
+    await getDb().cache.put({
       key,
-      data,
+      data: clonedData,
       timestamp: Date.now(),
       listName,
     });
+    console.log(`[DexieCache] Successfully cached: key=${key}`);
   } catch (error) {
     console.warn("[DexieCache] Failed to set cache entry:", error);
   }
@@ -157,7 +198,7 @@ async function setCacheEntry<T>(key: string, data: T, listName?: string): Promis
  */
 export async function invalidateCache(key: string): Promise<void> {
   try {
-    await db.cache.delete(key);
+    await getDb().cache.delete(key);
   } catch (error) {
     console.warn("[DexieCache] Failed to invalidate cache:", error);
   }
@@ -169,7 +210,7 @@ export async function invalidateCache(key: string): Promise<void> {
  */
 export async function invalidateCacheByList(listName: string): Promise<void> {
   try {
-    await db.cache.where("listName").equals(listName).delete();
+    await getDb().cache.where("listName").equals(listName).delete();
     console.log(`[DexieCache] Invalidated cache for list: ${listName}`);
   } catch (error) {
     console.warn("[DexieCache] Failed to invalidate cache by list:", error);
@@ -181,7 +222,7 @@ export async function invalidateCacheByList(listName: string): Promise<void> {
  */
 export async function clearAllCache(): Promise<void> {
   try {
-    await db.cache.clear();
+    await getDb().cache.clear();
     console.log("[DexieCache] Cleared all cache");
   } catch (error) {
     console.warn("[DexieCache] Failed to clear cache:", error);
@@ -193,8 +234,8 @@ export async function clearAllCache(): Promise<void> {
  */
 export async function getCacheStats(): Promise<{ count: number; lists: string[] }> {
   try {
-    const count = await db.cache.count();
-    const entries = await db.cache.toArray();
+    const count = await getDb().cache.count();
+    const entries = await getDb().cache.toArray();
     const lists = [...new Set(entries.map((e) => e.listName).filter(Boolean))] as string[];
     return { count, lists };
   } catch (error) {

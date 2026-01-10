@@ -15,10 +15,18 @@
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import ConfigErrorBoundary from "./_components/ConfigErrorBoundary.svelte";
   import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
+  import { SHAREPOINT_PATHS } from "$lib/env/sharepoint-paths";
   import { SECTION_CLASSES } from "$lib/common-library/utils";
+  import { initCacheDatabase } from "$lib/common-library/utils/cache";
 
   // Provide config to all child components via Svelte context
   setContext("sharePointConfig", SHAREPOINT_CONFIG);
+
+  // Initialize IndexedDB cache with app + site-specific prefix to prevent data leakage
+  // Format: {shortname}_{siteCollection} - unique per project AND per SharePoint site
+  const siteCollection = SHAREPOINT_PATHS.site_collection.split("/").pop() || "local";
+  const cachePrefix = `${SHAREPOINT_CONFIG.shortname}_${siteCollection}`;
+  initCacheDatabase(cachePrefix);
 
   onMount(() => {
     loadData();

@@ -16,6 +16,8 @@ import type { SharePointConfig } from "$lib/common-library/integrations";
  * for better autocomplete (e.g., lists.Story vs lists[string])
  */
 export const SHAREPOINT_CONFIG = {
+  /** Unique short name - used for IndexedDB cache isolation between projects */
+  shortname: "starter",
   info: {
     version: "Version 1",
     emails: {

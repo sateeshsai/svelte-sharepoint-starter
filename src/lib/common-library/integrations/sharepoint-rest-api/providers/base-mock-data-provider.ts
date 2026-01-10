@@ -57,7 +57,7 @@ export abstract class BaseMockDataProvider implements DataProvider {
       // Initialize ID counter based on max ID in seed data
       const maxId = seedData.reduce((max, item) => Math.max(max, item.Id || 0), 0);
       this.idCounters.set(listName, maxId + 1);
-      console.log(`[MockDataProvider] Initialized session for ${listName}, maxId=${maxId}, items=${seedData.length}`);
+      // console.log(`[MockDataProvider] Initialized session for ${listName}, maxId=${maxId}, items=${seedData.length}`);
     }
     return this.sessionStore.get(listName)!;
   }
@@ -387,7 +387,7 @@ export abstract class BaseMockDataProvider implements DataProvider {
 
       for (let i = 0; i < numNewEntries; i++) {
         const entryNum = currentCount + i + 1;
-        console.log(`[MockDataProvider] Simulating new story entry #${entryNum}`);
+        // console.log(`[MockDataProvider] Simulating new story entry #${entryNum}`);
 
         const newStory = {
           Id: this.getNextId(options.listName),
@@ -447,7 +447,7 @@ export abstract class BaseMockDataProvider implements DataProvider {
 
         if (isReaction) {
           const emoji = reactionEmojis[Math.floor(Math.random() * reactionEmojis.length)];
-          console.log(`[MockDataProvider] Simulating new engagement reaction #${entryNum}: ${emoji}`);
+          // console.log(`[MockDataProvider] Simulating new engagement reaction #${entryNum}: ${emoji}`);
 
           const newEngagement = {
             Id: this.getNextId(options.listName),
@@ -465,7 +465,7 @@ export abstract class BaseMockDataProvider implements DataProvider {
           sessionData.push(newEngagement);
         } else {
           const comment = mockComments[Math.floor(Math.random() * mockComments.length)];
-          console.log(`[MockDataProvider] Simulating new engagement comment #${entryNum}`);
+          // console.log(`[MockDataProvider] Simulating new engagement comment #${entryNum}`);
 
           const newEngagement = {
             Id: this.getNextId(options.listName),
