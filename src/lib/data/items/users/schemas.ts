@@ -2,15 +2,15 @@
  * User Schemas and Types
  *
  * This module defines the data structure for User items:
- * - UserSchema: Core fields for user access control
- * - UserListSchema: Full schema including SharePoint metadata (for GET)
- * - UserPostSchema: Schema for creating user records (for POST)
+ * - User_Schema: Core fields for user access control
+ * - UserListItem_Schema: Full schema including SharePoint metadata (for GET)
+ * - UserPostItem_Schema: Schema for creating user records (for POST)
  *
  * @example
  * ```typescript
- * import { UserListSchema, type User_ListItem } from "$lib/data/items/users/schemas";
+ * import { UserListItem_Schema, type User_ListItem } from "$lib/data/items/users/schemas";
  *
- * const users: User_ListItem[] = UserListSchema.array().parse(apiResponse.value);
+ * const users: User_ListItem[] = UserListItem_Schema.array().parse(apiResponse.value);
  * const admins = users.filter(u => u.AccessRole === "Admin");
  * ```
  */
@@ -21,22 +21,22 @@ import { z } from "zod";
  * Core User fields schema
  * AccessRole determines user permissions in the application
  */
-export const UserSchema = z.strictObject({
+export const User_Schema = z.strictObject({
   AccessRole: z.enum(["Admin"]).nullable(),
 });
 
-export const UserListSchema = z.strictObject({
+export const UserListItem_Schema = z.strictObject({
   ...Sharepoint_Default_Props_Schema.shape,
-  ...UserSchema.shape,
+  ...User_Schema.shape,
   User: Sharepoint_Lookup_DefaultProps_Schema,
 });
 
-export const UserPostSchema = z.strictObject({
+export const UserPostItem_Schema = z.strictObject({
   ...SharepointTitleProps_Schema.shape,
-  ...UserSchema.shape,
+  ...User_Schema.shape,
   UserId: z.number().positive("User ID is required."),
 });
 
 /** Type definitions derived from schemas */
-export type User_ListItem = z.infer<typeof UserListSchema>;
-export type User_ListItem_Post = z.infer<typeof UserPostSchema>;
+export type User_ListItem = z.infer<typeof UserListItem_Schema>;
+export type User_PostItem = z.infer<typeof UserPostItem_Schema>;

@@ -1,17 +1,18 @@
 /**
  * Files API - File upload and management operations
  */
-import type { BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
-import { apiError, validationError } from "$lib/common-library/integrations";
+import type { BaseAsyncLoadState, BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+import { apiError, validationError, createSelectExpandQueries } from "$lib/common-library/integrations";
+import { createFileListItem } from "./factory";
 import { dataUriToFile } from "$lib/common-library/utils/functions/file";
 import { readAndUploadFile, type Sharepoint_Error_Formatted, type Sharepoint_PostItemResponse } from "$lib/common-library/integrations";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
-import type { File_ListItem, File_ListItem_Post_ForStory } from "./schemas";
+import type { File_ListItem, File_PostItem } from "./schemas";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
 /** Response from postListItem - matches SharePoint POST response format (flat lookup IDs) */
-export type FileDetailsPostSuccessResponse = File_ListItem_Post_ForStory & {
+export type FileDetailsPostSuccessResponse = File_PostItem & {
   Id: number;
   Created: string;
   Modified: string;
@@ -49,7 +50,7 @@ export async function uploadCroppedImage(dataUri: string, file: File, fileUpload
 // PUT/UPDATE Operations
 // ============================================================================
 
-export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Partial<File_ListItem_Post_ForStory>, updateFileState: BaseAsyncSubmitState) {
+export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Partial<File_PostItem>, updateFileState: BaseAsyncSubmitState) {
   const provider = getDataProvider();
   const updateResponse = await provider.updateListItem({
     listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
@@ -145,11 +146,11 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
 
   // 2. POST UPLOADED FILE DETAILS TO FILES LIST
   //2.A. PREPARE POST PROMISES
-  const fileDetailsPromises: Promise<Sharepoint_PostItemResponse<File_ListItem_Post_ForStory, { Id: number }>>[] = [];
+  const fileDetailsPromises: Promise<Sharepoint_PostItemResponse<File_PostItem, { Id: number }>>[] = [];
   fileUploadSuccessResponses.forEach((fileUploadSuccessResponse, idx) => {
     console.log(fileUploadSuccessResponse);
 
-    const fileDetailsToPost: File_ListItem_Post_ForStory = {
+    const fileDetailsToPost: File_PostItem = {
       Title: fileUploadSuccessResponse.Url.split("/").pop() || "file",
       ParentId: storyId,
       Description: "",
@@ -191,4 +192,37 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
   // Resetting the form to allow uploading more files.
   fileUploadState.resetForm();
   return fileDetailsPostSuccessResponses;
+}
+
+// ============================================================================
+// GET Operations
+// ============================================================================
+
+/**
+ * Fetch files associated with a story
+ * @param storyId - Parent story ID
+ * @param storyFilesLoadState - State object to track loading/error status
+ * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
+ */
+export async function getStoryFiles(storyId: number, storyFilesLoadState: BaseAsyncLoadState, signal?: AbortSignal) {
+  const selectExpand = createSelectExpandQueries(createFileListItem({ ParentId: storyId, ParentType: "Story" }));
+  const provider = getDataProvider();
+  const storyFilesResponse = await provider.getListItems<{ value: File_ListItem[] }>({
+    listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
+    operations: [
+      ["select", selectExpand.select],
+      ["expand", selectExpand.expand],
+      ["filter", `Parent/Id eq ${storyId}`],
+      ["top", 5000],
+    ],
+    signal,
+  });
+
+  if ("error" in storyFilesResponse) {
+    storyFilesLoadState.setError(apiError({ userMessage: "Could not fetch story files", technicalMessage: storyFilesResponse?.error, context: "Fetching story files" }));
+    return;
+  }
+
+  storyFilesLoadState.setReady();
+  return storyFilesResponse.value;
 }

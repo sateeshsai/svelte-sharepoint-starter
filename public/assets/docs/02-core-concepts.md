@@ -62,6 +62,19 @@ See [Architecture docs](/docs/architecture) for detailed implementation.
 
 The starter uses **Zod schemas** as the single source of truth, organized by domain:
 
+### Naming Conventions
+
+| Entity                 | Pattern                 | Example                   |
+| ---------------------- | ----------------------- | ------------------------- |
+| **Core Schema**        | `Xxx_Schema`            | `Story_Schema`            |
+| **ListItem Schema**    | `XxxListItem_Schema`    | `StoryListItem_Schema`    |
+| **PostItem Schema**    | `XxxPostItem_Schema`    | `StoryPostItem_Schema`    |
+| **ListItem Type**      | `Xxx_ListItem`          | `Story_ListItem`          |
+| **PostItem Type**      | `Xxx_PostItem`          | `Story_PostItem`          |
+| **Factory (ListItem)** | `createXxxListItem`     | `createStoryListItem`     |
+| **Factory (PostItem)** | `createXxxPostItem`     | `createStoryPostItem`     |
+| **Converter**          | `xxxListItemToPostItem` | `storyListItemToPostItem` |
+
 ### Domain-Based Schema Organization
 
 Schemas live alongside their related API and data files:
@@ -91,7 +104,7 @@ import { z } from "zod";
 import { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema } from "$lib/common-library/integrations";
 
 // Core fields schema
-export const StorySchema = z.strictObject({
+export const Story_Schema = z.strictObject({
   Title: z.string().min(10, "Title must be at least 10 characters"),
   Content: z.string().min(10, "Content too short"),
   Tags: z.string(),
@@ -102,15 +115,15 @@ export const StorySchema = z.strictObject({
 });
 
 // Full schema for GET responses (includes SharePoint metadata)
-export const StoryListSchema = z.strictObject({
+export const StoryListItem_Schema = z.strictObject({
   ...Sharepoint_Default_Props_Schema.shape,
-  ...StorySchema.shape,
+  ...Story_Schema.shape,
   Author: Sharepoint_Lookup_DefaultProps_Schema,
 });
 
 // Schema for POST/PATCH (excludes SharePoint metadata)
-export const StoryPostSchema = z.strictObject({
-  ...StorySchema.shape,
+export const StoryPostItem_Schema = z.strictObject({
+  ...Story_Schema.shape,
 });
 ```
 
@@ -126,8 +139,8 @@ Types are defined in the same file as schemas:
 
 ```typescript
 // In stories/schemas.ts
-export type Story_ListItem = z.infer<typeof StoryListSchema>;
-export type Story_ListItem_Post = z.infer<typeof StoryPostSchema>;
+export type Story_ListItem = z.infer<typeof StoryListItem_Schema>;
+export type Story_PostItem = z.infer<typeof StoryPostItem_Schema>;
 ```
 
 **No manual typing!** Types are automatically derived from schemas.
@@ -136,7 +149,7 @@ export type Story_ListItem_Post = z.infer<typeof StoryPostSchema>;
 
 ```typescript
 // Import schemas and types from domain folders
-import { StoryListSchema, type Story_ListItem } from "$lib/data/items/stories/schemas";
+import { StoryListItem_Schema, type Story_ListItem } from "$lib/data/items/stories/schemas";
 import { type File_ListItem } from "$lib/data/items/files/schemas";
 import { type User_ListItem } from "$lib/data/items/users/schemas";
 
@@ -148,7 +161,7 @@ import { getStories, type Story_ListItem } from "$lib/data/items/stories";
 
 ```typescript
 // Runtime validation in data providers
-const validated = StorySchema.parse(responseData);
+const validated = Story_Schema.parse(responseData);
 
 // If validation fails, you get detailed error:
 // "Title must be at least 3 characters"

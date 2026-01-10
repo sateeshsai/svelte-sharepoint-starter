@@ -145,14 +145,14 @@ Create `src/lib/data/items/tasks/api.ts`:
 
 ```typescript
 import { createSelectExpandQueries, type Sharepoint_Get_Operations } from "$lib/common-library/integrations";
-import { createNew_Task_ListItem } from "$lib/data/new-items.svelte";
-import type { Task_ListItem } from "$lib/data/types";
+import { createTaskListItem } from "$lib/data/items/tasks/factory";
+import type { Task_ListItem } from "$lib/data/items/tasks/schemas";
 import type { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
 export async function getTasks(loadState: AsyncLoadState, signal?: AbortSignal): Promise<Task_ListItem[] | undefined> {
-  const selectExpand = createSelectExpandQueries(createNew_Task_ListItem());
+  const selectExpand = createSelectExpandQueries(createTaskListItem());
 
   const operations: Sharepoint_Get_Operations = [
     ["select", selectExpand.select],
@@ -177,10 +177,10 @@ export async function getTasks(loadState: AsyncLoadState, signal?: AbortSignal):
 }
 ```
 
-**Add new item creator** to `src/lib/data/new-items.svelte.ts`:
+**Add factory** to `src/lib/data/items/tasks/factory.ts`:
 
 ```typescript
-export function createNew_Task_ListItem(): Task_ListItem {
+export function createTaskListItem(): Task_ListItem {
   return {
     Id: 0,
     Title: "",
@@ -205,7 +205,7 @@ Create `src/routes/tasks/index.svelte`:
   import { getTasks } from "$lib/data/items/tasks";
   import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
-  import type { Task_ListItem } from "$lib/data/types";
+  import type { Task_ListItem } from "$lib/data/items/tasks/schemas";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { Section, SectionHeader } from "$lib/common-library/components/layout";

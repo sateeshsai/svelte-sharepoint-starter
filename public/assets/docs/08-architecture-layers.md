@@ -551,7 +551,7 @@ import { global_State } from "$lib/data/global-state"; // NO
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config"; // NO (in most cases)
 
 // ❌ Common-library should NOT import app-specific types
-import type { Story_ListItem } from "$lib/data/types"; // NO
+import type { Story_ListItem } from "$lib/data/items/stories/schemas"; // NO
 ```
 
 ---

@@ -26,9 +26,9 @@
     <ErrorBoundaryMessage customError="Error rendering home page." {error} {reset} />
   {/snippet}
   <main class={cn("grid content-start justify-items-center")}>
-    <section
+    <Section
       class="w-full text-balance grid bg-no-repeat bg-bottom bg-size-[210%] md:bg-size-[180%] lg:bg-size-[130%] xl:bg-size-[100%]"
-      style:background-image={`url(${"./assets/images/svelte-machine.avif"})`}
+      style="background-image:url(./assets/images/svelte-machine.avif)"
     >
       <div class={cn("hero", SECTION_CLASSES.padding.standard, SECTION_CLASSES.maxWidth.standard)}>
         {#if global_State.userProperties}
@@ -43,7 +43,7 @@
         </h1>
         <p in:fade|global={{ delay: 200 }} class="leading-relaxed max-w-[30ch] lg:max-w-[50ch] 2xl:text-lg mb-48 lg:mb-56">A meta-framework to accelerate and standardize web development projects.</p>
       </div>
-    </section>
+    </Section>
 
     <Separator class="bg-muted" />
 

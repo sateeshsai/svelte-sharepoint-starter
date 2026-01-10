@@ -1,6 +1,7 @@
 <script lang="ts">
   import { navigate, p, route } from "sv-router/generated";
-  import { getStory, getStoryFiles, pollStoryEngagements, postNewStory, addEngagement, removeEngagement } from "$lib/data/items/stories";
+  import { getStory, pollStoryEngagements, postNewStory, addEngagement, removeEngagement } from "$lib/data/items/stories";
+  import { getStoryFiles } from "$lib/data/items/files";
   import { getUserPropertiesById } from "$lib/data/items/users";
   import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import type { File_ListItem } from "$lib/data/items/files/schemas";

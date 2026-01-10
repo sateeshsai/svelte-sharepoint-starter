@@ -8,8 +8,7 @@
   import StoryFilesInput from "./_components/StoryFilesInput.svelte";
   import Trash from "@lucide/svelte/icons/trash";
   import { cn } from "$lib/utils";
-  import { getStoryFiles } from "$lib/data/items/stories";
-  import { deleteStoryFile, updateStoryFile } from "$lib/data/items/files";
+  import { getStoryFiles, deleteStoryFile, updateStoryFile } from "$lib/data/items/files";
   import { createLoadState, createSubmitState, type AsyncLoadState } from "$lib/data/async-state.svelte";
   import { flip } from "svelte/animate";
   import type { File_ListItem } from "$lib/data/items/files/schemas";

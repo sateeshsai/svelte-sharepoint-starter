@@ -422,7 +422,10 @@ const response = await provider.getListItems({
 **Fake Data Available:**
 
 ```ts
-import { LOCAL_STORY_ITEMS, LOCAL_ENGAGEMENTS, LOCAL_FILES, LOCAL_USERS } from "$lib/data/local-data";
+import { LOCAL_STORY_ITEMS } from "$lib/data/items/stories/local-data";
+import { LOCAL_FILES } from "$lib/data/items/files/local-data";
+import { LOCAL_USERS } from "$lib/data/items/users/local-data";
+import { LOCAL_ENGAGEMENTS } from "$lib/common-library/integrations/components/engagements/local-data";
 import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/common-library/integrations/sharepoint-rest-api/data/local-data";
 ```
 
@@ -444,7 +447,7 @@ import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "$lib/
 import { AsyncLoadState } from "$lib/common-library/utils/async/async.svelte";
 import { useAbortController } from "$lib/hooks/useAbortController.svelte";
 import { getDataProvider } from "$lib/data/provider-factory";
-import type { Story_ListItem } from "$lib/data/types";
+import type { Story_ListItem } from "$lib/data/items/stories/schemas";
 
 const { signal } = useAbortController();
 let items: Story_ListItem[] | undefined = $state();

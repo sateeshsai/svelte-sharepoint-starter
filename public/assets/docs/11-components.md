@@ -227,11 +227,11 @@ Form handling with Superforms and Zod validation.
 <script>
   import { superForm } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
-  import { storySchema } from "$lib/data/schemas";
+  import { Story_Schema } from "$lib/data/items/stories/schemas";
 
   export let data;
   const { form, enhance } = superForm(data.form, {
-    validators: zodClient(storySchema),
+    validators: zodClient(Story_Schema),
   });
 </script>
 

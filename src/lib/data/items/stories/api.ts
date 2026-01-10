@@ -4,12 +4,10 @@
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/constants/const";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 import { createSelectExpandQueries, getEngagements, pollEngagements, type Sharepoint_Get_Operations, apiError, notFoundError, type Engagement_ListItem } from "$lib/common-library/integrations";
-import { createStoryTemplate, createStoryPost, storyToPost } from "./factory";
-import { createFileTemplate } from "$lib/data/items/files/factory";
+import { createStoryListItem, createStoryPostItem, storyListItemToPostItem } from "./factory";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { global_State } from "$lib/data/global-state.svelte";
 import type { Story_ListItem } from "./schemas";
-import type { File_ListItem } from "$lib/data/items/files/schemas";
 import type { BaseAsyncLoadState, BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { getCachedOrFetch, invalidateCacheByList } from "$lib/common-library/utils/cache";
 import { toast } from "svelte-sonner";
@@ -131,7 +129,7 @@ async function fetchStoriesFromProvider(
   signal?: AbortSignal,
   cacheResponse: boolean = true
 ): Promise<Story_ListItem[] | undefined> {
-  const selectExpand = createSelectExpandQueries(createStoryTemplate());
+  const selectExpand = createSelectExpandQueries(createStoryListItem());
 
   const operations: Sharepoint_Get_Operations = [
     ["select", selectExpand.select],
@@ -173,7 +171,7 @@ async function fetchStoriesFromProvider(
  * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
  */
 export async function getStory(storyId: number, storyLoadState: BaseAsyncLoadState, signal?: AbortSignal) {
-  const selectExpand = createSelectExpandQueries(createStoryTemplate());
+  const selectExpand = createSelectExpandQueries(createStoryListItem());
   const provider = getDataProvider();
   const fetchResponse = await provider.getListItems<{ value: Story_ListItem[] }>({
     listName: SHAREPOINT_CONFIG.lists.Story.name,
@@ -199,35 +197,6 @@ export async function getStory(storyId: number, storyLoadState: BaseAsyncLoadSta
 
   storyLoadState.setReady();
   return fetchResponse.value[0];
-}
-
-/**
- * Fetch files associated with a story
- * @param storyId - Parent story ID
- * @param storyFilesLoadState - State object to track loading/error status
- * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
- */
-export async function getStoryFiles(storyId: number, storyFilesLoadState: BaseAsyncLoadState, signal?: AbortSignal) {
-  const selectExpand = createSelectExpandQueries(createFileTemplate({ ParentId: storyId, ParentType: "Story" }));
-  const provider = getDataProvider();
-  const storyFilesResponse = await provider.getListItems<{ value: File_ListItem[] }>({
-    listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
-    operations: [
-      ["select", selectExpand.select],
-      ["expand", selectExpand.expand],
-      ["filter", `Parent/Id eq ${storyId}`],
-      ["top", 5000],
-    ],
-    signal,
-  });
-
-  if ("error" in storyFilesResponse) {
-    storyFilesLoadState.setError(apiError({ userMessage: "Could not fetch story files", technicalMessage: storyFilesResponse?.error, context: "Fetching story files" }));
-    return;
-  }
-
-  storyFilesLoadState.setReady();
-  return storyFilesResponse.value;
 }
 
 /**
@@ -273,7 +242,7 @@ export function pollStoryEngagements(storyId: number, onUpdate: (engagements: En
 
 /** Creates a new story and navigates to its edit page. */
 export async function postNewStory(newStoryState: BaseAsyncSubmitState) {
-  const newStoryToPost = createStoryPost();
+  const newStoryToPost = createStoryPostItem();
   const provider = getDataProvider();
   const postNewStoryResponse = await provider.postListItem({
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
@@ -311,7 +280,7 @@ export async function postNewStory(newStoryState: BaseAsyncSubmitState) {
 export async function updateStory(story: Story_ListItem, storySubmissionState: BaseAsyncSubmitState) {
   storySubmissionState.setInprogress();
 
-  const dataToPost = storyToPost(story);
+  const dataToPost = storyListItemToPostItem(story);
   const provider = getDataProvider();
 
   const storyUpdateResponse = await provider.updateListItem({

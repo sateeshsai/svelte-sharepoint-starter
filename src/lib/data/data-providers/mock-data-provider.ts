@@ -1,5 +1,10 @@
 import { BaseMockDataProvider } from "$lib/common-library/integrations/sharepoint-rest-api/providers/base-mock-data-provider";
-import { LOCAL_STORY_ITEMS, LOCAL_ENGAGEMENTS, LOCAL_FILES, LOCAL_USERS, LOCAL_ANALYTICS, LOCAL_ERROR_REPORTS } from "../local-data";
+import { LOCAL_STORY_ITEMS } from "$lib/data/items/stories/local-data";
+import { LOCAL_FILES } from "$lib/data/items/files/local-data";
+import { LOCAL_USERS } from "$lib/data/items/users/local-data";
+import { LOCAL_ENGAGEMENTS } from "$lib/common-library/integrations/components/engagements/local-data";
+import { LOCAL_ANALYTICS } from "$lib/common-library/integrations/analytics/local-data";
+import { LOCAL_ERROR_REPORTS } from "$lib/common-library/integrations/error-handling/local-data";
 import { SHAREPOINT_CONFIG, type AppSharePointConfig } from "$lib/env/sharepoint-config";
 
 /**

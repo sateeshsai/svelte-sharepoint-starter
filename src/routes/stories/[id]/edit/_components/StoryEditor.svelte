@@ -6,10 +6,9 @@
   import Input from "$lib/components/ui/input/input.svelte";
   import Textarea from "$lib/components/ui/textarea/textarea.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
-  import { storyFilesSchema } from "$lib/data/items/files/schemas";
-  import { StoryPostSchema } from "$lib/data/items/stories/schemas";
-  import { storyToPost } from "$lib/data/items/stories/factory";
-  import { fileToPost } from "$lib/data/items/files/factory";
+  import { StoryFiles_Schema, StoryPostItem_Schema } from "$lib/data/items/stories/schemas";
+  import { storyListItemToPostItem } from "$lib/data/items/stories/factory";
+  import { fileListItemToPostItem } from "$lib/data/items/files/factory";
   import { z } from "zod";
   import { cn } from "$lib/utils";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
@@ -28,8 +27,8 @@
   let { story = $bindable() }: { story: Story_ListItem } = $props();
 
   let storyDataToPost_ValidationErrors = $derived.by(() => {
-    const dataToPost = storyToPost(story);
-    const storyDataToPost_ValidationResult = StoryPostSchema.safeParse(dataToPost);
+    const dataToPost = storyListItemToPostItem(story);
+    const storyDataToPost_ValidationResult = StoryPostItem_Schema.safeParse(dataToPost);
     return storyDataToPost_ValidationResult.error ? z.flattenError(storyDataToPost_ValidationResult.error) : undefined;
   });
 
@@ -37,8 +36,8 @@
   let storyFiles: File_ListItem[] | undefined = $state();
 
   let filesValidationErrors: z.core.$ZodIssue[] = $derived.by(() => {
-    const validationResult = storyFilesSchema.safeParse({
-      files: storyFiles?.map((sf) => fileToPost(sf)),
+    const validationResult = StoryFiles_Schema.safeParse({
+      files: storyFiles?.map((sf) => fileListItemToPostItem(sf)),
     });
 
     return validationResult.error?.issues ?? [];

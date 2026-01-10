@@ -5,14 +5,14 @@
  * Used for generating query templates and new item creation.
  */
 
-import type { File_ListItem, File_ListItem_Post_ForStory } from "./schemas";
+import type { File_ListItem, File_PostItem } from "./schemas";
 
 /**
  * Create File list item template with default values
  * Used primarily for generating $select/$expand queries via createSelectExpandQueries()
- * Not intended for actual new item creation - use createFilePost() instead
+ * Not intended for actual new item creation - use createFilePostItem() instead
  */
-export function createFileTemplate(options: { ParentId: number; ParentType: File_ListItem_Post_ForStory["ParentType"] }): File_ListItem {
+export function createFileListItem(options: { ParentId: number; ParentType: File_PostItem["ParentType"] }): File_ListItem {
   return {
     Id: 1,
     Created: "",
@@ -33,10 +33,11 @@ export function createFileTemplate(options: { ParentId: number; ParentType: File
 }
 
 /**
- * Create new File POST item with sensible defaults for story attachments
+ * Create new File POST item with sensible defaults
  * Returns data ready to be posted to SharePoint
+ * For story files, validate with FilePostItem_ForStory_Schema from stories/schemas
  */
-export function createFilePost(options: { ParentId: number; ParentType: File_ListItem_Post_ForStory["ParentType"] }): File_ListItem_Post_ForStory {
+export function createFilePostItem(options: { ParentId: number; ParentType: File_PostItem["ParentType"] }): File_PostItem {
   return {
     ParentId: options.ParentId,
     Title: "",
@@ -47,10 +48,10 @@ export function createFilePost(options: { ParentId: number; ParentType: File_Lis
 }
 
 /**
- * Convert File list item to POST format for story attachments
- * Useful when editing an existing file
+ * Convert File list item to POST format
+ * For story files, validate result with FilePostItem_ForStory_Schema from stories/schemas
  */
-export function fileToPost(file: File_ListItem): File_ListItem_Post_ForStory {
+export function fileListItemToPostItem(file: File_ListItem): File_PostItem {
   return {
     ParentId: file.Parent.Id,
     Title: file.Title,
