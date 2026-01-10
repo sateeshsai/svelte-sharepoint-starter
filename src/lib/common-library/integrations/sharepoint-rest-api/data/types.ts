@@ -91,6 +91,6 @@ export interface Sharepoint_UploadFile_SuccessResponse {
  * - expand: Comma-separated lookup fields to expand (e.g., "Author,Editor")
  * - top: Maximum number of items to return
  * - skip: Number of items to skip (for pagination)
- * - orderby: Sort direction, sorts by Created field
+ * - orderby: Sort expression with field and direction (e.g., "Created desc", "Title asc")
  */
-export type Sharepoint_Get_Operations = (["select", string] | ["filter", string] | ["expand", string] | ["top", number] | ["skip", number] | ["orderby", "asc" | "desc"])[] | `$${string}=${string}`;
+export type Sharepoint_Get_Operations = (["select", string] | ["filter", string] | ["expand", string] | ["top", number] | ["skip", number] | ["orderby", string])[] | `$${string}=${string}`;

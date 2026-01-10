@@ -5,6 +5,7 @@
   import * as Field from "$lib/components/ui/field/index.js";
   import type { File_ListItem } from "$lib/data/items/files/schemas";
   import { uploadStoryFiles } from "$lib/data/items/files";
+  import { global_State } from "$lib/data/global-state.svelte";
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   let { storyFiles = $bindable(), storyId, fileUploadState = $bindable() }: { storyFiles: File_ListItem[]; storyId: number; fileUploadState: AsyncSubmitState } = $props();
 
@@ -16,14 +17,19 @@
     //3. LOCAL MODE UPDATE - Add new files to local state
     if (fileDetailsPostSuccessResponses) {
       fileDetailsPostSuccessResponses.forEach((data) => {
+        // POST response returns flat fields (AuthorId, ParentId)
+        // Construct expanded format for local state display
         const fileDetails_ListItem: File_ListItem = {
           Id: data.Id,
-          Author: data.Author,
+          Author: {
+            Id: data.AuthorId,
+            Title: global_State.currentUser?.Title ?? "Unknown",
+          },
           FileOrder: data.FileOrder,
           Created: data.Created,
           Modified: data.Modified,
           Title: data.Title,
-          Parent: data.Parent ?? { Id: data.ParentId, Title: "" },
+          Parent: { Id: data.ParentId, Title: "" },
           Description: data.Description,
           ParentType: data.ParentType,
         };

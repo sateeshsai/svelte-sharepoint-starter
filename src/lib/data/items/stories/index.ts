@@ -5,6 +5,7 @@ export {
   getStory,
   getStoryFiles,
   getStoryEngagements,
+  pollStoryEngagements,
   // POST
   postNewStory,
   // PUT

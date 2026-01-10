@@ -14,6 +14,9 @@
  * // Async state management
  * import { BaseAsyncLoadState, BaseAsyncSubmitState } from "$lib/common-library/utils/async";
  *
+ * // IndexedDB cache
+ * import { getCachedOrFetch, invalidateCacheByList } from "$lib/common-library/utils/cache";
+ *
  * // Local dev detection
  * import { LOCAL_MODE } from "$lib/common-library/utils/local-dev";
  * ```
@@ -24,6 +27,9 @@ export * from "./styling";
 
 // Async state management
 export * from "./async";
+
+// IndexedDB cache utilities
+export * from "./cache";
 
 // Pure utility functions (debounce, formatDate, string utils, etc.)
 // Note: Import from ./functions for individual exports to avoid namespace pollution

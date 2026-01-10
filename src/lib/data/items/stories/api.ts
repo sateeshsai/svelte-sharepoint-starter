@@ -3,34 +3,78 @@
  */
 import { RECOMMENDED_ERROR_ACTIONS_FOR_UI } from "$lib/common-library/integrations/sharepoint-rest-api/constants/const";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
-import { createSelectExpandQueries, getEngagements, type Sharepoint_Get_Operations, apiError, notFoundError } from "$lib/common-library/integrations";
+import { createSelectExpandQueries, getEngagements, pollEngagements, type Sharepoint_Get_Operations, apiError, notFoundError, type Engagement_ListItem } from "$lib/common-library/integrations";
 import { createStoryTemplate, createStoryPost, storyToPost } from "./factory";
 import { createFileTemplate } from "$lib/data/items/files/factory";
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import type { Story_ListItem } from "./schemas";
 import type { File_ListItem } from "$lib/data/items/files/schemas";
 import type { BaseAsyncLoadState, BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
+import { getCachedOrFetch, invalidateCacheByList } from "$lib/common-library/utils/cache";
 import { toast } from "svelte-sonner";
 import { navigate } from "sv-router/generated";
 
 // Re-export engagement handlers for convenience
 export { addEngagement, removeEngagement } from "$lib/common-library/integrations/components/engagements";
 
+// Cache key for stories list
+const STORIES_CACHE_KEY = "stories-list";
+const STORIES_CACHE_MAX_AGE = 60 * 60 * 1000; // 1 hour
+
 // ============================================================================
 // GET Operations
 // ============================================================================
 
 /**
- * Fetch stories from SharePoint/mock data.
- * Supports incremental polling with lastFetchedInPollTimeString filter.
+ * Fetch stories with IndexedDB caching and stale-while-revalidate pattern.
  *
- * @param storiesLoadState - State object to track loading/error status. Use AsyncLoadState for auto error reporting.
- * @param lastFetchedInPollTimeString - ISO timestamp to fetch only stories created after this time (for polling)
+ * Behavior:
+ * - First load: Returns cached data immediately if available (sets stale state), fetches fresh in background
+ * - Polling: Skips cache, fetches only new items since lastFetchedInPollTimeString
+ *
+ * @param storiesLoadState - State object to track loading/error/stale status
+ * @param lastFetchedInPollTimeString - ISO timestamp for polling (skips cache when provided)
  * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
- * @param cacheResponse - Set false for real-time polling to bypass cache
+ * @param cacheResponse - Set false for real-time polling to bypass in-memory dedup cache
  * @returns Array of stories or undefined on error
  */
 export async function getStories(
+  storiesLoadState: BaseAsyncLoadState,
+  lastFetchedInPollTimeString?: string | undefined,
+  signal?: AbortSignal,
+  cacheResponse: boolean = true
+): Promise<Story_ListItem[] | undefined> {
+  // Polling mode: skip IndexedDB cache, fetch only new items
+  if (lastFetchedInPollTimeString) {
+    return fetchStoriesFromProvider(storiesLoadState, lastFetchedInPollTimeString, signal, cacheResponse);
+  }
+
+  // Initial load: use IndexedDB cache with stale-while-revalidate
+  const result = await getCachedOrFetch<Story_ListItem[]>({
+    cacheKey: STORIES_CACHE_KEY,
+    listName: SHAREPOINT_CONFIG.lists.Story.name,
+    maxAge: STORIES_CACHE_MAX_AGE,
+    onStale: () => storiesLoadState.setStale(),
+    onFresh: () => storiesLoadState.setReady(),
+    fetchFn: async () => {
+      return await fetchStoriesFromProvider(storiesLoadState, undefined, signal, cacheResponse);
+    },
+  });
+
+  if (result.stale) {
+    // Data is from cache, fresh fetch happening in background
+    storiesLoadState.setStale();
+  } else if (result.data) {
+    storiesLoadState.setReady();
+  }
+
+  return result.data;
+}
+
+/**
+ * Internal: Fetch stories directly from provider (no IndexedDB caching)
+ */
+async function fetchStoriesFromProvider(
   storiesLoadState: BaseAsyncLoadState,
   lastFetchedInPollTimeString?: string | undefined,
   signal?: AbortSignal,
@@ -146,6 +190,22 @@ export async function getStoryEngagements(storyId: number, engagementsLoadState:
   return await getEngagements(provider, SHAREPOINT_CONFIG.lists.Engagements.name, storyId, engagementsLoadState, signal);
 }
 
+/**
+ * Poll for engagement updates on a story
+ * Automatically uses appropriate interval (5s LOCAL_MODE, 20s SharePoint)
+ * @param storyId - Parent story ID
+ * @param onUpdate - Callback with latest engagements array
+ * @param loadState - Optional state object to track loading/error status
+ * @returns Stop function to halt polling
+ * @example
+ * const stop = pollStoryEngagements(123, (data) => { engagements = data; });
+ * onCleanup(() => stop());
+ */
+export function pollStoryEngagements(storyId: number, onUpdate: (engagements: Engagement_ListItem[]) => void, loadState?: BaseAsyncLoadState): () => void {
+  const provider = getDataProvider();
+  return pollEngagements(provider, SHAREPOINT_CONFIG.lists.Engagements.name, storyId, onUpdate, loadState);
+}
+
 // ============================================================================
 // POST/CREATE Operations
 // ============================================================================
@@ -171,6 +231,9 @@ export async function postNewStory(newStoryState: BaseAsyncSubmitState) {
     newStoryState.setError(apiError({ userMessage: "Story created but no Id returned", technicalMessage: "Missing Id in response", context: "Creating story" }));
     return;
   }
+
+  // Invalidate stories cache so next fetch gets fresh data
+  await invalidateCacheByList(SHAREPOINT_CONFIG.lists.Story.name);
 
   navigate("/stories/:id/edit", {
     params: {
@@ -201,6 +264,9 @@ export async function updateStory(story: Story_ListItem, storySubmissionState: B
     storySubmissionState.setError(apiError({ userMessage: "Error saving story", technicalMessage: storyUpdateResponse.error, context: "Saving story" }));
     return;
   }
+
+  // Invalidate stories cache so next fetch gets fresh data
+  await invalidateCacheByList(SHAREPOINT_CONFIG.lists.Story.name);
 
   storySubmissionState.setSuccess();
   return storyUpdateResponse;

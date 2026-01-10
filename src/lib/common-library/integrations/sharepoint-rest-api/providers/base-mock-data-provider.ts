@@ -252,11 +252,14 @@ export abstract class BaseMockDataProvider implements DataProvider {
   /**
    * Apply $select operation - returns only specified fields
    * Handles nested fields like "Author/Id,Author/Title" by preserving nested structure
+   * In DEV mode, wraps items in Proxy to warn when accessing non-selected fields
    */
   private applySelect(data: any[], selectExpr: string): any[] {
     if (!selectExpr) return data;
 
     const fields = selectExpr.split(",").map((f) => f.trim());
+    // Extract top-level field names (including parent names from nested fields)
+    const topLevelFields = new Set(fields.map((f) => f.split("/")[0]));
 
     return data.map((item) => {
       const selected: Record<string, any> = {};
@@ -277,19 +280,36 @@ export abstract class BaseMockDataProvider implements DataProvider {
         }
       });
 
+      // DEV mode: wrap in Proxy to catch access to non-selected fields
+      // Helps catch bugs where code relies on fields not in $select
+      if (import.meta.env.DEV) {
+        return new Proxy(selected, {
+          get(target, prop) {
+            if (typeof prop === "string" && !topLevelFields.has(prop) && prop !== "then" && !prop.startsWith("$")) {
+              console.warn(`[MockProvider] Accessing "${prop}" but it wasn't in $select. ` + `This will return undefined in SharePoint. Selected fields: ${fields.join(", ")}`);
+            }
+            return target[prop as keyof typeof target];
+          },
+        });
+      }
+
       return selected;
     });
   }
 
   /**
-   * Apply $orderby operation - sorts results by Created field
-   * Accepts "asc" or "desc" as direction
+   * Apply $orderby operation - sorts results by specified field
+   * Accepts SharePoint format: "ColumnName" or "ColumnName asc" or "ColumnName desc"
+   * Default direction is ascending if not specified
    */
-  private applyOrderBy(data: any[], direction: string): any[] {
-    if (!direction) return data;
+  private applyOrderBy(data: any[], orderByExpr: string): any[] {
+    if (!orderByExpr) return data;
 
-    const field = "Created"; // Default sort field
-    const dir = direction.toLowerCase() === "desc" ? -1 : 1;
+    // Parse "ColumnName direction" format (e.g., "Created desc", "Title asc", "Id")
+    const parts = orderByExpr.trim().split(/\s+/);
+    const field = parts[0];
+    const direction = parts[1]?.toLowerCase() || "asc";
+    const dir = direction === "desc" ? -1 : 1;
 
     return [...data].sort((a, b) => {
       const aVal = this.getNestedValue(a, field);
@@ -390,6 +410,82 @@ export abstract class BaseMockDataProvider implements DataProvider {
 
       if (numNewEntries > 0) {
         this.simulatedEntryCount.set(options.listName, currentCount + numNewEntries);
+      }
+    }
+
+    // Simulate new engagements during polling for testing live reaction/comment updates
+    // Only for Engagements list, when cacheResponse is false (polling scenario), and with Parent/Id filter
+    const hasParentIdFilter = operations && typeof operations !== "string" && operations.some(([op, value]) => op === "filter" && typeof value === "string" && /Parent\/Id\s+eq\s+\d+/.test(value));
+
+    if (LOCAL_MODE && hasParentIdFilter && options.cacheResponse === false && options.listName === this.config.lists.Engagements?.name) {
+      // Extract parentId from filter
+      const filterOp = operations && typeof operations !== "string" && operations.find(([op, value]) => op === "filter" && typeof value === "string" && /Parent\/Id\s+eq\s+\d+/.test(String(value)));
+      const parentIdMatch = filterOp ? String(filterOp[1]).match(/Parent\/Id\s+eq\s+(\d+)/) : null;
+      const parentId = parentIdMatch ? parseInt(parentIdMatch[1], 10) : 1;
+
+      const engagementKey = `${options.listName}_${parentId}`;
+      const currentCount = this.simulatedEntryCount.get(engagementKey) || 0;
+
+      // Randomly create 0-2 new engagements per poll (50% chance for each)
+      const numNewEntries = Math.random() > 0.5 ? (Math.random() > 0.5 ? 2 : 1) : 0;
+
+      // Emoji and comment options for simulation
+      const reactionEmojis = ["❤️", "🚀", "⭐", "👏", "💡", "🎉"];
+      const mockAuthors = [
+        { Id: 1, Title: "Modukuru, Sateeshsai" },
+        { Id: 2, Title: "Mooring, James" },
+        { Id: 3, Title: "Gupta, Tripti" },
+        { Id: 4, Title: "Test, User" },
+      ];
+      const mockComments = ["Great work on this!", "Very insightful content.", "I learned something new today.", "Thanks for sharing!", "This is really helpful."];
+
+      for (let i = 0; i < numNewEntries; i++) {
+        const entryNum = currentCount + i + 1;
+        const isReaction = Math.random() > 0.3; // 70% reactions, 30% comments
+        const randomAuthor = mockAuthors[Math.floor(Math.random() * mockAuthors.length)];
+        const now = new Date().toISOString();
+
+        if (isReaction) {
+          const emoji = reactionEmojis[Math.floor(Math.random() * reactionEmojis.length)];
+          console.log(`[MockDataProvider] Simulating new engagement reaction #${entryNum}: ${emoji}`);
+
+          const newEngagement = {
+            Id: this.getNextId(options.listName),
+            Title: emoji,
+            EngagementType: "Reaction",
+            Content: null,
+            Created: now,
+            Modified: now,
+            Author: randomAuthor,
+            Parent: { Id: parentId, Title: `Parent ${parentId}` },
+            ParentType: "Story",
+          };
+
+          const sessionData = this.getSessionData(options.listName);
+          sessionData.push(newEngagement);
+        } else {
+          const comment = mockComments[Math.floor(Math.random() * mockComments.length)];
+          console.log(`[MockDataProvider] Simulating new engagement comment #${entryNum}`);
+
+          const newEngagement = {
+            Id: this.getNextId(options.listName),
+            Title: "",
+            EngagementType: "Comment",
+            Content: comment,
+            Created: now,
+            Modified: now,
+            Author: randomAuthor,
+            Parent: { Id: parentId, Title: `Parent ${parentId}` },
+            ParentType: "Story",
+          };
+
+          const sessionData = this.getSessionData(options.listName);
+          sessionData.push(newEngagement);
+        }
+      }
+
+      if (numNewEntries > 0) {
+        this.simulatedEntryCount.set(engagementKey, currentCount + numNewEntries);
       }
     }
 
@@ -612,35 +708,48 @@ export abstract class BaseMockDataProvider implements DataProvider {
     const now = new Date().toISOString();
     const newId = this.getNextId(options.listName);
 
-    // Create new item with SharePoint-like metadata
-    // Include Author field like SharePoint does (using first mock user as default)
+    // Create new item with SharePoint POST response format
+    // POST responses return flat fields (AuthorId, EditorId) - NOT expanded objects
+    // Expanded objects only come from GET with $expand
     const mockAuthor = LOCAL_SHAREPOINT_USERS[0];
 
-    // Convert flat lookup IDs (e.g., ParentId) to expanded lookup objects (e.g., Parent: { Id, Title })
-    // This mimics SharePoint's behavior when you POST with ParentId and GET with $expand=Parent
-    const expandedBody = { ...options.body };
-    for (const key of Object.keys(expandedBody)) {
-      if (key.endsWith("Id") && typeof expandedBody[key] === "number") {
-        const lookupFieldName = key.slice(0, -2); // Remove "Id" suffix
-        const lookupId = expandedBody[key];
-        // Create expanded lookup object
-        expandedBody[lookupFieldName] = { Id: lookupId, Title: `${lookupFieldName} ${lookupId}` };
-        // Keep the original Id field too (SharePoint does this)
-      }
-    }
-
+    // POST response: keep lookup fields flat (e.g., ParentId stays as ParentId)
+    // Do NOT expand to Parent: { Id, Title } - that's only for GET with $expand
     const newItem = {
+      // SharePoint POST response metadata
       Id: newId,
       ID: newId, // SharePoint returns both Id and ID
       Created: now,
       Modified: now,
-      Author: mockAuthor ? { Id: mockAuthor.Id, Title: mockAuthor.Title } : { Id: 1, Title: "Mock User" },
-      ...expandedBody,
+      AuthorId: mockAuthor?.Id ?? 1,
+      EditorId: mockAuthor?.Id ?? 1,
+      FileSystemObjectType: 0,
+      ContentTypeId: "0x0100",
+      OData__UIVersionString: "1.0",
+      Attachments: false as const,
+      GUID: crypto.randomUUID(),
+      // Include posted data as-is (flat lookup IDs stay flat)
+      ...options.body,
     };
 
+    // For session store, we need expanded format for subsequent GET queries
+    // Create a separate expanded version for the session
+    const expandedItem = { ...newItem };
+    // Expand lookup fields for session store (so GET with $expand works)
+    for (const key of Object.keys(options.body)) {
+      if (key.endsWith("Id") && typeof options.body[key] === "number") {
+        const lookupFieldName = key.slice(0, -2);
+        const lookupId = options.body[key];
+        (expandedItem as any)[lookupFieldName] = { Id: lookupId, Title: `${lookupFieldName} ${lookupId}` };
+      }
+    }
+    // Add Author as expanded for GET queries
+    (expandedItem as any).Author = mockAuthor ? { Id: mockAuthor.Id, Title: mockAuthor.Title } : { Id: 1, Title: "Mock User" };
+
     // Add to session store so subsequent getListItems will find it
+    // Use expanded version so GET with $expand works correctly
     const sessionData = this.getSessionData(options.listName);
-    sessionData.push(newItem);
+    sessionData.push(expandedItem);
 
     if (options.logToConsole) {
       console.log("[MockDataProvider] postListItem", {

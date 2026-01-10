@@ -87,7 +87,7 @@ export class BaseAsyncSubmitState {
 
 /**
  * Framework-agnostic async state management for data loading
- * Tracks loading, ready, and error states
+ * Tracks loading, ready, stale, and error states
  * Use for GET operations
  *
  * Base class - extend for integration-specific behavior (e.g., auto error reporting)
@@ -95,6 +95,8 @@ export class BaseAsyncSubmitState {
 export class BaseAsyncLoadState {
   loading = $state(true);
   ready: boolean = $state(false);
+  /** True when showing cached/stale data while fetching fresh data in background */
+  stale: boolean = $state(false);
   error: string | undefined = $state("");
   /** Full error details for UI components (popover, report button) */
   errorDetails: ErrorReportParams | undefined = $state(undefined);
@@ -131,12 +133,24 @@ export class BaseAsyncLoadState {
     this.error = "";
     this.loading = true;
     this.ready = false;
+    this.stale = false;
+  }
+
+  /**
+   * Set stale state - showing cached data while fetching fresh
+   * UI can show subtle "Updating..." indicator
+   */
+  setStale() {
+    this.stale = true;
+    this.ready = true;
+    this.loading = false;
   }
 
   setReady() {
     this.error = "";
     this.loading = false;
     this.ready = true;
+    this.stale = false;
   }
 
   resetForm() {

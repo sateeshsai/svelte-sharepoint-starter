@@ -1,0 +1,30 @@
+Instructions for agents:
+About the project:This is a Svelte 5 (runes only) starter code base with examples and utilities to be used by other developers in the team, to accelerate development and increase collaboration.
+
+About the codebase:
+The build files will be hosted on SharePoint 2013 folders. We use mock data when in dev mode because we can’t connect to SharePoint Rest API on localhost, using providers. The mock and SharePoint API are in sync and should continue to to be in sync (Sharepoint returns get and post responses slightly differently. Fields like Id, Created, Modified, Author are set by SharePoint but and we don't include them in post). Keep meaningful separations between layers like application and common-library etc. Use the functions in the utils folders, only create new ones if required. Refactor and reorganise these when necessary. We are in beta, so not worried about breaking changes. $lib/components/ is reserved for third-party UI components. No need to worry about refactoring third party stuff.
+
+Standards:
+Variable names should be succinct, meaningful, unambiguous. Maintainability and ease of use is important. Always use correct semantic html, thinking of the larger context. Pay attention of data loading and submission patterns. We use Shad-Cn svelte components in components/ui. Use them where appropriate but don't force fit. Network requests fetching and submitting page’s data should be at the top most route which uses that data in respective post.ts or get.ts functions. Always validate submissions inside the component using the post variant of an item schema before posting to lists. We don’t validate incoming data. Big pieces of constant data should be next to the user component as data.ts.
+
+Important:
+Get a solid understanding of the code base. Pay attention to detail, recheck understanding by reviewing files on how things connect with each other instead of assuming. Provide subjective ones, if any, in a separate section, don't nitpick too much though. Run pnpm check to verify when it makes sense to do so. Always be concise and focus on important details than grammar. Ask clarifying questions, only if needed.
+
+Comment plan:
+JS Doc Comments should be meaningful, concise, and more importantly helpful to the developers using the code base. Okay to have more detailed info library code, if it’s helpful. Comments should be about our specific implementations and patterns, than something the user can look up online.
+
+Overall goal:
+Overall I am are trying to refactor the codebase to make it more robust, with more features, finding bugs and edge cases. For now let’s focus on solving a specific task.
+
+How we’ll collaborate:
+Describe unusual terminal expand if and when they are proposed.
+
+Things to do at the beginning to each task:
+Create a new branch with a short but descriptive name for the task.
+
+Things to do after full completion of the task and only explicit go ahead:
+
+- Run pnpm check.
+- Update/add JSDoc comments and the .md docs (the ones in the public folder) if necessary. No need for additional section level docs.
+- Update this agents.md file with information that you now know that would have been helpful if included/elaborated/clarified in this file.
+- Finally commit changes, merge with main branch and push to origin. Commit messages brief and glanceable.

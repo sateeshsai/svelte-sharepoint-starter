@@ -1,6 +1,6 @@
 <script lang="ts">
   import { navigate, p, route } from "sv-router/generated";
-  import { getStory, getStoryFiles, getStoryEngagements, postNewStory, addEngagement, removeEngagement } from "$lib/data/items/stories";
+  import { getStory, getStoryFiles, pollStoryEngagements, postNewStory, addEngagement, removeEngagement } from "$lib/data/items/stories";
   import { getUserPropertiesById } from "$lib/data/items/users";
   import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import type { File_ListItem } from "$lib/data/items/files/schemas";
@@ -78,15 +78,34 @@
   let ReactionSubmissionIsInProgress = $state(false);
   let CommentSubmissionIsInProgress = $state(false);
 
-  $effect(() => {
-    loadEngagements(storyId);
-  });
+  // Poll for engagement updates - starts automatically when storyId is set
+  let stopPolling: (() => void) | undefined;
 
-  async function loadEngagements(story_Id: string | undefined) {
-    if (story_Id) {
-      engagements = await getStoryEngagements(+story_Id, engagementsLoadState, signal);
+  $effect(() => {
+    // Clean up previous polling when storyId changes
+    if (stopPolling) {
+      stopPolling();
+      stopPolling = undefined;
     }
-  }
+
+    if (storyId) {
+      engagementsLoadState.setLoading();
+      stopPolling = pollStoryEngagements(
+        +storyId,
+        (data) => {
+          engagements = data;
+        },
+        engagementsLoadState
+      );
+    }
+
+    // Cleanup on component unmount
+    return () => {
+      if (stopPolling) {
+        stopPolling();
+      }
+    };
+  });
 
   async function onAddReaction(emoji: string) {
     if (!storyId || !story) return;
@@ -130,7 +149,7 @@
     {#if storyLoadState?.loading}
       <StatusMessage type="loading" message="Loading story..." />
     {:else if storyLoadState.ready && story}
-      <Prose as="article" variant="withLinks" class="max-w-5xl w-full text-pretty">
+      <Prose as="article" variant="withLinks" class="w-full text-pretty">
         <SectionHeader variant="page" class="mt-4 mb-6">
           {#snippet breadcrumbsSnippet()}
             <a class="p-0 flex gap-2 items-center no-underline!" href={p("/stories")}>

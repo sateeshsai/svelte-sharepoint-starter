@@ -109,6 +109,7 @@ export {
   isComment,
   // Fetchers
   getEngagements,
+  pollEngagements,
   postReaction,
   postComment,
   deleteEngagement,

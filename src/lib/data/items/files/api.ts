@@ -10,13 +10,14 @@ import { toast } from "svelte-sonner";
 import type { File_ListItem, File_ListItem_Post_ForStory } from "./schemas";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
 
-/** Response from postListItem */
+/** Response from postListItem - matches SharePoint POST response format (flat lookup IDs) */
 export type FileDetailsPostSuccessResponse = File_ListItem_Post_ForStory & {
   Id: number;
   Created: string;
   Modified: string;
-  Author: { Id: number; Title: string };
-  Parent?: { Id: number; Title: string };
+  AuthorId: number;
+  EditorId: number;
+  // Lookup fields stay flat in POST response (ParentId, not Parent: { Id, Title })
 };
 
 // ============================================================================
