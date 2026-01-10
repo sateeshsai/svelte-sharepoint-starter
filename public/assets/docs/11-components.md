@@ -409,7 +409,7 @@ Automatic dark mode support via `mode-watcher`.
 
 ### Custom Gradients
 
-Custom gradient definitions in `src/lib/common-library/css/gradients.css`
+Custom gradient definitions in `src/lib/common-library/utils/css/gradients.css`
 
 ```css
 .gradient-hero {

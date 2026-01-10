@@ -1,6 +1,6 @@
 import type { FileExtension, FileDetails } from "./file_types";
 
-export let FILE_TYPES: Record<FileExtension, FileDetails> = {
+export const FILE_TYPES: Record<FileExtension, FileDetails> = {
   // Office Documents
   pptx: {
     extn: "pptx",
@@ -76,11 +76,11 @@ export let FILE_TYPES: Record<FileExtension, FileDetails> = {
   },
   otf: {
     extn: "otf",
-    name: "Email",
-    filetype: "office",
-    backgroundcolor: "#243C80",
+    name: "OpenType Font",
+    filetype: "document",
+    backgroundcolor: "#444444",
     color: "white",
-    openwith: "Outlook",
+    openwith: "Font Viewer",
     preview: false,
   },
 
@@ -594,12 +594,12 @@ export let FILE_TYPES: Record<FileExtension, FileDetails> = {
 };
 
 export const FILE_INPUT_ACCEPT_STRINGS = {
-  images: "image/jpeg,image/png,image/svg+xml,image/gif,image/webp,image/bmp,image/tiff,image/x-icon",
+  images: "image/jpeg,image/png,image/svg+xml,image/gif,image/webp,image/bmp,image/tiff,image/x-icon,image/avif",
   video: "video/mp4,video/quicktime,video/x-msvideo,video/webm,video/x-flv,video/x-ms-wmv,video/x-matroska,.mkv,.mov,.avi,.m4v",
   audio: "audio/mpeg,audio/wav,audio/aac,audio/flac,audio/ogg,audio/mp4,audio/x-ms-wma,.mp3,.wav,.aac,.flac,.ogg,.m4a,.wma",
   documents:
     "application/pdf,application/msword,application/vnd.ms-excel,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.oasis.opendocument.text,application/vnd.oasis.opendocument.spreadsheet,application/vnd.oasis.opendocument.presentation,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,.txt,.rtf,.csv,.json,.xml,.sql,.md",
   archives: "application/zip,application/x-rar-compressed,application/x-7z-compressed,application/x-tar,application/gzip,.zip,.rar,.7z,.tar,.gz,.tar.gz",
-  code: ".ts,.tsx,.js,.cjs,.jsx,.html,.css,.scss,.less,.py,.java,.cpp,.c,.php,.rb,.go,text/plain", // this is not comprehensive
+  code: ".ts,.tsx,.js,.mjs,.cjs,.jsx,.svelte,.html,.css,.scss,.less,.py,.java,.cpp,.c,.php,.rb,.go,text/plain",
   all: "",
 };

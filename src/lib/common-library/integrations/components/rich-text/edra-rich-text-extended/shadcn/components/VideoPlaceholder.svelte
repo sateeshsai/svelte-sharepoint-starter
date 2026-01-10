@@ -4,7 +4,7 @@
   import Video from "@lucide/svelte/icons/video";
   import { buttonVariants } from "$lib/components/ui/button/button.svelte";
   import { AsyncSubmitState, validationError, apiError } from "$lib/common-library/integrations/error-handling";
-  import FileDropZoneWrapper from "$lib/common-library/components/media/FileDropZoneWrapper.svelte";
+  import { FileDropZoneWrapper } from "$lib/common-library/components/media";
   import MediaPlaceHolder from "$lib/common-library/integrations/components/rich-text/edra-rich-text/components/MediaPlaceHolder.svelte";
   import { randomIdString } from "$lib/common-library/utils/functions/string";
   import { getContext } from "svelte";

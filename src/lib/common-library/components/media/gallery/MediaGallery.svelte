@@ -1,22 +1,8 @@
-<script lang="ts" module>
-  /**
-   * Item structure for MediaGallery component.
-   * Flexible interface that works with any media item that has an id, filename, and optional description.
-   */
-  export interface MediaGalleryItem {
-    /** Unique identifier for the media item */
-    id: string | number;
-    /** Filename or title for the media */
-    filename: string;
-    /** Optional description/caption shown below media */
-    description?: string;
-  }
-</script>
-
 <script lang="ts">
+  import type { FileItem } from "../file_types";
   import { IsInViewport } from "runed";
   import * as Dialog from "$lib/components/ui/dialog/index.js";
-  import FilePreview from "$lib/common-library/components/media/FilePreview.svelte";
+  import FilePreview from "./FilePreview.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
   import { cn } from "$lib/utils";
   import ArrowLeft from "@lucide/svelte/icons/arrow-left";
@@ -26,7 +12,7 @@
 
   interface Props {
     /** Array of media items to display in the gallery */
-    items: MediaGalleryItem[];
+    items: FileItem[];
     /** Base path to media folder (prepended to filenames) */
     basePath: string;
     /** Optional CSS class for gallery container */

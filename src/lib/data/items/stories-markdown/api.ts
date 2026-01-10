@@ -1,11 +1,28 @@
+/**
+ * Markdown Stories API
+ *
+ * Loads stories from markdown files in /public/assets/StoryFiles/markdown/.
+ * This is a demo feature showing how to render markdown-based content.
+ *
+ * @example
+ * import { getMarkdownStories, getMarkdownStory, type StoryMarkdown } from "$lib/data/items/stories-markdown";
+ */
+
 import type { Story_ListItem } from "$lib/data/items/stories/schemas";
 import type { File_ListItem } from "$lib/data/items/files/schemas";
 import YAML from "js-yaml";
 import { marked } from "marked";
 
+/**
+ * Extended story type for markdown-based stories.
+ * Includes slug for URL routing and pre-rendered HTML content.
+ */
 export type StoryMarkdown = Story_ListItem & {
+  /** URL-safe identifier derived from filename */
   slug: string;
+  /** Pre-rendered HTML from markdown content */
   htmlContent: string;
+  /** Optional attached files */
   Files?: File_ListItem[];
 };
 
@@ -31,7 +48,7 @@ function extractContent(markdown: string): string {
  * Loads all stories from markdown files in /public/assets/StoryFiles/markdown/.
  * Reads stories.md index file to discover story slugs, then fetches and parses each markdown file.
  */
-export async function getStories(): Promise<StoryMarkdown[]> {
+export async function getMarkdownStories(): Promise<StoryMarkdown[]> {
   try {
     // Fetch the stories index
     const indexResponse = await fetch("./assets/StoryFiles/markdown/stories.md");
@@ -80,7 +97,11 @@ export async function getStories(): Promise<StoryMarkdown[]> {
   }
 }
 
-export async function getStory(slug: string): Promise<StoryMarkdown | null> {
-  const stories = await getStories();
+/**
+ * Gets a single markdown story by slug.
+ * @param slug - URL-safe identifier (filename without .md)
+ */
+export async function getMarkdownStory(slug: string): Promise<StoryMarkdown | null> {
+  const stories = await getMarkdownStories();
   return stories.find((s) => s.slug === slug) || null;
 }

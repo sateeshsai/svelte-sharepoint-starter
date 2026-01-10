@@ -17,7 +17,7 @@
   import { updateStory } from "$lib/data/items/stories";
   import { AsyncLoadState, AsyncSubmitState, validationError } from "$lib/common-library/integrations/error-handling";
   import { slide } from "svelte/transition";
-  import { ImageCropperState } from "$lib/common-library/components/media/cropperState.svelte";
+  import { ImageCropperState } from "$lib/common-library/components/media";
   import EditStoryFiles from "./_components/_story-files/EditStoryFiles.svelte";
   import EditStoryCoverImage from "./_components/_cover-image/EditStoryCoverImage.svelte";
   import EditStoryContent from "./_components/_content/EditStoryContent.svelte";

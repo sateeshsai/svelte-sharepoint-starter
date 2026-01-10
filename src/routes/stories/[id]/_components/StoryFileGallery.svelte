@@ -1,9 +1,9 @@
 <script lang="ts">
   /**
    * Story-specific wrapper around MediaGallery.
-   * Converts File_ListItem[] to MediaGalleryItem[] format.
+   * Converts File_ListItem[] to FileItem[] format.
    */
-  import MediaGallery from "$lib/common-library/components/media/MediaGallery.svelte";
+  import { MediaGallery } from "$lib/common-library/components/media";
   import type { File_ListItem } from "$lib/data/items/files/schemas";
 
   const { files, folderPath }: { files: File_ListItem[]; folderPath: string } = $props();

@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { getStory } from "./get-story";
-  import type { StoryMarkdown } from "../get-stories";
+  import { getMarkdownStory, type StoryMarkdown } from "$lib/data/items/stories-markdown";
   import { route, p } from "sv-router/generated";
   import { AsyncLoadState, notFoundError, validationError } from "$lib/common-library/integrations/error-handling";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
@@ -26,7 +25,7 @@
       return;
     }
 
-    story = await getStory(slug);
+    story = await getMarkdownStory(slug);
     if (!story) {
       storyLoadState.setError(notFoundError({ userMessage: `Story "${slug}" not found`, context: "StoryMarkdownPage" }));
     } else {

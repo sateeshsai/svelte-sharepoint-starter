@@ -2,41 +2,55 @@
  * Media Components
  *
  * Components for file handling, preview, upload, cropping, and gallery display.
+ *
+ * @example
+ * // Upload components
+ * import { FileDropZone, CropperJsWrapper } from "$lib/common-library/components/media/upload";
+ *
+ * // Gallery components
+ * import { FilePreview, MediaGallery } from "$lib/common-library/components/media/gallery";
+ *
+ * // Or import everything from media root
+ * import { FileDropZone, MediaGallery, displaySize } from "$lib/common-library/components/media";
  */
 
-import FileDropZone, { type FileRejectedReason, type FileDropZoneProps } from "./FileDropZone.svelte";
+// ============================================================================
+// File Size Utilities
+// ============================================================================
 
-export const displaySize = (bytes: number): string => {
-  if (bytes < KILOBYTE) return `${bytes.toFixed(0)} B`;
-
-  if (bytes < MEGABYTE) return `${(bytes / KILOBYTE).toFixed(0)} KB`;
-
-  if (bytes < GIGABYTE) return `${(bytes / MEGABYTE).toFixed(0)} MB`;
-
-  return `${(bytes / GIGABYTE).toFixed(0)} GB`;
-};
-
-// Utilities for working with file sizes
 export const BYTE = 1;
 export const KILOBYTE = 1024;
 export const MEGABYTE = 1024 * KILOBYTE;
 export const GIGABYTE = 1024 * MEGABYTE;
 
-// utilities for limiting accepted files
+/** Format bytes to human-readable string (e.g., "1.5 MB") */
+export const displaySize = (bytes: number): string => {
+  if (bytes < KILOBYTE) return `${bytes.toFixed(0)} B`;
+  if (bytes < MEGABYTE) return `${(bytes / KILOBYTE).toFixed(0)} KB`;
+  if (bytes < GIGABYTE) return `${(bytes / MEGABYTE).toFixed(0)} MB`;
+  return `${(bytes / GIGABYTE).toFixed(0)} GB`;
+};
+
+// Accept patterns for common file types
 export const ACCEPT_IMAGE = "image/*";
 export const ACCEPT_VIDEO = "video/*";
 export const ACCEPT_AUDIO = "audio/*";
 
-export { FileDropZone, type FileRejectedReason, type FileDropZoneProps };
+// ============================================================================
+// Upload Components
+// ============================================================================
 
-// Additional media components
-export { default as FilePreview } from "./FilePreview.svelte";
-export { default as FileDropZoneWrapper } from "./FileDropZoneWrapper.svelte";
-export { default as FileGallery } from "./FileGallery.svelte";
-export { default as MediaGallery, type MediaGalleryItem } from "./MediaGallery.svelte";
-export { default as CropperJsWrapper } from "./CropperJsWrapper.svelte";
+export { FileDropZone, FileDropZoneWrapper, CropperJsWrapper, ImageCropperState, type FileRejectedReason, type FileDropZoneProps } from "./upload";
 
-// Utilities and types
+// ============================================================================
+// Gallery Components
+// ============================================================================
+
+export { FilePreview, MediaGallery } from "./gallery";
+
+// ============================================================================
+// File Type Utilities
+// ============================================================================
+
 export * from "./file_types";
 export * from "./file_utils";
-export { ImageCropperState } from "./cropperState.svelte";

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { FileDropZone } from "$lib/common-library/components/media";
+  import FileDropZone from "./FileDropZone.svelte";
   import { cn } from "$lib/utils";
   import type { Snippet } from "svelte";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";

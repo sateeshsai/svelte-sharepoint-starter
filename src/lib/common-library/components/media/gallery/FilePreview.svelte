@@ -1,7 +1,7 @@
 <script lang="ts">
   import { cn } from "$lib/utils";
-  import type { FileExtension } from "./file_types";
-  import { FILE_TYPES } from "./file_utils";
+  import type { FileExtension } from "../file_types";
+  import { FILE_TYPES } from "../file_utils";
 
   const {
     src,
@@ -56,6 +56,6 @@
 {:else}
   <div style:background="hsl(220,10%,50%)" style:color="white" class={cn("grid content-center  justify-items-center text-center", DEFAULT_CLASSES, className, "")}>
     <p>File</p>
-    <p class="uppercase">(fileExtn)</p>
+    <p class="uppercase">({fileExtn})</p>
   </div>
 {/if}

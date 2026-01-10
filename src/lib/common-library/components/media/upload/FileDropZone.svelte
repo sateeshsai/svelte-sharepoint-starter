@@ -48,9 +48,9 @@
 
 <script lang="ts">
   import UploadIcon from "@lucide/svelte/icons/upload";
-  import { displaySize } from ".";
+  import { displaySize } from "..";
   import { useId } from "bits-ui";
-  import { cn } from "tailwind-variants";
+  import { cn } from "$lib/utils";
 
   let { id = useId(), children, maxFiles, maxFileSize, fileCount, disabled = false, onUpload, onFileRejected, accept, class: className, ...rest }: FileDropZoneProps = $props();
 
@@ -87,7 +87,6 @@
 
     if (!selectedFiles) return;
 
-    console.log(selectedFiles[0]);
     await upload(Array.from(selectedFiles));
 
     // this if a file fails and we upload the same file again we still get feedback
@@ -143,8 +142,6 @@
 
       validFiles.push(file);
     }
-
-    console.log(validFiles);
 
     await onUpload(validFiles);
 

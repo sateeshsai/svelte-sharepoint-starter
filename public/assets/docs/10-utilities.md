@@ -15,7 +15,26 @@ keywords:
 
 # Utilities Reference
 
-All utilities are located in `src/lib/common-library/utils/` and `src/lib/utils.ts`.
+All utilities are located in `src/lib/common-library/utils/`.
+
+```typescript
+// Import individual functions via barrel export
+import { debounce, formatDate, capitalizeFirstLetter } from "$lib/common-library/utils/functions";
+
+// Styling classes
+import { SECTION_CLASSES, HEADING_CLASSES } from "$lib/common-library/utils";
+
+// Async state management
+import { BaseAsyncLoadState, BaseAsyncSubmitState } from "$lib/common-library/utils/async";
+
+// Local development mode
+import { LOCAL_MODE } from "$lib/common-library/utils/local-dev";
+
+// Type utilities
+import type { ExactlyOne, PromiseResolvedType } from "$lib/common-library/utils/types";
+```
+
+> **Note:** `$lib/utils.ts` contains ShadCN-specific utilities (e.g., `cn()` for class merging).
 
 **See also:** [Examples](/docs/examples) (utilities in action) | [Components](/docs/components) (UI helpers)
 

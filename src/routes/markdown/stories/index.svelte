@@ -1,9 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import ListFilter from "@lucide/svelte/icons/list-filter";
-  import type { StoryMarkdown } from "./get-stories";
+  import { getMarkdownStories, type StoryMarkdown } from "$lib/data/items/stories-markdown";
   import type { Filter } from "$routes/stories/_components/StoryFilters.svelte";
-  import { getStories } from "./get-stories";
   import { AsyncLoadState, apiError } from "$lib/common-library/integrations/error-handling";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import StoryFilters from "$routes/stories/_components/StoryFilters.svelte";
@@ -20,7 +19,7 @@
   onMount(async () => {
     storiesLoadState.setLoading();
     try {
-      stories = await getStories();
+      stories = await getMarkdownStories();
       storiesLoadState.setReady();
     } catch (error) {
       storiesLoadState.setError(apiError({ userMessage: "Failed to load stories", technicalMessage: error instanceof Error ? error.message : String(error), context: "MarkdownStoriesPage" }));

@@ -19,7 +19,6 @@ export type FileExtension =
   | "xls"
   | "pdf"
   | "eml"
-  | "otf"
   | "odt"
   | "ods"
   | "odp"
@@ -65,6 +64,7 @@ export type FileExtension =
   | "json"
   | "xml"
   | "sql"
+  | "otf"
   // Code
   | "ts"
   | "tsx"
@@ -83,3 +83,16 @@ export type FileExtension =
   | "go";
 
 export type FileType = "office" | "pdf" | "img" | "video" | "audio" | "archive" | "document" | "code";
+
+/**
+ * Generic file item interface for gallery/list display.
+ * Flexible interface that works with any media item that has an id, filename, and optional description.
+ */
+export interface FileItem {
+  /** Unique identifier for the file item */
+  id: string | number;
+  /** Filename for the file (used to construct full path) */
+  filename: string;
+  /** Optional description/caption */
+  description?: string;
+}
