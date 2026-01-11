@@ -16,7 +16,7 @@
 </script>
 
 {#if sectionData}
-  <Section padding="compact">
+  <Section padding="compact" prose="standard">
     <SectionHeader variant="page" breadcrumbs={[{ label: "Admin", href: "/" }, { label: categoryData?.title ?? "", href: "/components" }, { label: sectionData.title }]}>
       {#snippet intro()}
         <p>

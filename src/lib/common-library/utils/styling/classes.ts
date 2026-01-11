@@ -11,13 +11,13 @@ export const SECTION_CLASSES = {
   /** Max-width constraints with centering. Use with grid/flex containers. */
   maxWidth: {
     /** 56rem (896px) - Ideal for reading content, forms */
-    narrow: "max-w-4xl justify-self-center w-full",
+    narrow: "max-w-4xl sm:max-w-4xl justify-self-center w-full",
     /** 80rem (1280px) - Default page content width */
-    standard: "max-w-7xl justify-self-center w-full",
+    standard: "max-w-7xl sm:max-w-7xl justify-self-center w-full",
     /** 100% of screen-xl (1280px) - For wider layouts */
-    wide: "max-w-screen-xl justify-self-center w-full",
+    wide: "max-w-screen-xl sm:max-w-screen-xl justify-self-center w-full",
     /** Full viewport width - No constraint */
-    full: "w-full",
+    full: "w-full sm:max-w-none",
   },
   /** App shell max-width (outermost container). Uses screen-4xl (150rem). */
   appShell: "max-w-screen-4xl mx-auto",
@@ -51,7 +51,7 @@ export const SECTION_CLASSES = {
  */
 export const PROSE_CLASSES = {
   /** Standard prose with dark mode support */
-  standard: "prose-sm sm:prose mx-auto dark:prose-invert",
+  standard: "prose-sm sm:prose mx-auto dark:prose-invert prose-h1:mt-4",
   /** Prose with styled links (underline, muted decoration) */
   withLinks: "prose-sm sm:prose mx-auto dark:prose-invert prose-a:underline prose-a:decoration-muted-foreground prose-a:decoration-1 prose-a:underline-offset-3",
 } as const;

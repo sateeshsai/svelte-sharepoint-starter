@@ -10,23 +10,23 @@
   </Section>
   ```
 
-  @example Full-bleed background
+  @example With prose variant for markdown content
   ```svelte
-  <Section fullBleedBg background="bg-muted/80 dark:bg-muted/30" maxWidth="standard">
-    <h2>Content with full-width background</h2>
+  <Section prose="standard">
+    {@html markdownContent}
   </Section>
   ```
 
-  @example With Prose component for markdown
+  @example Prose with links variant
   ```svelte
-  <Section>
-    <Prose>{@html markdownContent}</Prose>
+  <Section prose="withLinks" padding="compact">
+    {@html blogPost}
   </Section>
   ```
 -->
 <script lang="ts">
   import { cn } from "$lib/utils";
-  import { SECTION_CLASSES, type MaxWidthVariant, type PaddingVariant } from "$lib/common-library/utils";
+  import { SECTION_CLASSES, PROSE_CLASSES, type MaxWidthVariant, type PaddingVariant, type ProseVariant } from "$lib/common-library/utils";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
 
@@ -35,6 +35,8 @@
     maxWidth?: MaxWidthVariant;
     /** Padding preset. Defaults to "standard" */
     padding?: PaddingVariant;
+    /** Prose variant for markdown/rich text content. When set, applies Tailwind Typography classes. */
+    prose?: ProseVariant;
     /** HTML element to render. Defaults to "section" */
     as?: "section" | "div" | "article" | "main" | "aside";
     /** Additional classes merged with defaults */
@@ -44,9 +46,9 @@
     children?: Snippet;
   };
 
-  let { maxWidth = "standard", padding = "standard", as: Element = "section", class: className = "", node = $bindable(), children, ...restProps }: Props = $props();
+  let { maxWidth = "standard", padding = "standard", prose, as: Element = "section", class: className = "", node = $bindable(), children, ...restProps }: Props = $props();
 
-  const innerClasses = $derived(cn(SECTION_CLASSES.maxWidth[maxWidth], SECTION_CLASSES.padding[padding], className));
+  const innerClasses = $derived(cn(prose && PROSE_CLASSES[prose], SECTION_CLASSES.maxWidth[maxWidth], SECTION_CLASSES.padding[padding], className));
 </script>
 
 <svelte:element this={Element} bind:this={node} class={innerClasses} {...restProps}>

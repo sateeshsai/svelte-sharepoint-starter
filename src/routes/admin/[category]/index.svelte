@@ -4,9 +4,6 @@
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { trackAnalytics } from "$lib/common-library/integrations/analytics/analytics";
   import { Section, SectionHeader } from "$lib/common-library/components/layout";
-  import Prose from "$lib/common-library/components/layout/Prose.svelte";
-  import { cn } from "$lib/utils";
-  import { PROSE_CLASSES } from "$lib/common-library/utils";
   const params = $derived(route.getParams("/admin/:category"));
   const categorySlug = $derived(params.category);
   const categoryData = $derived(DASHBOARD_SAMPLE_DATA.navMain.find((c) => c.title.toLowerCase().replaceAll(" ", "-") === categorySlug));
@@ -15,7 +12,7 @@
 </script>
 
 {#if categoryData}
-  <Section padding="compact" class={cn(PROSE_CLASSES["standard"])}>
+  <Section padding="compact" prose="standard">
     <SectionHeader variant="page" breadcrumbs={[{ label: "Admin", href: "/" }, { label: categoryData.title }]}>
       {#snippet intro()}
         <p>
