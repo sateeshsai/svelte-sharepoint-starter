@@ -3,8 +3,8 @@
  *
  * This module defines the data structure for File attachments:
  * - File_Schema: Core fields for file metadata
- * - FileListItem_Schema: Full schema including SharePoint metadata (for GET)
- * - FilePostItem_Schema: Schema for uploading files (for POST)
+ * - File_ListItem_Schema: Full schema including SharePoint metadata (for GET)
+ * - File_PostItem_Schema: Schema for uploading files (for POST)
  *
  * Story-specific file schemas (FilePostItem_ForStory_Schema, StoryFiles_Schema) are in
  * $lib/data/items/stories/schemas to maintain proper module isolation.
@@ -33,28 +33,28 @@ export const File_Schema = z.strictObject({
   FileOrder: z.number().positive("File order must be a positive number."),
 });
 
-export const FileListItem_Schema = z.strictObject({
+export const File_ListItem_Schema = z.strictObject({
   ...Sharepoint_Default_Props_Schema.shape,
   ...File_Schema.shape,
   Author: Sharepoint_Lookup_DefaultProps_Schema,
   Parent: Sharepoint_Lookup_DefaultProps_Schema,
 });
 
-export const FilePostItem_Schema = z.strictObject({
+export const File_PostItem_Schema = z.strictObject({
   ...File_Schema.shape,
   ParentId: z.number().positive("Parent ID is required."),
 });
 
 /** Type definitions derived from schemas */
-export type File_ListItem = z.infer<typeof FileListItem_Schema>;
-export type File_PostItem = z.infer<typeof FilePostItem_Schema>;
+export type File_ListItem = z.infer<typeof File_ListItem_Schema>;
+export type File_PostItem = z.infer<typeof File_PostItem_Schema>;
 
 /**
  * Validate file data for POST/creation
  * @returns Typed success result or error with formatted message
  */
 export function validateFileForPost(data: unknown): { success: true; data: File_PostItem } | { success: false; error: string } {
-  const result = FilePostItem_Schema.safeParse(data);
+  const result = File_PostItem_Schema.safeParse(data);
   if (result.success) {
     return { success: true, data: result.data };
   }

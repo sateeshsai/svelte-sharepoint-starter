@@ -67,8 +67,8 @@ The starter uses **Zod schemas** as the single source of truth, organized by dom
 | Entity                 | Pattern                 | Example                   |
 | ---------------------- | ----------------------- | ------------------------- |
 | **Core Schema**        | `Xxx_Schema`            | `Story_Schema`            |
-| **ListItem Schema**    | `XxxListItem_Schema`    | `StoryListItem_Schema`    |
-| **PostItem Schema**    | `XxxPostItem_Schema`    | `StoryPostItem_Schema`    |
+| **ListItem Schema**    | `Xxx_ListItem_Schema`   | `Story_ListItem_Schema`   |
+| **PostItem Schema**    | `Xxx_PostItem_Schema`   | `Story_PostItem_Schema`   |
 | **ListItem Type**      | `Xxx_ListItem`          | `Story_ListItem`          |
 | **PostItem Type**      | `Xxx_PostItem`          | `Story_PostItem`          |
 | **Factory (ListItem)** | `createXxxListItem`     | `createStoryListItem`     |
@@ -115,14 +115,14 @@ export const Story_Schema = z.strictObject({
 });
 
 // Full schema for GET responses (includes SharePoint metadata)
-export const StoryListItem_Schema = z.strictObject({
+export const Story_ListItem_Schema = z.strictObject({
   ...Sharepoint_Default_Props_Schema.shape,
   ...Story_Schema.shape,
   Author: Sharepoint_Lookup_DefaultProps_Schema,
 });
 
 // Schema for POST/PATCH (excludes SharePoint metadata)
-export const StoryPostItem_Schema = z.strictObject({
+export const Story_PostItem_Schema = z.strictObject({
   ...Story_Schema.shape,
 });
 ```
@@ -139,8 +139,8 @@ Types are defined in the same file as schemas:
 
 ```typescript
 // In stories/schemas.ts
-export type Story_ListItem = z.infer<typeof StoryListItem_Schema>;
-export type Story_PostItem = z.infer<typeof StoryPostItem_Schema>;
+export type Story_ListItem = z.infer<typeof Story_ListItem_Schema>;
+export type Story_PostItem = z.infer<typeof Story_PostItem_Schema>;
 ```
 
 **No manual typing!** Types are automatically derived from schemas.
@@ -149,7 +149,7 @@ export type Story_PostItem = z.infer<typeof StoryPostItem_Schema>;
 
 ```typescript
 // Import schemas and types from domain folders
-import { StoryListItem_Schema, type Story_ListItem } from "$lib/data/items/stories/schemas";
+import { Story_ListItem_Schema, type Story_ListItem } from "$lib/data/items/stories/schemas";
 import { type File_ListItem } from "$lib/data/items/files/schemas";
 import { type User_ListItem } from "$lib/data/items/users/schemas";
 

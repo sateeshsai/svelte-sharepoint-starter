@@ -3,15 +3,15 @@
  *
  * This module defines the data structure for Story items:
  * - Story_Schema: Core fields for story content
- * - StoryListItem_Schema: Full schema including SharePoint metadata (for GET)
- * - StoryPostItem_Schema: Schema for creating/updating stories (for POST/PATCH)
+ * - Story_ListItem_Schema: Full schema including SharePoint metadata (for GET)
+ * - Story_PostItem_Schema: Schema for creating/updating stories (for POST/PATCH)
  *
  * @example
  * ```typescript
- * import { StoryListItem_Schema, type Story_ListItem } from "$lib/data/items/stories/schemas";
+ * import { Story_ListItem_Schema, type Story_ListItem } from "$lib/data/items/stories/schemas";
  *
  * // Validate API response
- * const story = StoryListItem_Schema.parse(apiResponse);
+ * const story = Story_ListItem_Schema.parse(apiResponse);
  *
  * // Type-safe usage
  * const stories: Story_ListItem[] = validatedData;
@@ -35,27 +35,27 @@ export const Story_Schema = z.strictObject({
 });
 
 /** Full Story schema including SharePoint metadata - use for GET responses */
-export const StoryListItem_Schema = z.strictObject({
+export const Story_ListItem_Schema = z.strictObject({
   ...Sharepoint_Default_Props_Schema.shape,
   ...Story_Schema.shape,
   Author: Sharepoint_Lookup_DefaultProps_Schema,
 });
 
 /** Story schema for POST/PATCH operations - excludes SharePoint metadata */
-export const StoryPostItem_Schema = z.strictObject({
+export const Story_PostItem_Schema = z.strictObject({
   ...Story_Schema.shape,
 });
 
 /** Type definitions derived from schemas */
-export type Story_ListItem = z.infer<typeof StoryListItem_Schema>;
-export type Story_PostItem = z.infer<typeof StoryPostItem_Schema>;
+export type Story_ListItem = z.infer<typeof Story_ListItem_Schema>;
+export type Story_PostItem = z.infer<typeof Story_PostItem_Schema>;
 
 /**
  * Validate story data for POST/creation
  * @returns Typed success result or error with formatted message
  */
 export function validateStoryForPost(data: unknown): { success: true; data: Story_PostItem } | { success: false; error: string } {
-  const result = StoryPostItem_Schema.safeParse(data);
+  const result = Story_PostItem_Schema.safeParse(data);
   if (result.success) {
     return { success: true, data: result.data };
   }
@@ -64,13 +64,13 @@ export function validateStoryForPost(data: unknown): { success: true; data: Stor
 
 // ============================================================================
 // Story-specific File Schemas
-// These extend base FilePostItem_Schema with story-specific validation rules
+// These extend base File_PostItem_Schema with story-specific validation rules
 // ============================================================================
 
-import { FilePostItem_Schema } from "$lib/data/items/files/schemas";
+import { File_PostItem_Schema } from "$lib/data/items/files/schemas";
 
 /** File schema with required caption for story images */
-export const FilePostItem_ForStory_Schema = FilePostItem_Schema.extend({
+export const FilePostItem_ForStory_Schema = File_PostItem_Schema.extend({
   Description: z.string().min(6, "Caption must be at least 6 characters.").max(255, "Caption can't be longer than 255 characters."),
 });
 

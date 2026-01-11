@@ -3,14 +3,14 @@
  *
  * This module defines the data structure for User items:
  * - User_Schema: Core fields for user access control
- * - UserListItem_Schema: Full schema including SharePoint metadata (for GET)
- * - UserPostItem_Schema: Schema for creating user records (for POST)
+ * - User_ListItem_Schema: Full schema including SharePoint metadata (for GET)
+ * - User_PostItem_Schema: Schema for creating user records (for POST)
  *
  * @example
  * ```typescript
- * import { UserListItem_Schema, type User_ListItem } from "$lib/data/items/users/schemas";
+ * import { User_ListItem_Schema, type User_ListItem } from "$lib/data/items/users/schemas";
  *
- * const users: User_ListItem[] = UserListItem_Schema.array().parse(apiResponse.value);
+ * const users: User_ListItem[] = User_ListItem_Schema.array().parse(apiResponse.value);
  * const admins = users.filter(u => u.AccessRole === "Admin");
  * ```
  */
@@ -25,18 +25,18 @@ export const User_Schema = z.strictObject({
   AccessRole: z.enum(["Admin"]).nullable(),
 });
 
-export const UserListItem_Schema = z.strictObject({
+export const User_ListItem_Schema = z.strictObject({
   ...Sharepoint_Default_Props_Schema.shape,
   ...User_Schema.shape,
   User: Sharepoint_Lookup_DefaultProps_Schema,
 });
 
-export const UserPostItem_Schema = z.strictObject({
+export const User_PostItem_Schema = z.strictObject({
   ...SharepointTitleProps_Schema.shape,
   ...User_Schema.shape,
   UserId: z.number().positive("User ID is required."),
 });
 
 /** Type definitions derived from schemas */
-export type User_ListItem = z.infer<typeof UserListItem_Schema>;
-export type User_PostItem = z.infer<typeof UserPostItem_Schema>;
+export type User_ListItem = z.infer<typeof User_ListItem_Schema>;
+export type User_PostItem = z.infer<typeof User_PostItem_Schema>;

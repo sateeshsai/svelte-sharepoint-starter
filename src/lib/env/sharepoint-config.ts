@@ -1,6 +1,6 @@
-import { StoryListItem_Schema, StoryPostItem_Schema, FilePostItem_ForStory_Schema } from "$lib/data/items/stories/schemas";
-import { FileListItem_Schema } from "$lib/data/items/files/schemas";
-import { UserListItem_Schema, UserPostItem_Schema } from "$lib/data/items/users/schemas";
+import { Story_ListItem_Schema, Story_PostItem_Schema, FilePostItem_ForStory_Schema } from "$lib/data/items/stories/schemas";
+import { File_ListItem_Schema } from "$lib/data/items/files/schemas";
+import { User_ListItem_Schema, User_PostItem_Schema } from "$lib/data/items/users/schemas";
 import { EngagementListSchema, EngagementPostSchema } from "$lib/common-library/integrations/components/engagements/engagement-schemas";
 import { z, type ZodObject } from "zod";
 import { AnalyticsEntryListSchema, AnalyticsEntryPostSchema } from "$lib/common-library/integrations/analytics/schemas";
@@ -41,8 +41,8 @@ export const SHAREPOINT_CONFIG = {
     Story: {
       name: "StoryList",
       schemas: {
-        list: StoryListItem_Schema,
-        post: StoryPostItem_Schema,
+        list: Story_ListItem_Schema,
+        post: Story_PostItem_Schema,
       },
     },
     Engagements: {
@@ -55,15 +55,15 @@ export const SHAREPOINT_CONFIG = {
     StoryFiles: {
       name: "FilesList",
       schemas: {
-        list: FileListItem_Schema,
+        list: File_ListItem_Schema,
         post: FilePostItem_ForStory_Schema,
       },
     },
     UsersInfo: {
       name: "UsersInfoList",
       schemas: {
-        list: UserListItem_Schema,
-        post: UserPostItem_Schema,
+        list: User_ListItem_Schema,
+        post: User_PostItem_Schema,
       },
     },
     ErrorReports: {

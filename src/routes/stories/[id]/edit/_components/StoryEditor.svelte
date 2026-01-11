@@ -6,7 +6,7 @@
   import Input from "$lib/components/ui/input/input.svelte";
   import Textarea from "$lib/components/ui/textarea/textarea.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
-  import { StoryFiles_Schema, StoryPostItem_Schema } from "$lib/data/items/stories/schemas";
+  import { StoryFiles_Schema, Story_PostItem_Schema } from "$lib/data/items/stories/schemas";
   import { storyListItemToPostItem } from "$lib/data/items/stories/factory";
   import { fileListItemToPostItem } from "$lib/data/items/files/factory";
   import { z } from "zod";
@@ -28,7 +28,7 @@
 
   let storyDataToPost_ValidationErrors = $derived.by(() => {
     const dataToPost = storyListItemToPostItem(story);
-    const storyDataToPost_ValidationResult = StoryPostItem_Schema.safeParse(dataToPost);
+    const storyDataToPost_ValidationResult = Story_PostItem_Schema.safeParse(dataToPost);
     return storyDataToPost_ValidationResult.error ? z.flattenError(storyDataToPost_ValidationResult.error) : undefined;
   });
 

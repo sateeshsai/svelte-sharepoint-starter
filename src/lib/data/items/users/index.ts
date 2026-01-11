@@ -2,7 +2,7 @@
 export { getAndStoreCurrentUserInfo, getUserPropertiesById } from "./api";
 
 // Schemas and types
-export { User_Schema, UserListItem_Schema, UserPostItem_Schema } from "./schemas";
+export { User_Schema, User_ListItem_Schema, User_PostItem_Schema } from "./schemas";
 export type { User_ListItem, User_PostItem } from "./schemas";
 
 // Local mock data

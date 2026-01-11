@@ -13,7 +13,7 @@ Variable names should be succinct, meaningful, unambiguous. Maintainability and 
 Naming conventions for data layer (`$lib/data/items/`):
 
 - Types: `Xxx_ListItem` (GET data), `Xxx_PostItem` (POST data)
-- Schemas: `Xxx_Schema` (core), `XxxListItem_Schema` (GET), `XxxPostItem_Schema` (POST)
+- Schemas: `Xxx_Schema` (core), `Xxx_ListItem_Schema` (GET), `Xxx_PostItem_Schema` (POST)
 - Factory functions: `createXxxListItem`, `createXxxPostItem`, `xxxListItemToPostItem`
 - Domain modules should be self-contained. Cross-domain schemas (e.g., `FilePostItem_ForStory_Schema`) live in the consumer's module (stories/) not the source (files/).
   Important:
