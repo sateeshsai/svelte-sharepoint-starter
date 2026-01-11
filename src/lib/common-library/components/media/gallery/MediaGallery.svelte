@@ -68,7 +68,7 @@
                     options={{ image: { alt: activeItem.description ?? "" }, video: { autoplay: true } }}
                   />
                 </a>
-                <figcaption class="mt-2 text-sm text-center">{activeItem.description ?? ""}</figcaption>
+                <figcaption class="mt-4 text-sm text-center text-balance">{activeItem.description ?? ""}</figcaption>
               </figure>
             </Dialog.Content>
           </Dialog.Root>

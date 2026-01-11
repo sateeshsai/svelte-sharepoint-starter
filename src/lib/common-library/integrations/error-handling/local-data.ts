@@ -33,7 +33,7 @@ export const LOCAL_ERROR_REPORTS: ErrorReport_ListItem[] = [
     Modified: new Date("2024-12-05").toISOString(),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
   },
   {
@@ -49,7 +49,7 @@ export const LOCAL_ERROR_REPORTS: ErrorReport_ListItem[] = [
     Modified: new Date("2024-12-28").toISOString(),
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Simpson, Homer",
     },
   },
   {
@@ -81,7 +81,7 @@ export const LOCAL_ERROR_REPORTS: ErrorReport_ListItem[] = [
     Modified: new Date("2025-01-06").toISOString(),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
   },
 ];

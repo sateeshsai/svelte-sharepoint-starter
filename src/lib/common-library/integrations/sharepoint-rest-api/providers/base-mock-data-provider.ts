@@ -433,8 +433,8 @@ export abstract class BaseMockDataProvider implements DataProvider {
       const reactionEmojis = ["❤️", "🚀", "⭐", "👏", "💡", "🎉"];
       const mockAuthors = [
         { Id: 1, Title: "Modukuru, Sateeshsai" },
-        { Id: 2, Title: "Mooring, James" },
-        { Id: 3, Title: "Gupta, Tripti" },
+        { Id: 2, Title: "Doe, John" },
+        { Id: 3, Title: "Simpson, Homer" },
         { Id: 4, Title: "Test, User" },
       ];
       const mockComments = ["Great work on this!", "Very insightful content.", "I learned something new today.", "Thanks for sharing!", "This is really helpful."];

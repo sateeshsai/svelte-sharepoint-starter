@@ -56,7 +56,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "Towering trees in the heart of the forest",
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Parent: { Id: 2, Title: "Whispers of the Forest" },
     ParentType: "Story",
@@ -70,7 +70,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "A peaceful stream flowing through the woods",
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Parent: { Id: 2, Title: "Whispers of the Forest" },
     ParentType: "Story",
@@ -85,7 +85,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "The summit view at sunrise",
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Simpson, Homer",
     },
     Parent: { Id: 3, Title: "The Mountain's Tale" },
     ParentType: "Story",
@@ -99,7 +99,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "The vast valley stretching to the horizon",
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Simpson, Homer",
     },
     Parent: { Id: 3, Title: "The Mountain's Tale" },
     ParentType: "Story",
@@ -129,7 +129,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "Work in progress image",
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Parent: { Id: 5, Title: "A Draft Story That Is Currently Being Written and Edited" },
     ParentType: "Story",
@@ -189,7 +189,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "Generic supporting image",
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Simpson, Homer",
     },
     Parent: { Id: 8, Title: "Empty Tags Story" },
     ParentType: "Story",
@@ -204,7 +204,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "First showcase image demonstrating high-resolution rendering",
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Parent: { Id: 9, Title: "Rich Media Story with Multiple Images and Complex Formatting" },
     ParentType: "Story",
@@ -218,7 +218,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "Second image with medium-length caption for testing text wrapping and layout",
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Parent: { Id: 9, Title: "Rich Media Story with Multiple Images and Complex Formatting" },
     ParentType: "Story",
@@ -232,7 +232,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "Short",
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Parent: { Id: 9, Title: "Rich Media Story with Multiple Images and Complex Formatting" },
     ParentType: "Story",
@@ -247,7 +247,7 @@ export const LOCAL_FILES: File_ListItem[] = [
       "This is an extremely long caption designed to test how the UI handles captions that extend beyond typical lengths, including multiple sentences with detailed information about the image content, technical specifications, and contextual details that might be relevant to understanding the visual.",
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Parent: { Id: 9, Title: "Rich Media Story with Multiple Images and Complex Formatting" },
     ParentType: "Story",
@@ -261,7 +261,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "Video demonstration of rich media capabilities",
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Parent: { Id: 9, Title: "Rich Media Story with Multiple Images and Complex Formatting" },
     ParentType: "Story",
@@ -275,7 +275,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "Audio narration track for accessibility",
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Parent: { Id: 9, Title: "Rich Media Story with Multiple Images and Complex Formatting" },
     ParentType: "Story",
@@ -307,7 +307,7 @@ export const LOCAL_FILES: File_ListItem[] = [
     Description: "Testing special chars: & < > \" ' and emojis 🚀 😊 in descriptions",
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Parent: { Id: 12, Title: "Special Characters & Symbols Test: Unicode, Emojis 🚀, and More!" },
     ParentType: "Story",

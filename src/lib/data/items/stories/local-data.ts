@@ -37,7 +37,7 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Modified: new Date("2024-06-12").toISOString(),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Tags: "magic,nature,forest,fantasy",
     CoverFileName: "2.avif",
@@ -54,7 +54,7 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Modified: daysAgo(6),
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Simpson, Homer",
     },
     Tags: "adventure,nature,mountains,courage",
     CoverFileName: "1.avif",
@@ -86,7 +86,7 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Modified: hoursAgo(12),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Tags: "draft,work-in-progress",
     CoverFileName: "5.avif",
@@ -102,7 +102,7 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Modified: daysAgo(100),
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Simpson, Homer",
     },
     Tags: "archived,old",
     CoverFileName: "6.avif",
@@ -136,7 +136,7 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Modified: daysAgo(2),
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Simpson, Homer",
     },
     Tags: "",
     CoverFileName: "8.avif",
@@ -154,7 +154,7 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Modified: hoursAgo(8),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Tags: "test,rich-media,formatting,images,comprehensive",
     CoverFileName: "9.avif",
@@ -187,7 +187,7 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Modified: hoursAgo(2),
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Simpson, Homer",
     },
     Tags: "collaboration,team,edited",
     CoverFileName: "11.avif",
@@ -204,7 +204,7 @@ export const LOCAL_STORY_ITEMS: Story_ListItem[] = [
     Modified: hoursAgo(4),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
     Tags: "unicode,special-chars,encoding,emoji,test",
     CoverFileName: "12.avif",

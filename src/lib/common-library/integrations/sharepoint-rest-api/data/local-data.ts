@@ -535,12 +535,12 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
     UserUrl: "",
   },
   {
-    AccountName: "i:0ǵ.t|adfs prod|jmooring",
+    AccountName: "i:0ǵ.t|adfs prod|jdoe",
     DirectReports: [],
-    DisplayName: "Mooring, James",
-    Email: "jmooring@yourdomain.com",
+    DisplayName: "Doe, John",
+    Email: "jdoe@yourdomain.com",
     ExtendedManagers: [],
-    ExtendedReports: ["i:0ǵ.t|adfs prod|jmooring"],
+    ExtendedReports: ["i:0ǵ.t|adfs prod|jdoe"],
     IsFollowed: false,
     LatestPost: null,
     Peers: [],
@@ -555,7 +555,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "SID",
-        Value: "i:0ǵ.t|adfs prod|jmooring",
+        Value: "i:0ǵ.t|adfs prod|jdoe",
         ValueType: "Edm.String",
       },
       {
@@ -565,12 +565,12 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "AccountName",
-        Value: "i:0ǵ.t|adfs prod|jmooring",
+        Value: "i:0ǵ.t|adfs prod|jdoe",
         ValueType: "Edm.String",
       },
       {
         Key: "FirstName",
-        Value: "James",
+        Value: "John",
         ValueType: "Edm.String",
       },
       {
@@ -580,7 +580,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "LastName",
-        Value: "Mooring",
+        Value: "Doe",
         ValueType: "Edm.String",
       },
       {
@@ -590,7 +590,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "PreferredName",
-        Value: "Mooring, James",
+        Value: "Doe, John",
         ValueType: "Edm.String",
       },
       {
@@ -645,7 +645,7 @@ export const LOCAL_SHAREPOINT_USERS_PROPERTIES = [
       },
       {
         Key: "UserName",
-        Value: "jmooring",
+        Value: "jdoe",
         ValueType: "Edm.String",
       },
       {
@@ -1086,14 +1086,14 @@ export const LOCAL_SHAREPOINT_USERS = [
   {
     Id: 2,
     IsHiddenInUI: false,
-    LoginName: "i:0ǵ.t|adfs prod|jmooring",
-    Title: "Mooring, James",
+    LoginName: "i:0ǵ.t|adfs prod|jdoe",
+    Title: "Doe, John",
     PrincipalType: 1,
-    Email: "jmooring@yourdomain.com",
+    Email: "jdoe@yourdomain.com",
     IsShareByEmailGuestUser: false,
     IsSiteAdmin: true,
     UserId: {
-      NameId: "jmooring",
+      NameId: "jdoe",
       NameIdIssuer: "TrustedProvider:adfs prod",
     },
   },

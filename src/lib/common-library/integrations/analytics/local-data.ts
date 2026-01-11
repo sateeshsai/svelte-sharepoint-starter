@@ -27,7 +27,7 @@ export const LOCAL_ANALYTICS: AnalyticsEntry_ListItem[] = [
     Modified: new Date("2024-12-20").toISOString(),
     Author: {
       Id: 2,
-      Title: "Mooring, James",
+      Title: "Doe, John",
     },
   },
   {
@@ -53,7 +53,7 @@ export const LOCAL_ANALYTICS: AnalyticsEntry_ListItem[] = [
     Modified: new Date().toISOString(),
     Author: {
       Id: 3,
-      Title: "Gupta, Tripti",
+      Title: "Simpson, Homer",
     },
   },
 ];

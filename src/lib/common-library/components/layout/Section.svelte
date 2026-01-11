@@ -35,10 +35,7 @@
     maxWidth?: MaxWidthVariant;
     /** Padding preset. Defaults to "standard" */
     padding?: PaddingVariant;
-    /** When true, background spans full viewport width with constrained inner content */
-    fullBleedBg?: boolean;
-    /** Background classes for the full-bleed wrapper (only used when fullBleedBg=true) */
-    background?: string;
+
     /** HTML element to render. Defaults to "section" */
     as?: "section" | "div" | "article" | "main" | "aside";
     /** Additional classes merged with defaults */
@@ -48,33 +45,13 @@
     children?: Snippet;
   };
 
-  let {
-    maxWidth = "standard",
-    padding = "standard",
-    fullBleedBg = false,
-    background = "",
-    as: Element = "section",
-    class: className = "",
-    node = $bindable(),
-    children,
-    ...restProps
-  }: Props = $props();
+  let { maxWidth = "standard", padding = "standard", as: Element = "section", class: className = "", node = $bindable(), children, ...restProps }: Props = $props();
 
   const innerClasses = $derived(cn(SECTION_CLASSES.maxWidth[maxWidth], SECTION_CLASSES.padding[padding], className));
 </script>
 
-{#if fullBleedBg}
-  <div bind:this={node} class={cn("w-full", background)}>
-    <svelte:element this={Element} class={innerClasses} {...restProps}>
-      {#if children}
-        {@render children()}
-      {/if}
-    </svelte:element>
-  </div>
-{:else}
-  <svelte:element this={Element} bind:this={node} class={innerClasses} {...restProps}>
-    {#if children}
-      {@render children()}
-    {/if}
-  </svelte:element>
-{/if}
+<svelte:element this={Element} bind:this={node} class={innerClasses} {...restProps}>
+  {#if children}
+    {@render children()}
+  {/if}
+</svelte:element>
