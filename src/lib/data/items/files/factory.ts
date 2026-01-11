@@ -35,7 +35,7 @@ export function createFileListItem(options: { ParentId: number; ParentType: File
 /**
  * Create new File POST item with sensible defaults
  * Returns data ready to be posted to SharePoint
- * For story files, validate with FilePostItem_ForStory_Schema from stories/schemas
+ * For story files, validate with File_PostItem_ForStory_Schema from stories/schemas
  */
 export function createFilePostItem(options: { ParentId: number; ParentType: File_PostItem["ParentType"] }): File_PostItem {
   return {
@@ -49,7 +49,7 @@ export function createFilePostItem(options: { ParentId: number; ParentType: File
 
 /**
  * Convert File list item to POST format
- * For story files, validate result with FilePostItem_ForStory_Schema from stories/schemas
+ * For story files, validate result with File_PostItem_ForStory_Schema from stories/schemas
  */
 export function fileListItemToPostItem(file: File_ListItem): File_PostItem {
   return {

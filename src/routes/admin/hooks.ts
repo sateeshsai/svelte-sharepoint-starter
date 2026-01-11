@@ -5,8 +5,7 @@ import type { Hooks } from "sv-router";
 import { navigate } from "sv-router/generated";
 
 /**
- * Admin route guard - redirects non-admin users to home.
- * Implements router lifecycle hooks for access control.
+ * Admin route guard - redirects non-admin users to home. This is not a security feature. Access control should be set inside powerpoint.
  */
 export default {
   beforeLoad() {

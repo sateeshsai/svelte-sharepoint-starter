@@ -1,4 +1,4 @@
-import { Story_ListItem_Schema, Story_PostItem_Schema, FilePostItem_ForStory_Schema } from "$lib/data/items/stories/schemas";
+import { Story_ListItem_Schema, Story_PostItem_Schema, File_PostItem_ForStory_Schema } from "$lib/data/items/stories/schemas";
 import { File_ListItem_Schema } from "$lib/data/items/files/schemas";
 import { User_ListItem_Schema, User_PostItem_Schema } from "$lib/data/items/users/schemas";
 import { EngagementListSchema, EngagementPostSchema } from "$lib/common-library/integrations/components/engagements/engagement-schemas";
@@ -56,7 +56,7 @@ export const SHAREPOINT_CONFIG = {
       name: "FilesList",
       schemas: {
         list: File_ListItem_Schema,
-        post: FilePostItem_ForStory_Schema,
+        post: File_PostItem_ForStory_Schema,
       },
     },
     UsersInfo: {

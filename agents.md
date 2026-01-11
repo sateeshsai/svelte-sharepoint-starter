@@ -15,7 +15,7 @@ Naming conventions for data layer (`$lib/data/items/`):
 - Types: `Xxx_ListItem` (GET data), `Xxx_PostItem` (POST data)
 - Schemas: `Xxx_Schema` (core), `Xxx_ListItem_Schema` (GET), `Xxx_PostItem_Schema` (POST)
 - Factory functions: `createXxxListItem`, `createXxxPostItem`, `xxxListItemToPostItem`
-- Domain modules should be self-contained. Cross-domain schemas (e.g., `FilePostItem_ForStory_Schema`) live in the consumer's module (stories/) not the source (files/).
+- Domain modules should be self-contained. Cross-domain schemas (e.g., `File_PostItem_ForStory_Schema`) live in the consumer's module (stories/) not the source (files/).
   Important:
   Assume we are in LOCAL_MODE. Get a solid understanding of the code base. Pay attention to detail, recheck understanding by reviewing files on how things connect with each other instead of assuming. Provide subjective ones, if any, in a separate section, don't nitpick too much though. Run pnpm check to verify when it makes sense to do so. Always be concise and focus on important details than grammar. Ask clarifying questions, only if needed.
 

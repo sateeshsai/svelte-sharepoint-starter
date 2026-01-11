@@ -12,17 +12,17 @@
 export const SCHEMA_VERSION = "1.0.0";
 
 // Story schemas - re-export from domain folder
-export { StorySchema, StoryListSchema, StoryPostSchema, validateStoryForPost } from "$lib/data/items/stories/schemas";
+export { Story_Schema, Story_ListItem_Schema, Story_PostItem_Schema, validateStoryForPost } from "$lib/data/items/stories/schemas";
 
 // Story-specific file schemas - re-export from stories domain
-export { FilePostSchema_ForStory, storyFilesSchema, validateStoryFileForPost, validateStoryFiles } from "$lib/data/items/stories/schemas";
+export { StoryFiles_Schema, validateStoryFileForPost, validateStoryFiles } from "$lib/data/items/stories/schemas";
 export type { File_PostItem_ForStory } from "$lib/data/items/stories/schemas";
 
 // File schemas - re-export from domain folder
-export { FileSchema, FileListSchema, FilePostSchema, validateFileForPost } from "$lib/data/items/files/schemas";
+export { File_Schema, File_ListItem_Schema, File_PostItem_Schema, validateFileForPost } from "$lib/data/items/files/schemas";
 
 // User schemas - re-export from domain folder
-export { UserSchema, UserListSchema, UserPostSchema } from "$lib/data/items/users/schemas";
+export { User_Schema, User_ListItem_Schema, User_PostItem_Schema } from "$lib/data/items/users/schemas";
 
 // Engagement schemas - re-export from common library
 export { EngagementSchema, EngagementListSchema, EngagementPostSchema } from "$lib/common-library/integrations/components/engagements/engagement-schemas";

@@ -70,24 +70,24 @@ export function validateStoryForPost(data: unknown): { success: true; data: Stor
 import { File_PostItem_Schema } from "$lib/data/items/files/schemas";
 
 /** File schema with required caption for story images */
-export const FilePostItem_ForStory_Schema = File_PostItem_Schema.extend({
+export const File_PostItem_ForStory_Schema = File_PostItem_Schema.extend({
   Description: z.string().min(6, "Caption must be at least 6 characters.").max(255, "Caption can't be longer than 255 characters."),
 });
 
 /** Validates array of story files */
 export const StoryFiles_Schema = z.object({
-  files: z.array(FilePostItem_ForStory_Schema).min(1, "Add at least one supporting file."),
+  files: z.array(File_PostItem_ForStory_Schema).min(1, "Add at least one supporting file."),
 });
 
 /** Type for story file POST data */
-export type File_PostItem_ForStory = z.infer<typeof FilePostItem_ForStory_Schema>;
+export type File_PostItem_ForStory = z.infer<typeof File_PostItem_ForStory_Schema>;
 
 /**
  * Validate story file data for POST/creation (with required description/caption)
  * @returns Typed success result or error with formatted message
  */
 export function validateStoryFileForPost(data: unknown): { success: true; data: File_PostItem_ForStory } | { success: false; error: string } {
-  const result = FilePostItem_ForStory_Schema.safeParse(data);
+  const result = File_PostItem_ForStory_Schema.safeParse(data);
   if (result.success) {
     return { success: true, data: result.data };
   }

@@ -19,3 +19,4 @@
 export { default as Section } from "./Section.svelte";
 export { default as SectionHeader } from "./SectionHeader.svelte";
 export { default as Prose } from "./Prose.svelte";
+export { default as BreadCrumbs, type BreadcrumbItem } from "./BreadCrumbs.svelte";

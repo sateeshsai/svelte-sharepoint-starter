@@ -6,7 +6,7 @@
  * - File_ListItem_Schema: Full schema including SharePoint metadata (for GET)
  * - File_PostItem_Schema: Schema for uploading files (for POST)
  *
- * Story-specific file schemas (FilePostItem_ForStory_Schema, StoryFiles_Schema) are in
+ * Story-specific file schemas (File_PostItem_ForStory_Schema, StoryFiles_Schema) are in
  * $lib/data/items/stories/schemas to maintain proper module isolation.
  *
  * @example
