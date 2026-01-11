@@ -35,7 +35,6 @@
     maxWidth?: MaxWidthVariant;
     /** Padding preset. Defaults to "standard" */
     padding?: PaddingVariant;
-
     /** HTML element to render. Defaults to "section" */
     as?: "section" | "div" | "article" | "main" | "aside";
     /** Additional classes merged with defaults */
