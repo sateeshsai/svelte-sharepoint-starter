@@ -11,7 +11,7 @@ import { readAndUploadFile as readAndUploadFileAPI } from "../rest-functions/pos
 import { ensureUserByEmailId as ensureUserByEmailIdAPI } from "../rest-functions/post/ensureUserByEmailId";
 import { updateListItem as updateListItemAPI } from "../rest-functions/update/updateListItem";
 import { deleteListItem as deleteListItemAPI } from "../rest-functions/delete/deleteListItem";
-import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User, Sharepoint_User_Properties } from "../data/types";
+import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_UploadFile_SuccessResponse, Sharepoint_User, Sharepoint_User_Properties } from "../data/types";
 
 /**
  * SharePointDataProvider - implements DataProvider interface using real SharePoint REST API
@@ -141,7 +141,7 @@ export class SharePointDataProvider implements DataProvider {
     folder?: string;
     logToConsole?: boolean;
     signal?: AbortSignal;
-  }): Promise<{ Url: string } | Sharepoint_Error_Formatted> {
+  }): Promise<Sharepoint_UploadFile_SuccessResponse | Sharepoint_Error_Formatted> {
     return readAndUploadFileAPI({
       siteCollectionUrl: options.siteCollectionUrl ?? this.config.paths.site_collection,
       serverRelativeUrl: "",
@@ -151,7 +151,7 @@ export class SharePointDataProvider implements DataProvider {
         name: options.file.name,
         obj: options.file,
       },
-    }) as Promise<{ Url: string } | Sharepoint_Error_Formatted>;
+    });
   }
 
   async updateListItem(options: {

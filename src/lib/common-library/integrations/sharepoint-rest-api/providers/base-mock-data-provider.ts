@@ -1,5 +1,5 @@
 import type { DataProvider } from "./data-provider";
-import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User, Sharepoint_User_Properties } from "../data/types";
+import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_UploadFile_SuccessResponse, Sharepoint_User, Sharepoint_User_Properties } from "../data/types";
 import type { SharePointConfig } from "../config";
 import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "../data/local-data";
 import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
@@ -770,8 +770,8 @@ export abstract class BaseMockDataProvider implements DataProvider {
     folder?: string;
     logToConsole?: boolean;
     signal?: AbortSignal;
-    mockResponse?: { Url: string };
-  }): Promise<{ Url: string } | Sharepoint_Error_Formatted> {
+    mockResponse?: Sharepoint_UploadFile_SuccessResponse;
+  }): Promise<Sharepoint_UploadFile_SuccessResponse | Sharepoint_Error_Formatted> {
     await this.simulateDelay(500);
 
     // If mockResponse provided, return it directly (escape hatch for testing)
@@ -782,9 +782,28 @@ export abstract class BaseMockDataProvider implements DataProvider {
       return options.mockResponse;
     }
 
-    // Return a mock file URL
+    // Return a mock response matching Sharepoint_UploadFile_SuccessResponse
+    const now = new Date().toISOString();
     return {
-      Url: `./assets/${options.folder || "files"}/${options.file.name}`,
+      Name: options.file.name,
+      ServerRelativeUrl: `/${options.folder || "files"}/${options.file.name}`,
+      Length: options.file.size,
+      TimeCreated: now,
+      TimeLastModified: now,
+      UniqueId: crypto.randomUUID(),
+      CheckInComment: "",
+      CheckOutType: 0,
+      ContentTag: "",
+      CustomizedPageStatus: 0,
+      ETag: "",
+      Exists: true,
+      IrmEnabled: false,
+      Level: 1,
+      LinkingUrl: "",
+      MajorVersion: 1,
+      MinorVersion: 0,
+      UIVersion: 512,
+      UIVersionLabel: "1.0",
     };
   }
 

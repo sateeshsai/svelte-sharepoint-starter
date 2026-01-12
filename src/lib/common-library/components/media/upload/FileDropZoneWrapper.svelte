@@ -1,7 +1,7 @@
 <script lang="ts">
   import FileDropZone from "./FileDropZone.svelte";
   import { cn } from "$lib/utils";
-  import type { Snippet } from "svelte";
+  import { onMount, type Snippet } from "svelte";
   import StatusMessage from "$lib/common-library/components/feedback/StatusMessage.svelte";
   import { BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
   import FileIcon from "@lucide/svelte/icons/file";
@@ -31,6 +31,10 @@
     children?: Snippet;
     fileUploadState: BaseAsyncSubmitState;
   } = $props();
+
+  onMount(() => {
+    fileUploadState.resetForm();
+  });
 </script>
 
 {#snippet defaultIcon()}

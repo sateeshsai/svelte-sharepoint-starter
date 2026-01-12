@@ -37,8 +37,9 @@
     coverImageCropperState.showCropper = false;
 
     const fileUploadSuccessResponse = await uploadCroppedImage(dataUri, fileInMemory as File, coverImageUploadState);
+    console.log(coverImageUploadState, fileUploadSuccessResponse);
 
-    if (coverImageUploadState.success && fileUploadSuccessResponse) {
+    if (fileUploadSuccessResponse) {
       coverImageCropperState.croppedImageDataUri_ForLocalMode = dataUri;
       story.CoverFileName = fileUploadSuccessResponse.Name;
       coverImageCropperState.showFileDropZone = false;

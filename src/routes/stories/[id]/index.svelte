@@ -161,7 +161,7 @@
   trackAnalytics();
 </script>
 
-<Section as="main" class="grid justify-center">
+<main class="grid justify-center">
   <svelte:boundary>
     {#snippet failed(error: any, reset)}
       <ErrorBoundaryMessage customError="Error rendering story page." {error} {reset} />
@@ -170,7 +170,7 @@
     {#if storyLoadState?.loading}
       <StatusMessage type="loading" message="Loading story..." />
     {:else if storyLoadState.ready && story}
-      <Prose as="article" variant="withLinks" class="w-full text-pretty">
+      <Section maxWidth="narrow" padding="compact" as="article" prose="withLinks" class="w-full text-pretty">
         <SectionHeader variant="page" class="mt-4 mb-6">
           {#snippet breadcrumbsSnippet()}
             <a class="p-0 flex gap-2 items-center no-underline!" href={p("/stories")}>
@@ -254,9 +254,9 @@
           bind:CommentSubmissionIsInProgress
           mode="comments"
         />
-      </Prose>
+      </Section>
     {:else if storyLoadState?.error}
       <StatusMessage type="error" message={storyLoadState.error} errorDetails={storyLoadState.errorDetails} />
     {/if}
   </svelte:boundary>
-</Section>
+</main>

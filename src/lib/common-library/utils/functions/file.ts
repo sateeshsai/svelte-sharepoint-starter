@@ -42,7 +42,7 @@ export async function fileToArrayBuffer(file: File): Promise<ArrayBuffer | null>
  * const file = dataUriToFile(dataUrl, 'cropped-image.jpg');
  */
 export function dataUriToFile(dataurl: string, filename: string) {
-  console.log(dataurl);
+  // console.log(dataurl);
   // Split the data URL into the mime type part and the data part
   var arr = dataurl.split(","),
     mime = arr[0].match(/:(.*?);/)?.[1],

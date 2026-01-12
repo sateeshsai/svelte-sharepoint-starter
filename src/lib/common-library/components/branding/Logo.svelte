@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { cn } from '$lib/utils';
-	import { mode } from 'mode-watcher';
+  import { cn } from "$lib/utils";
+  import { mode } from "mode-watcher";
 
-	const { class: className, color }: { class?: string; color?: 'black' | 'white' } = $props();
-	const logoColor = $derived(color ? color : mode.current === 'dark' ? 'white' : 'black');
+  const { class: className, color }: { class?: string; color?: "black" | "white" } = $props();
+  const logoColor = $derived(color ? color : mode.current === "dark" ? "white" : "black");
 </script>
 
-<svg
+<!-- <svg
 	class={cn('h-4 lg:h-5', className)}
 	viewBox="0 0 165 31"
 	fill="none"
@@ -62,4 +62,6 @@
 			<rect width="165" height="31" fill={logoColor} />
 		</clipPath>
 	</defs>
-</svg>
+</svg> -->
+
+<p class="uppercase font-bold text-sm">Your logo</p>

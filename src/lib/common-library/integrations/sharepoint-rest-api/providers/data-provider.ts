@@ -1,4 +1,4 @@
-import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_User, Sharepoint_User_Properties } from "../data/types";
+import type { Sharepoint_Error_Formatted, Sharepoint_Get_Operations, Sharepoint_UploadFile_SuccessResponse, Sharepoint_User, Sharepoint_User_Properties } from "../data/types";
 
 /**
  * DataProvider interface - abstracts data operations from implementation
@@ -126,8 +126,8 @@ export interface DataProvider {
     logToConsole?: boolean;
     signal?: AbortSignal;
     /** Override mock response for LOCAL_MODE testing - ignored in production */
-    mockResponse?: { Url: string };
-  }): Promise<{ Url: string } | Sharepoint_Error_Formatted>;
+    mockResponse?: Sharepoint_UploadFile_SuccessResponse;
+  }): Promise<Sharepoint_UploadFile_SuccessResponse | Sharepoint_Error_Formatted>;
 
   /**
    * Update an existing list item

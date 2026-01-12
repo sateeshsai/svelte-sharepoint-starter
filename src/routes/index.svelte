@@ -38,9 +38,10 @@
           {/if}
           <h1 class={cn(HEADING_CLASSES.hero, "mb-10")} in:slide|global>
             <span class="text-[#f96743]">Svelte</span> <span class="text-muted-foreground">+</span> <span class="text-dblue-300">SharePoint</span>
+            <!-- <span class="">A meta framework</span> -->
           </h1>
           <p in:fade|global={{ delay: 200 }} class="leading-relaxed max-w-[30ch] lg:max-w-[50ch] 2xl:text-lg mb-48 lg:mb-56">
-            A meta-framework to accelerate and standardize web development projects.
+            A Svelte 5 + Sharepoint starter codebase/meta-framework to accelerate and standardize web development projects.
           </p>
         </div>
       </Section>
@@ -55,7 +56,9 @@
             <track kind="captions" />
           </video>
           <div class="overlay col-start-1 row-start-1 w-full h-full bg-linear-to-r from-white/90 dark:from-black/80 from-40% dark:from-30% to-transparent p-8 grid content-center">
-            <h2 class={cn(HEADING_CLASSES.section, "text-3xl lg:text-5xl mb-6 text-dblue-500 dark:text-dblue-bright max-w-2/3")} in:slide|global={{ axis: "x", delay: 300 }}>Batteries-included!</h2>
+            <h2 class={cn(HEADING_CLASSES.section, "text-3xl lg:text-5xl mb-6 text-dblue-500 dark:text-dblue-bright font-light max-w-2/3")} in:slide|global={{ axis: "x", delay: 300 }}>
+              Batteries-included!
+            </h2>
             <p class="leading-relaxed 2xl:text-lg max-w-1/2 text-balance" in:fade|global={{ delay: 400 }}>Everything you would need to start a new project in minutes</p>
           </div>
         </div>

@@ -17,7 +17,7 @@
 
 {#if sectionData}
   <Section padding="compact" prose="standard">
-    <SectionHeader variant="page" breadcrumbs={[{ label: "Admin", href: "/" }, { label: categoryData?.title ?? "", href: "/components" }, { label: sectionData.title }]}>
+    <SectionHeader variant="page" breadcrumbs={[{ label: "Admin", href: "#/admin" }, { label: categoryData?.title ?? "", href: "#/admin/" + categorySlug }, { label: sectionData.title }]}>
       {#snippet intro()}
         <p>
           Lorem ipsum, dolor sit amet consectetur adipisicing elit. Iusto, officiis cumque. Expedita aliquid cumque illo placeat sapiente, amet nihil numquam! Fugit neque non accusantium distinctio

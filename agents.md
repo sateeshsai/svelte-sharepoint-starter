@@ -8,6 +8,9 @@ The build files will be hosted on SharePoint 2013 folders. We use mock data when
 Library isolation:
 common-library must NOT import from app layer ($lib/data/, $lib/env/, $routes/, etc.). When common-library components need app-specific behavior, use context injection pattern: define context key/types in common-library, app layer sets the context (in App.svelte), components get from context with fallback to base implementation. See ASYNC_STATE_CONTEXT_KEY in utils/async/ and initAsyncStateContext() in $lib/data/async-state.svelte.ts for the pattern. Also see ENGAGEMENT_CONTEXT_KEY and initEngagementContext() for engagements.
 
+Data Provider Pattern:
+All data operations (GET/POST/UPDATE/DELETE) must go through `getDataProvider()` from `$lib/data/data-providers/provider-factory.ts`. Never call REST functions directly from app-layer code. The provider abstracts between MockDataProvider (LOCAL_MODE) and SharePointDataProvider (production). Provider method signatures and return types must stay in sync across: DataProvider interface, SharePointDataProvider, and BaseMockDataProvider. REST functions in common-library should not import from app layer - config is passed via provider constructor.
+
 Important: `getContext()` can ONLY be called during component initialization, NOT inside async callbacks or event handlers. If you need context values in async code, capture them at component init time or pass as parameters.
 
 # Standards:

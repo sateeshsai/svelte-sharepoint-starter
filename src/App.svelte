@@ -58,7 +58,7 @@
   {/snippet}
   <!-- MOSTLY META AND UTIL UI ELEMENTS -->
   <ModeWatcher />
-  <TailwindViewportHelper />
+  <!-- <TailwindViewportHelper /> -->
   <Head />
   <Toaster richColors closeButton position="top-right" />
 
