@@ -1,7 +1,7 @@
 # Svelte + SharePoint Starter
 
-**Version:** Beta 1.0.0  
-**Status:** Production Ready
+**Version:** Alpha 1.0.0  
+**Status:** In Active Development
 
 A production-ready **Svelte 5** meta-framework for building web applications on **SharePoint 2013 on-premises**. Accelerate development with battle-tested patterns, offline-first development, and type-safe SharePoint integration.
 
