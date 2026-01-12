@@ -8,11 +8,11 @@ import { createStoryListItem, createStoryPostItem, storyListItemToPostItem } fro
 import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { global_State } from "$lib/data/global-state.svelte";
 import type { Story_ListItem } from "./schemas";
-import type { BaseAsyncLoadState, BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { getCachedOrFetch, invalidateCacheByList } from "$lib/common-library/utils/cache";
 import { toast } from "svelte-sonner";
 import { navigate } from "sv-router/generated";
 import { addEngagement as addEngagementBase, removeEngagement as removeEngagementBase } from "$lib/common-library/integrations/components/engagements";
+import type { AsyncLoadState, AsyncSubmitState } from "$lib/data/async-state.svelte";
 
 // Cache key for stories list
 const STORIES_CACHE_KEY = "stories-list";
@@ -84,11 +84,11 @@ export async function removeEngagement(params: RemoveStoryEngagementParams): Pro
  * @param storiesLoadState - State object to track loading/error/stale status
  * @param lastFetchedInPollTimeString - ISO timestamp for polling (skips cache when provided)
  * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
- * @param cacheResponse - Set false for real-time polling to bypass in-memory dedup cache
+ * @param cacheResponse - Set false for real-time polling to bypass in-memory dedupe cache
  * @returns Array of stories or undefined on error
  */
 export async function getStories(
-  storiesLoadState: BaseAsyncLoadState,
+  storiesLoadState: AsyncLoadState,
   lastFetchedInPollTimeString?: string | undefined,
   signal?: AbortSignal,
   cacheResponse: boolean = true
@@ -124,7 +124,7 @@ export async function getStories(
  * Internal: Fetch stories directly from provider (no IndexedDB caching)
  */
 async function fetchStoriesFromProvider(
-  storiesLoadState: BaseAsyncLoadState,
+  storiesLoadState: AsyncLoadState,
   lastFetchedInPollTimeString?: string | undefined,
   signal?: AbortSignal,
   cacheResponse: boolean = true
@@ -170,7 +170,7 @@ async function fetchStoriesFromProvider(
  * @param storyLoadState - State object to track loading/error status. Use AsyncLoadState for auto error reporting.
  * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
  */
-export async function getStory(storyId: number, storyLoadState: BaseAsyncLoadState, signal?: AbortSignal) {
+export async function getStory(storyId: number, storyLoadState: AsyncLoadState, signal?: AbortSignal) {
   const selectExpand = createSelectExpandQueries(createStoryListItem());
   const provider = getDataProvider();
   const fetchResponse = await provider.getListItems<{ value: Story_ListItem[] }>({
@@ -205,7 +205,7 @@ export async function getStory(storyId: number, storyLoadState: BaseAsyncLoadSta
  * @param engagementsLoadState - State object to track loading/error status
  * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
  */
-export async function getStoryEngagements(storyId: number, engagementsLoadState: BaseAsyncLoadState, signal?: AbortSignal) {
+export async function getStoryEngagements(storyId: number, engagementsLoadState: AsyncLoadState, signal?: AbortSignal) {
   const provider = getDataProvider();
   return await getEngagements(provider, SHAREPOINT_CONFIG.lists.Engagements.name, storyId, engagementsLoadState, signal);
 }
@@ -223,7 +223,7 @@ export async function getStoryEngagements(storyId: number, engagementsLoadState:
  * const stop = pollStoryEngagements(123, (data) => { engagements = data; });
  * onCleanup(() => stop());
  */
-export function pollStoryEngagements(storyId: number, onUpdate: (engagements: Engagement_ListItem[]) => void, loadState?: BaseAsyncLoadState): () => void {
+export function pollStoryEngagements(storyId: number, onUpdate: (engagements: Engagement_ListItem[]) => void, loadState?: AsyncLoadState): () => void {
   const provider = getDataProvider();
   const currentUserId = global_State.currentUser?.Id;
 
@@ -241,7 +241,7 @@ export function pollStoryEngagements(storyId: number, onUpdate: (engagements: En
 // ============================================================================
 
 /** Creates a new story and navigates to its edit page. */
-export async function postNewStory(newStoryState: BaseAsyncSubmitState) {
+export async function postNewStory(newStoryState: AsyncSubmitState) {
   const newStoryToPost = createStoryPostItem();
   const provider = getDataProvider();
   const postNewStoryResponse = await provider.postListItem({
@@ -277,7 +277,7 @@ export async function postNewStory(newStoryState: BaseAsyncSubmitState) {
 // PUT/UPDATE Operations
 // ============================================================================
 
-export async function updateStory(story: Story_ListItem, storySubmissionState: BaseAsyncSubmitState) {
+export async function updateStory(story: Story_ListItem, storySubmissionState: AsyncSubmitState) {
   storySubmissionState.setInprogress();
 
   const dataToPost = storyListItemToPostItem(story);

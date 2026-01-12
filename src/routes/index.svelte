@@ -27,7 +27,7 @@
   {/snippet}
   <main class={cn("grid content-start justify-items-center")}>
     <div class="w-full bg-no-repeat bg-bottom bg-size-[210%] md:bg-size-[180%] lg:bg-size-[130%] xl:bg-size-[100%]" style="background-image:url(./assets/images/svelte-machine.avif);">
-      <Section class="w-full text-balance grid ">
+      <Section class="w-full text-balance grid p-0!">
         <div class={cn("hero", SECTION_CLASSES.padding.standard, SECTION_CLASSES.maxWidth.standard)}>
           {#if global_State.userProperties}
             <p in:fly={{ x: -20 }} class="mb-10">Welcome, {getUserFirstLastNames(global_State.userProperties).first}!</p>

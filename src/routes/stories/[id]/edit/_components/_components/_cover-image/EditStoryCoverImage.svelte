@@ -81,7 +81,7 @@
       />
     {/if}
 
-    {#if coverImageCropperState.showFileDropZone}
+    {#if coverImageCropperState.showFileDropZone || !story.CoverFileName}
       <div id="story-cover-img" class="grid min-h-72 rounded-lg border border-dashed border-input">
         <FileDropZoneWrapper elementId="file-upload" fileUploadState={coverImageUploadState} onFileAdd={addCoverImage} accept="image/*" maxFiles={1} fileCount={0}>
           {#snippet icon()}

@@ -9,7 +9,7 @@
   import ErrorBoundaryMessage from "$lib/common-library/components/feedback/ErrorBoundaryMessage.svelte";
   import { EngagementSummary, type Engagement_ListItem } from "$lib/common-library/integrations/components/engagements";
   import { getStoryEngagements } from "$lib/data/items/stories";
-  import { createLoadState } from "$lib/data/async-state.svelte";
+  import { AsyncLoadState, createLoadState } from "$lib/data/async-state.svelte";
   import { useAbortController } from "$lib/hooks/useAbortController.svelte";
 
   const { signal } = useAbortController();

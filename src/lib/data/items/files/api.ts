@@ -1,7 +1,6 @@
 /**
  * Files API - File upload and management operations
  */
-import type { BaseAsyncLoadState, BaseAsyncSubmitState } from "$lib/common-library/utils/async/async.svelte";
 import { apiError, validationError, createSelectExpandQueries } from "$lib/common-library/integrations";
 import { createFileListItem } from "./factory";
 import { dataUriToFile } from "$lib/common-library/utils/functions/file";
@@ -10,6 +9,7 @@ import { SHAREPOINT_CONFIG } from "$lib/env/sharepoint-config";
 import { toast } from "svelte-sonner";
 import type { File_ListItem, File_PostItem } from "./schemas";
 import { getDataProvider } from "$lib/data/data-providers/provider-factory";
+import { AsyncLoadState, AsyncSubmitState } from "$lib/data/async-state.svelte";
 
 /** Response from postListItem - matches SharePoint POST response format (flat lookup IDs) */
 export type FileDetailsPostSuccessResponse = File_PostItem & {
@@ -26,7 +26,7 @@ export type FileDetailsPostSuccessResponse = File_PostItem & {
 // ============================================================================
 
 /** Converts cropped data URI to file and uploads to StoryFiles folder. */
-export async function uploadCroppedImage(dataUri: string, file: File, fileUploadState: BaseAsyncSubmitState) {
+export async function uploadCroppedImage(dataUri: string, file: File, fileUploadState: AsyncSubmitState) {
   fileUploadState.setInprogress();
   const fileToUpload = await dataUriToFile(dataUri, file?.name as string);
 
@@ -50,7 +50,7 @@ export async function uploadCroppedImage(dataUri: string, file: File, fileUpload
 // PUT/UPDATE Operations
 // ============================================================================
 
-export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Partial<File_PostItem>, updateFileState: BaseAsyncSubmitState) {
+export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Partial<File_PostItem>, updateFileState: AsyncSubmitState) {
   const provider = getDataProvider();
   const updateResponse = await provider.updateListItem({
     listName: SHAREPOINT_CONFIG.lists.StoryFiles.name,
@@ -72,7 +72,7 @@ export async function updateStoryFile(fileId: number, fileDetailsToUpdate: Parti
 // ============================================================================
 
 /** Deletes file metadata from Files list (does not delete the actual document library file). */
-export async function deleteStoryFile(fileId: number, deleteFileState: BaseAsyncSubmitState) {
+export async function deleteStoryFile(fileId: number, deleteFileState: AsyncSubmitState) {
   deleteFileState.setInprogress();
   const provider = getDataProvider();
   const deleteFileResponse = await provider.deleteListItem({
@@ -97,7 +97,7 @@ export async function deleteStoryFile(fileId: number, deleteFileState: BaseAsync
  * 1. Uploads files to StoryFiles document library
  * 2. Creates list items in Files list to track metadata
  */
-export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[], storyId: number, fileUploadState: BaseAsyncSubmitState) {
+export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[], storyId: number, fileUploadState: AsyncSubmitState) {
   fileUploadState.setInprogress();
 
   if (!files?.length) {
@@ -204,7 +204,7 @@ export async function uploadStoryFiles(files: File[], storyFiles: File_ListItem[
  * @param storyFilesLoadState - State object to track loading/error status
  * @param signal - AbortSignal from useAbortController() to cancel request on component unmount
  */
-export async function getStoryFiles(storyId: number, storyFilesLoadState: BaseAsyncLoadState, signal?: AbortSignal) {
+export async function getStoryFiles(storyId: number, storyFilesLoadState: AsyncLoadState, signal?: AbortSignal) {
   const selectExpand = createSelectExpandQueries(createFileListItem({ ParentId: storyId, ParentType: "Story" }));
   const provider = getDataProvider();
   const storyFilesResponse = await provider.getListItems<{ value: File_ListItem[] }>({

@@ -219,7 +219,13 @@
           mode="reactions"
         />
 
-        <img in:scale|global={{ start: 0 }} alt={story.Title} src={"./assets/StoryFiles/" + story.CoverFileName} class="rounded-md mt-2 max-h-75 w-full object-cover object-center" />
+        <img
+          in:scale|global={{ start: 0 }}
+          alt={story.Title}
+          src={"./assets/StoryFiles/" + story.CoverFileName}
+          class="rounded-md mt-2 max-h-75 w-full object-cover object-center"
+          style="view-transition-name: story-{story.Id}"
+        />
 
         <h3 class="">{story.Introduction}</h3>
         <LineAnimated class="mt-8 mb-6" />

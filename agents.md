@@ -47,4 +47,5 @@ Create a new branch with a short but descriptive name for the task.
 - Run pnpm check.
 - Update/add JSDoc comments and the .md docs (the ones in the public folder) if necessary. No need for additional section level docs.
 - Update this agents.md file with information that you now know that would have been helpful if included/elaborated/clarified in this file.
+- Update FRAMEWORK_FEATURES with any new things we added that should be listed in it.
 - Finally commit changes, merge with main branch and push to origin. Commit messages brief and glanceable.
