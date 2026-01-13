@@ -24,6 +24,8 @@
     customError: string;
   } = $props();
 
+  console.log(error);
+
   const errorString = $derived(typeof error === "string" ? error : error instanceof Error ? JSON.stringify(error, Object.getOwnPropertyNames(error)) : "Unknown boundary error.");
 
   const config = getContext<SharePointConfig>("sharePointConfig");

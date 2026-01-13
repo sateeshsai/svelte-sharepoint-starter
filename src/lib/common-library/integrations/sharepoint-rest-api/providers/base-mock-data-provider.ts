@@ -81,7 +81,9 @@ export abstract class BaseMockDataProvider implements DataProvider {
   }
 
   /**
-   * Parse operations array into a map for easier access
+   * Parse operations (array or string) into a map for easy value extraction.
+   * Handles both tuple array format and raw query string format.
+   * Used internally to apply operations in OData semantic order regardless of input order.
    */
   private parseOperations(operations?: Sharepoint_Get_Operations): Map<string, string | number> {
     const opMap = new Map<string, string | number>();
@@ -298,42 +300,58 @@ export abstract class BaseMockDataProvider implements DataProvider {
   }
 
   /**
-   * Apply $orderby operation - sorts results by specified field
-   * Accepts SharePoint format: "ColumnName" or "ColumnName asc" or "ColumnName desc"
-   * Default direction is ascending if not specified
+   * Apply $orderby operation - sorts results by one or more fields
+   * Accepts SharePoint format: "Column1 asc, Column2 desc" (comma-separated)
+   * Each column can have optional direction (asc/desc), defaults to asc
+   * @example "Created desc" - single column descending
+   * @example "Category asc, Created desc" - primary by Category, secondary by Created
    */
   private applyOrderBy(data: any[], orderByExpr: string): any[] {
     if (!orderByExpr) return data;
 
-    // Parse "ColumnName direction" format (e.g., "Created desc", "Title asc", "Id")
-    const parts = orderByExpr.trim().split(/\s+/);
-    const field = parts[0];
-    const direction = parts[1]?.toLowerCase() || "asc";
-    const dir = direction === "desc" ? -1 : 1;
+    // Parse comma-separated columns: "Created desc, Title asc, Id"
+    const columns = orderByExpr.split(",").map((col) => {
+      const parts = col.trim().split(/\s+/);
+      const field = parts[0];
+      const direction = parts[1]?.toLowerCase() || "asc";
+      return { field, dir: direction === "desc" ? -1 : 1 };
+    });
 
     return [...data].sort((a, b) => {
-      const aVal = this.getNestedValue(a, field);
-      const bVal = this.getNestedValue(b, field);
-
-      if (aVal == null && bVal == null) return 0;
-      if (aVal == null) return dir;
-      if (bVal == null) return -dir;
-
-      // Handle date strings
-      const aDate = Date.parse(aVal);
-      const bDate = Date.parse(bVal);
-      if (!isNaN(aDate) && !isNaN(bDate)) {
-        return (aDate - bDate) * dir;
+      // Compare by each column in order until we find a difference
+      for (const { field, dir } of columns) {
+        const result = this.compareValues(a, b, field, dir);
+        if (result !== 0) return result;
       }
-
-      // Handle strings
-      if (typeof aVal === "string" && typeof bVal === "string") {
-        return aVal.localeCompare(bVal) * dir;
-      }
-
-      // Handle numbers
-      return (aVal - bVal) * dir;
+      return 0;
     });
+  }
+
+  /**
+   * Compare two items by a single field, handling nulls, dates, strings, and numbers
+   */
+  private compareValues(a: any, b: any, field: string, dir: number): number {
+    const aVal = this.getNestedValue(a, field);
+    const bVal = this.getNestedValue(b, field);
+
+    if (aVal == null && bVal == null) return 0;
+    if (aVal == null) return dir;
+    if (bVal == null) return -dir;
+
+    // Handle date strings
+    const aDate = Date.parse(aVal);
+    const bDate = Date.parse(bVal);
+    if (!isNaN(aDate) && !isNaN(bDate)) {
+      return (aDate - bDate) * dir;
+    }
+
+    // Handle strings
+    if (typeof aVal === "string" && typeof bVal === "string") {
+      return aVal.localeCompare(bVal) * dir;
+    }
+
+    // Handle numbers
+    return (aVal - bVal) * dir;
   }
 
   /**
@@ -489,43 +507,13 @@ export abstract class BaseMockDataProvider implements DataProvider {
       }
     }
 
-    // Apply operations in the order they are passed (respects caller's intent)
-    if (operations && typeof operations !== "string") {
-      for (const [op, value] of operations) {
-        switch (op) {
-          case "filter":
-            if (typeof value === "string") {
-              mockData = this.applyFilter(mockData, value);
-            }
-            break;
-          case "orderby":
-            if (typeof value === "string") {
-              mockData = this.applyOrderBy(mockData, value);
-            }
-            break;
-          case "skip":
-            if (typeof value === "number") {
-              mockData = this.applySkip(mockData, value);
-            }
-            break;
-          case "top":
-            if (typeof value === "number") {
-              mockData = this.applyTop(mockData, value);
-            }
-            break;
-          case "select":
-            if (typeof value === "string") {
-              mockData = this.applySelect(mockData, value);
-            }
-            break;
-          case "expand":
-            // $expand is handled implicitly - mock data already has nested objects populated
-            // SharePoint's $expand tells the API to include related entities, which we already have
-            break;
-        }
-      }
-    } else if (typeof operations === "string") {
-      // Handle raw query string format - parse and apply in standard order
+    // Apply operations in OData semantic order (not array order) to match SharePoint behavior:
+    // 1. $filter - filter rows
+    // 2. $orderby - sort rows
+    // 3. $skip - skip N rows
+    // 4. $top - take N rows
+    // 5. $select - project columns (expand is implicit in mock data)
+    if (operations) {
       const opMap = this.parseOperations(operations);
 
       const filterExpr = opMap.get("filter");

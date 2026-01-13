@@ -59,6 +59,8 @@ export async function reportError(config: SharePointConfig, params: ErrorReportP
       return;
     }
 
+    console.log(toSharePointPost(params));
+
     await postListItem({
       siteCollectionUrl: config.paths.site_collection,
       dataToPost: toSharePointPost(params),

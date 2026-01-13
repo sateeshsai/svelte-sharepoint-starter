@@ -87,6 +87,8 @@ export interface GetCachedOrFetchOptions<T> {
   onStale?: () => void;
   /** Called when fresh data is available */
   onFresh?: () => void;
+  /** Called when background fetch fails (only fires on stale-while-revalidate path) */
+  onBackgroundError?: (error: unknown) => void;
   /** If true, skip cache entirely (useful for polling) */
   skipCache?: boolean;
 }
@@ -110,7 +112,7 @@ const DEFAULT_MAX_AGE = 60 * 60 * 1000; // 1 hour
  * @returns Object with data, fromCache flag, and stale flag
  */
 export async function getCachedOrFetch<T>(options: GetCachedOrFetchOptions<T>): Promise<CachedResult<T>> {
-  const { cacheKey, fetchFn, maxAge = DEFAULT_MAX_AGE, listName, onStale, onFresh, skipCache = false } = options;
+  const { cacheKey, fetchFn, maxAge = DEFAULT_MAX_AGE, listName, onStale, onFresh, onBackgroundError, skipCache = false } = options;
 
   // Skip cache entirely if requested
   if (skipCache) {
@@ -140,12 +142,17 @@ export async function getCachedOrFetch<T>(options: GetCachedOrFetchOptions<T>): 
     onStale?.();
 
     // Background fetch and update
-    fetchFn().then(async (freshData) => {
-      if (freshData !== undefined) {
-        await setCacheEntry(cacheKey, freshData, listName);
-        onFresh?.();
-      }
-    });
+    fetchFn()
+      .then(async (freshData) => {
+        if (freshData !== undefined) {
+          await setCacheEntry(cacheKey, freshData, listName);
+          onFresh?.();
+        }
+      })
+      .catch((error) => {
+        console.warn("[DexieCache] Background fetch failed:", error);
+        onBackgroundError?.(error);
+      });
 
     return { data: cached.data, fromCache: true, stale: true };
   }
@@ -178,7 +185,7 @@ async function getCacheEntry<T>(key: string): Promise<CacheEntry<T> | undefined>
  */
 async function setCacheEntry<T>(key: string, data: T, listName?: string): Promise<void> {
   try {
-    console.log(`[DexieCache] Setting cache entry: key=${key}, listName=${listName}`);
+    // console.log(`[DexieCache] Setting cache entry: key=${key}, listName=${listName}`);
     // Use $state.snapshot to strip Proxies (from Svelte reactivity or dev warnings)
     const clonedData = $state.snapshot(data);
     await getDb().cache.put({

@@ -134,7 +134,8 @@ async function fetchStoriesFromProvider(
   const operations: Sharepoint_Get_Operations = [
     ["select", selectExpand.select],
     ["expand", selectExpand.expand],
-    ["top", 5000],
+    ["orderby", "Created asc,Title desc"],
+    ["top", 10],
   ];
 
   if (lastFetchedInPollTimeString) {
