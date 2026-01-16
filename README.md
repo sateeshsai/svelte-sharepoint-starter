@@ -119,7 +119,7 @@ Perfect for teams that need to:
 
 ## 🤝 Contributing
 
-This is an internal starter for team collaboration. When making improvements:
+This is a simple starter codebase. When making improvements:
 
 1. **Maintain layer separation** - common-library stays generic
 2. **Update docs** - Keep guides in sync with code changes
@@ -133,7 +133,6 @@ This is an internal starter for team collaboration. When making improvements:
 
 **Contact:** sateesh.modukuru@gmail.com  
 **Status:** Beta 1.0.0 - Production Ready  
-**Repository:** Internal team use
 
 ---
 
