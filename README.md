@@ -132,7 +132,6 @@ This is a simple starter codebase. When making improvements:
 ## 📞 Support
 
 **Contact:** sateesh.modukuru@gmail.com  
-**Status:** Beta 1.0.0 - Production Ready  
 
 ---
 
