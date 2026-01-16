@@ -66,7 +66,7 @@
       <div class="preview relative h-72" id="story-cover-img">
         <img
           id="image"
-          src={LOCAL_MODE && fileInMemory ? coverImageCropperState.croppedImageDataUri_ForLocalMode : "./assets/images/" + story.CoverFileName}
+          src={LOCAL_MODE && fileInMemory ? coverImageCropperState.croppedImageDataUri_ForLocalMode : "./assets/StoryFiles/" + story.CoverFileName}
           alt="CropperPic"
           class="bg-muted/30 rounded overflow-hidden h-full w-full object-cover object-center"
         />

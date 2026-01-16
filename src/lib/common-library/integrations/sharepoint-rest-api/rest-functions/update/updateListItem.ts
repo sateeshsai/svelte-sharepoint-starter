@@ -19,8 +19,8 @@ export async function updateListItem<T extends Record<string, any>>(options: {
     credentials: "same-origin", // or credentials: 'include'
     //@ts-ignore
     headers: new Headers({
-      Accept: "application/json; odata=verbose",
-      "Content-Type": "application/json; odata=verbose",
+      Accept: "application/json;odata=nometadata",
+      "Content-Type": "application/json; odata=nometadata",
       "X-RequestDigest": options.formDigest,
       "X-HTTP-Method": "MERGE",
       "IF-MATCH": "*",

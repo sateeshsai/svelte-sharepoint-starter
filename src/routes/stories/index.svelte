@@ -53,7 +53,6 @@
       // This ensures next poll gets items created after this timestamp
       lastFetchTimeString = currentFetchTimeString;
       stories = stories ? [...stories, ...storiesFromDB] : storiesFromDB;
-      stopPolling();
     }, pollInterval);
   }
 

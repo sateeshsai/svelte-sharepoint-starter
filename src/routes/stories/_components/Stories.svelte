@@ -55,7 +55,7 @@
         out:send={{ key: story.Id, duration: 500 }}
         animate:flip={{ duration: 500 }}
       >
-        {new Date(story.Created).toLocaleDateString()}
+        <!-- {new Date(story.Created).toLocaleDateString()} -->
         <div class="storyThumbnail rounded bg-center bg-cover h-36 w-36" style="background-image:{`url(${'./assets/StoryFiles/' + story.CoverFileName})`}"></div>
         <div class="storyInfo grid gap-2 content-start">
           <p class="font-bold line-clamp-2">{story.Title}</p>
