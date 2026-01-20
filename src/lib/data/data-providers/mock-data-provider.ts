@@ -52,13 +52,7 @@ const MOCK_AUTHORS = [
 const REACTION_EMOJIS = ["❤️", "🚀", "⭐", "👏", "💡", "🎉"];
 
 /** Comments for engagement simulation */
-const MOCK_COMMENTS = [
-  "Great work on this!",
-  "Very insightful content.",
-  "I learned something new today.",
-  "Thanks for sharing!",
-  "This is really helpful.",
-];
+const MOCK_COMMENTS = ["Great work on this!", "Very insightful content.", "I learned something new today.", "Thanks for sharing!", "This is really helpful."];
 
 /** Create a type-safe mock story for polling */
 function createMockStoryPollItem(entryNumber: number): StoryPollItem {
