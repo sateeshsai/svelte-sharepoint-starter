@@ -74,6 +74,20 @@ export abstract class BaseMockDataProvider implements DataProvider {
   }
 
   /**
+   * Hook for simulating modifications to existing items during polling.
+   * Override in app-layer to "touch" existing items for Modified-based polling scenarios.
+   * Base implementation does nothing.
+   *
+   * @param listName - Name of the SharePoint list being polled
+   * @param sessionData - Reference to the session store data (can be mutated)
+   * @param context - Parsed filter context from the polling request
+   * @returns Number of items that were modified (for logging/debugging)
+   */
+  protected simulateExistingItemModifications(listName: string, sessionData: any[], context: MockPollContext): number {
+    return 0;
+  }
+
+  /**
    * Get the session data for a list, initializing from seed data if needed
    * All reads go through this to ensure we're using the mutable session store
    */
@@ -478,19 +492,25 @@ export abstract class BaseMockDataProvider implements DataProvider {
       const filterComponents = this.extractFilterComponents(filterExpr);
 
       if (filterComponents) {
-        // Build unique key for tracking simulated entries (include filter column for multi-filter scenarios)
-        const entryKey = `${options.listName}_${filterComponents.column}_${filterComponents.value ?? ""}`;
-        const currentCount = this.simulatedEntryCount.get(entryKey) || 0;
-
-        // Randomly create 0-2 new entries per poll (50% chance for any, then 50% for second)
-        const numNewEntries = Math.random() > 0.5 ? (Math.random() > 0.5 ? 2 : 1) : 0;
-
         const context: MockPollContext = {
           filterColumn: filterComponents.column,
           filterOperator: filterComponents.operator,
           filterValue: filterComponents.value,
           cacheResponse: options.cacheResponse,
         };
+
+        // For Modified-based filters, allow app-layer to simulate modifications to existing items
+        if (filterComponents.column === "Modified" && (filterComponents.operator === "gt" || filterComponents.operator === "ge")) {
+          const sessionData = this.getSessionData(options.listName);
+          this.simulateExistingItemModifications(options.listName, sessionData, context);
+        }
+
+        // Build unique key for tracking simulated entries (include filter column for multi-filter scenarios)
+        const entryKey = `${options.listName}_${filterComponents.column}_${filterComponents.value ?? ""}`;
+        const currentCount = this.simulatedEntryCount.get(entryKey) || 0;
+
+        // Randomly create 0-2 new entries per poll (50% chance for any, then 50% for second)
+        const numNewEntries = Math.random() > 0.5 ? (Math.random() > 0.5 ? 2 : 1) : 0;
 
         for (let i = 0; i < numNewEntries; i++) {
           const entryNum = currentCount + i + 1;
