@@ -131,12 +131,12 @@ Fetch current user data and properties.
 const provider = getDataProvider();
 
 // Get current user
-const user = await provider.getCurrentUser({
+const user = await provider.getCurrentSharepointUser({
   signal,
 });
 
 // Get detailed user properties
-const userProps = await provider.getCurrentUserProperties({
+const userProps = await provider.getCurrentSharepointUserProperties({
   signal,
 });
 
@@ -165,8 +165,8 @@ Request 4: getListItems({...}) → After TTL expires, hits API again
 **Default TTLs:**
 
 - getListItems - 30 seconds
-- getCurrentUser - 60 seconds
-- getCurrentUserProperties - 60 seconds
+- getCurrentSharepointUser - 60 seconds
+- getCurrentSharepointUserProperties - 60 seconds
 - getFormDigestValue - 25 minutes (long-lived digest token)
 
 **Automatic Cache Cleanup:**
@@ -410,7 +410,6 @@ const response = await provider.getListItems({
 **DataProvider Implementations:**
 
 1. **MockDataProvider** (`$lib/data/mock-data-provider.ts`)
-
    - Uses LOCAL_STORY_ITEMS, LOCAL_USERS, etc. from `$lib/data/local-data.ts`
    - Simulates network delays (300-500ms)
    - For polling, simulates creating new items (30% chance per poll)

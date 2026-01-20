@@ -180,7 +180,7 @@ export function canEditItem(authorId: number | undefined): boolean {
 ```svelte
 <script>
   import { global_State, setCurrentUser, isAdmin, canEditItem } from "$lib/data/global-state.svelte";
-  import { getCurrentUser } from "$lib/common-library/integrations/sharepoint-rest-api/get/getCurrentUser";
+  import { getCurrentSharepointUser } from "$lib/common-library/integrations/sharepoint-rest-api/get/getCurrentSharepointUser";
 
   const loadState = new AsyncLoadState();
 
@@ -191,7 +191,7 @@ export function canEditItem(authorId: number | undefined): boolean {
   async function initializeUser() {
     try {
       const provider = getDataProvider();
-      const user = await provider.getCurrentUser({
+      const user = await provider.getCurrentSharepointUser({
         signal,
       });
       setCurrentUser(user);
@@ -224,7 +224,7 @@ export function canEditItem(authorId: number | undefined): boolean {
 ```svelte
 <script>
   import { canEditItem } from "$lib/data/global-state.svelte";
-  
+
   let story: Story_ListItem = $state();
   let currentUserCanEdit = $derived(canEditItem(story?.Author?.Id));
 </script>

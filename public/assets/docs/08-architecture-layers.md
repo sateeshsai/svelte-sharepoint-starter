@@ -93,8 +93,8 @@ The **DataProvider** pattern abstracts all data operations, enabling automatic s
 ```typescript
 export interface DataProvider {
   getListItems<T>(...): Promise<T | Sharepoint_Error_Formatted>;
-  getCurrentUser<T>(...): Promise<T | Sharepoint_Error_Formatted>;
-  getCurrentUserProperties(...): Promise<...>;
+  getCurrentSharepointUser<T>(...): Promise<T | Sharepoint_Error_Formatted>;
+  getCurrentSharepointUserProperties(...): Promise<...>;
   getFormDigestValue(...): Promise<...>;
   postListItem<T>(...): Promise<T | Sharepoint_Error_Formatted>;
   readAndUploadFile(...): Promise<...>;
@@ -242,7 +242,6 @@ const app = mount(App, { target: document.getElementById("app")! });
 **What happens during initialization:**
 
 1. **Config Validation** - Zod schema validates your `sharepoint-config.ts`
-
    - Required fields: `paths.site_collection`, list names, folder names
    - Detects typos and missing fields with clear error messages
    - Shows error page if validation fails (prevents silent bugs)

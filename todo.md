@@ -1,0 +1,7 @@
+- Move stuff like files to \_shared in the data layer.
+- Distinction between user and sharepoint user
+- fetchAndSetCurrentUserProperties vs getAndStoreCurrentUserInfo naming
+- getSharepointUserPropertiesById - formState missing
+- BaseAsyncLoadState still being used in App layer
+- Move sharepoint user stuff out of items/users to common-library layer
+- code formatting. for example in error more info

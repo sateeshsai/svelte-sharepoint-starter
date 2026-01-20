@@ -41,7 +41,6 @@
       const currentFetchTimeString = new Date().toISOString();
       const storiesFromDB = await getStories(storiesLoadState, lastFetchTimeString, signal, false);
       console.log(storiesFromDB);
-
       // Stop polling only if fetch failed (storiesFromDB is undefined on error)
       // Empty arrays [] are valid responses and keep polling active
       if (storiesFromDB === undefined || storiesLoadState.error) {
@@ -63,7 +62,7 @@
       const yearFilterValidate = !filters.Year.selected.length || filters.Year.selected.reduce((acc, selectedYear) => (new Date(story.Created).getFullYear() === +selectedYear ? true : acc), false);
       const authorFilterValidate = !filters.Author.selected.length || filters.Author.selected.reduce((acc, selectedAuthor) => (story.Author.Title === selectedAuthor ? true : acc), false);
       return tagsFilterValidate && yearFilterValidate && authorFilterValidate;
-    })
+    }),
   );
 
   const filters: Record<"Tags" | "Year" | "Author", Filter> = $derived.by(() => {
@@ -75,7 +74,7 @@
             stories
               ?.map((s) => s.Tags?.replaceAll(" ", "").split(","))
               .flat()
-              .filter((t) => t)
+              .filter((t) => t),
           ),
         ],
         selected: [],

@@ -1,10 +1,10 @@
 import type { DataProvider } from "./data-provider";
 import type { SharePointConfig } from "../config";
 import { getListItems as getListItemsAPI } from "../rest-functions/get/getListItems";
-import { getCurrentUser as getCurrentUserAPI } from "../rest-functions/get/getCurrentUser";
-import { getCurrentUserProperties as getCurrentUserPropertiesAPI } from "../rest-functions/get/getCurrentUserProperties";
-import { getUserProperties as getUserPropertiesAPI } from "../rest-functions/get/getUserProperties";
-import { getUser as getUserAPI } from "../rest-functions/get/getUser";
+import { getCurrentSharepointUser as getCurrentUserAPI } from "../rest-functions/get/getCurrentSharepointUser";
+import { getCurrentSharepointUserProperties as getCurrentUserPropertiesAPI } from "../rest-functions/get/getCurrentSharepointUserProperties";
+import { getSharepointUserProperties as getUserPropertiesAPI } from "../rest-functions/get/getSharepointUserProperties";
+import { getSharepointUser as getUserAPI } from "../rest-functions/get/getSharepointUser";
 import { getFormDigestValue as getFormDigestValueAPI } from "../rest-functions/get/getFormDigestValue";
 import { postListItem as postListItemAPI } from "../rest-functions/post/postListItem";
 import { readAndUploadFile as readAndUploadFileAPI } from "../rest-functions/post/readAndUploadFile";
@@ -43,7 +43,7 @@ export class SharePointDataProvider implements DataProvider {
     });
   }
 
-  async getCurrentUser<T extends Sharepoint_User>(options: {
+  async getCurrentSharepointUser<T extends Sharepoint_User>(options: {
     siteCollectionUrl?: string;
     logToConsole?: boolean;
     signal?: AbortSignal;
@@ -55,7 +55,7 @@ export class SharePointDataProvider implements DataProvider {
     });
   }
 
-  async getCurrentUserProperties(options: {
+  async getCurrentSharepointUserProperties(options: {
     siteCollectionUrl?: string;
     logToConsole?: boolean;
     signal?: AbortSignal;
@@ -71,7 +71,7 @@ export class SharePointDataProvider implements DataProvider {
     return { value: result as Record<string, any> };
   }
 
-  async getUserProperties<T extends Sharepoint_User_Properties>(options: {
+  async getSharepointUserProperties<T extends Sharepoint_User_Properties>(options: {
     siteCollectionUrl?: string;
     accountName: string;
     logToConsole?: boolean;
@@ -84,7 +84,7 @@ export class SharePointDataProvider implements DataProvider {
     });
   }
 
-  async getUser<T extends Sharepoint_User>(options: {
+  async getSharepointUser<T extends Sharepoint_User>(options: {
     siteCollectionUrl?: string;
     userId: string;
     logToConsole?: boolean;

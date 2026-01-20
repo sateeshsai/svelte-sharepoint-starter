@@ -8,7 +8,7 @@ import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_User } fr
  *
  * @example
  * // Fetch user by ID
- * getUser({ siteCollectionUrl, userId: "123" })
+ * getSharepointUser({ siteCollectionUrl, userId: "123" })
  *
  * @param options.siteCollectionUrl - SharePoint site collection URL
  * @param options.userId - The SharePoint user ID
@@ -16,7 +16,7 @@ import type { Sharepoint_Error, Sharepoint_Error_Formatted, Sharepoint_User } fr
  * @param options.signal - AbortSignal for request cancellation
  * @param options.deduplicationTtlMs - TTL for request deduplication
  */
-export function getUser<T extends Sharepoint_User>(options: {
+export function getSharepointUser<T extends Sharepoint_User>(options: {
   siteCollectionUrl?: string;
   userId: string;
   logToConsole?: boolean;
@@ -43,7 +43,7 @@ export function getUser<T extends Sharepoint_User>(options: {
       fetch(fetchRequest, { signal: options.signal ?? null })
         .then((response) => response.json())
         .then((data: T | Sharepoint_Error | undefined) => {
-          if (options.logToConsole) console.log("FN: getCurrentUser Response", data);
+          if (options.logToConsole) console.log("FN: getCurrentSharepointUser Response", data);
           if (!data || "odata.error" in data) {
             return {
               error: "Unable to fetch current user details. Error message: " + (data?.["odata.error"].message.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
@@ -52,7 +52,7 @@ export function getUser<T extends Sharepoint_User>(options: {
           return data;
         })
         .catch((error) => {
-          if (options.logToConsole) console.log("FN: getCurrentUser Error", error);
+          if (options.logToConsole) console.log("FN: getCurrentSharepointUser Error", error);
           if (error instanceof Error && error.name === "AbortError") {
             return {
               error: "Unable to fetch current user details. Request timed out or was cancelled. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
@@ -65,6 +65,6 @@ export function getUser<T extends Sharepoint_User>(options: {
     {
       ttlMs: options.deduplicationTtlMs ?? 60000, // 60 second default TTL for user data
       clearOnError: true,
-    }
+    },
   );
 }

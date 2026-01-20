@@ -554,7 +554,7 @@ export abstract class BaseMockDataProvider implements DataProvider {
     return result;
   }
 
-  async getCurrentUser<T extends Sharepoint_User>(options: {
+  async getCurrentSharepointUser<T extends Sharepoint_User>(options: {
     siteCollectionUrl?: string;
     logToConsole?: boolean;
     signal?: AbortSignal;
@@ -567,7 +567,7 @@ export abstract class BaseMockDataProvider implements DataProvider {
     return mockUser as T;
   }
 
-  async getCurrentUserProperties(options: {
+  async getCurrentSharepointUserProperties(options: {
     siteCollectionUrl?: string;
     logToConsole?: boolean;
     signal?: AbortSignal;
@@ -580,7 +580,7 @@ export abstract class BaseMockDataProvider implements DataProvider {
     return { value: mockProps as Record<string, any> };
   }
 
-  async getUserProperties<T extends Sharepoint_User_Properties>(options: {
+  async getSharepointUserProperties<T extends Sharepoint_User_Properties>(options: {
     siteCollectionUrl?: string;
     accountName: string;
     logToConsole?: boolean;
@@ -615,7 +615,7 @@ export abstract class BaseMockDataProvider implements DataProvider {
     return mockProps as unknown as T;
   }
 
-  async getUser<T extends Sharepoint_User>(options: {
+  async getSharepointUser<T extends Sharepoint_User>(options: {
     siteCollectionUrl?: string;
     userId: string;
     logToConsole?: boolean;

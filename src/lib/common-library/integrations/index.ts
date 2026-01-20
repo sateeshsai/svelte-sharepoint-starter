@@ -37,8 +37,8 @@ export { Sharepoint_Default_Props_Schema, Sharepoint_Lookup_DefaultProps_Schema,
 export {
   // GET
   getListItems,
-  getCurrentUser,
-  getCurrentUserProperties,
+  getCurrentSharepointUser,
+  getCurrentSharepointUserProperties,
   getFormDigestValue,
   // POST
   postListItem,

@@ -1,9 +1,9 @@
 // GET functions
 export { getListItems } from "./get/getListItems";
-export { getCurrentUser } from "./get/getCurrentUser";
-export { getCurrentUserProperties } from "./get/getCurrentUserProperties";
-export { getUserProperties } from "./get/getUserProperties";
-export { getUser } from "./get/getUser";
+export { getCurrentSharepointUser } from "./get/getCurrentSharepointUser";
+export { getCurrentSharepointUserProperties } from "./get/getCurrentSharepointUserProperties";
+export { getSharepointUserProperties } from "./get/getSharepointUserProperties";
+export { getSharepointUser } from "./get/getSharepointUser";
 export { getFormDigestValue } from "./get/getFormDigestValue";
 
 // POST functions

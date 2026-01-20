@@ -33,7 +33,7 @@ export interface DataProvider {
    * @param options - Configuration for the request
    * @returns Promise resolving to user object or error
    */
-  getCurrentUser<T extends Sharepoint_User>(options: {
+  getCurrentSharepointUser<T extends Sharepoint_User>(options: {
     siteCollectionUrl?: string;
     logToConsole?: boolean;
     signal?: AbortSignal;
@@ -45,7 +45,7 @@ export interface DataProvider {
    * @param options - Configuration for the request
    * @returns Promise resolving to user properties or error
    */
-  getCurrentUserProperties(options: {
+  getCurrentSharepointUserProperties(options: {
     siteCollectionUrl?: string;
     logToConsole?: boolean;
     signal?: AbortSignal;
@@ -58,7 +58,7 @@ export interface DataProvider {
    * @param options - Configuration including accountName (email, emailId, or full logonName)
    * @returns Promise resolving to user properties or error
    */
-  getUserProperties<T extends Sharepoint_User_Properties>(options: {
+  getSharepointUserProperties<T extends Sharepoint_User_Properties>(options: {
     siteCollectionUrl?: string;
     /** Email address (user@domain.com), emailId (username), or full logonName */
     accountName: string;
@@ -72,7 +72,7 @@ export interface DataProvider {
    * @param options - Configuration including userId
    * @returns Promise resolving to user object or error
    */
-  getUser<T extends Sharepoint_User>(options: {
+  getSharepointUser<T extends Sharepoint_User>(options: {
     siteCollectionUrl?: string;
     userId: string;
     logToConsole?: boolean;

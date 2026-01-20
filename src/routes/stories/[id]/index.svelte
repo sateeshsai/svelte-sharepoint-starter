@@ -2,7 +2,7 @@
   import { navigate, p, route } from "sv-router/generated";
   import { getStory, pollStoryEngagements, postNewStory, addEngagement, removeEngagement } from "$lib/data/items/stories";
   import { getStoryFiles } from "$lib/data/items/files";
-  import { getUserPropertiesById } from "$lib/data/items/users";
+  import { getSharepointUserPropertiesById } from "$lib/data/items/users";
   import type { Story_ListItem } from "$lib/data/items/stories/schemas";
   import type { File_ListItem } from "$lib/data/items/files/schemas";
   import type { Engagement_ListItem } from "$lib/common-library/integrations";
@@ -72,7 +72,7 @@
 
   async function loadAuthorProperties(authorId: number | undefined) {
     if (!authorId) return;
-    authorProperties = await getUserPropertiesById(authorId);
+    authorProperties = await getSharepointUserPropertiesById(authorId);
   }
 
   let engagementsLoadState = createLoadState();

@@ -17,7 +17,7 @@ import type { User_ListItem } from "./schemas";
 export async function getAndStoreCurrentUserInfo(dataLoadState: BaseAsyncLoadState) {
   const provider = getDataProvider();
 
-  const fetchResponse = await provider.getCurrentUser({
+  const fetchResponse = await provider.getCurrentSharepointUser({
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
     logToConsole: false,
   });
@@ -69,7 +69,7 @@ export async function getAndStoreCurrentUserInfo(dataLoadState: BaseAsyncLoadSta
 async function fetchAndSetCurrentUserProperties() {
   //FETCH USER PROPERTIES
   const provider = getDataProvider();
-  const userPropertiesResponse = await provider.getCurrentUserProperties({
+  const userPropertiesResponse = await provider.getCurrentSharepointUserProperties({
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
   });
 
@@ -90,11 +90,11 @@ async function fetchAndSetCurrentUserProperties() {
  * @param userId - SharePoint user ID
  * @returns User properties or undefined if not found
  */
-export async function getUserPropertiesById(userId: number): Promise<Sharepoint_User_Properties | undefined> {
+export async function getSharepointUserPropertiesById(userId: number): Promise<Sharepoint_User_Properties | undefined> {
   const provider = getDataProvider();
 
   // First get the user by ID to get their LoginName
-  const userResponse = await provider.getUser({
+  const userResponse = await provider.getSharepointUser({
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
     userId: String(userId),
   });
@@ -102,7 +102,7 @@ export async function getUserPropertiesById(userId: number): Promise<Sharepoint_
   if ("error" in userResponse) return undefined;
 
   // Then use the LoginName to fetch user properties
-  const propsResponse = await provider.getUserProperties({
+  const propsResponse = await provider.getSharepointUserProperties({
     siteCollectionUrl: SHAREPOINT_CONFIG.paths.site_collection,
     accountName: userResponse.LoginName,
   });

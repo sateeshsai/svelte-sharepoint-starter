@@ -26,15 +26,15 @@ function toLogonName(emailOrLogonName: string): string {
  *
  * @example
  * // By email
- * getUserProperties({ siteCollectionUrl, accountName: "sateesh.modukuru@yourdomain.com" })
+ * getSharepointUserProperties({ siteCollectionUrl, accountName: "sateesh.modukuru@yourdomain.com" })
  *
  * // By emailId (username portion)
- * getUserProperties({ siteCollectionUrl, accountName: "smodukuru" })
+ * getSharepointUserProperties({ siteCollectionUrl, accountName: "smodukuru" })
  *
  * // By full logonName
- * getUserProperties({ siteCollectionUrl, accountName: "i:0ǵ.t|adfs prod|smodukuru" })
+ * getSharepointUserProperties({ siteCollectionUrl, accountName: "i:0ǵ.t|adfs prod|smodukuru" })
  */
-export function getUserProperties<T extends Sharepoint_User_Properties>(options: {
+export function getSharepointUserProperties<T extends Sharepoint_User_Properties>(options: {
   siteCollectionUrl: string;
   /** Email address (user@domain.com), emailId (username), or full logonName */
   accountName: string;
@@ -64,7 +64,7 @@ export function getUserProperties<T extends Sharepoint_User_Properties>(options:
       fetch(fetchRequest, { signal: options.signal })
         .then((response) => response.json())
         .then((data: T | Sharepoint_Error | undefined) => {
-          if (options.logToConsole) console.log("FN: getUserProperties Response", data);
+          if (options.logToConsole) console.log("FN: getSharepointUserProperties Response", data);
           if (!data || "odata.error" in data) {
             return {
               error: "Unable to fetch user properties. Error message: " + (data?.["odata.error"].message.value ?? "Something went wrong. ") + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
@@ -73,7 +73,7 @@ export function getUserProperties<T extends Sharepoint_User_Properties>(options:
           return data;
         })
         .catch((error) => {
-          if (options.logToConsole) console.log("FN: getUserProperties Error", error);
+          if (options.logToConsole) console.log("FN: getSharepointUserProperties Error", error);
           if (error instanceof Error && error.name === "AbortError") {
             return {
               error: "Unable to fetch user properties. Request timed out or was cancelled. " + RECOMMENDED_ERROR_ACTIONS_FOR_UI.reload,
@@ -86,6 +86,6 @@ export function getUserProperties<T extends Sharepoint_User_Properties>(options:
     {
       ttlMs: options.deduplicationTtlMs ?? 60000, // 60 second default TTL for user properties
       clearOnError: true,
-    }
+    },
   );
 }
