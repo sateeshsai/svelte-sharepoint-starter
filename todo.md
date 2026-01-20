@@ -5,3 +5,4 @@
 - BaseAsyncLoadState still being used in App layer
 - Move sharepoint user stuff out of items/users to common-library layer
 - code formatting. for example in error more info
+- font options

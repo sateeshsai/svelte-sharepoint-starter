@@ -5,6 +5,21 @@ import { LOCAL_SHAREPOINT_USERS, LOCAL_SHAREPOINT_USERS_PROPERTIES } from "../da
 import { LOCAL_MODE } from "$lib/common-library/utils/local-dev/modes";
 
 /**
+ * Context passed to generateMockPollItems() for poll simulation.
+ * Contains parsed filter info so app-layer can generate appropriate mock data.
+ */
+export type MockPollContext = {
+  /** The column being filtered (e.g., 'Created', 'Modified', 'Parent/Id') */
+  filterColumn?: string;
+  /** The filter operator (e.g., 'gt', 'ge', 'eq', 'ne') */
+  filterOperator?: string;
+  /** The parsed filter value (string for dates, number for IDs, etc.) */
+  filterValue?: string | number | boolean | null;
+  /** Whether response caching is disabled (indicates polling scenario) */
+  cacheResponse?: boolean;
+};
+
+/**
  * BaseMockDataProvider - abstract base class with reusable mock data logic
  * Extend this class in your app layer and implement getDataForList() to provide project-specific data
  * Lives in common-library for portability across different projects
@@ -43,6 +58,20 @@ export abstract class BaseMockDataProvider implements DataProvider {
    * @returns Array of mock items for that list
    */
   protected abstract getDataForList(listName: string): any[];
+
+  /**
+   * Hook for generating mock items during polling simulation.
+   * Override in app-layer to provide domain-specific mock data for live update testing.
+   * Base implementation returns empty array (no simulation).
+   *
+   * @param listName - Name of the SharePoint list being polled
+   * @param entryNumber - Sequential number for this simulated entry (for unique titles etc.)
+   * @param context - Parsed filter context from the polling request
+   * @returns Array of mock items to add (without Id/Created/Modified - base provider adds these)
+   */
+  protected generateMockPollItems(listName: string, entryNumber: number, context: MockPollContext): any[] {
+    return [];
+  }
 
   /**
    * Get the session data for a list, initializing from seed data if needed
@@ -252,6 +281,53 @@ export abstract class BaseMockDataProvider implements DataProvider {
   }
 
   /**
+   * Extract filter components from a filter expression.
+   * Parses the first comparison operator found (for compound filters, extracts first condition).
+   * Mirrors the parsing logic in evaluateFilterExpression() but returns structured data.
+   * @returns Parsed filter components or null if no valid comparison found
+   */
+  private extractFilterComponents(filterExpr: string): { column: string; operator: string; value: string | number | boolean | null } | null {
+    if (!filterExpr) return null;
+
+    // For compound filters (and/or), extract first condition
+    let expr = filterExpr;
+    if (/ and /i.test(expr)) {
+      expr = expr.split(/ and /i)[0].trim();
+    } else if (/ or /i.test(expr)) {
+      expr = expr.split(/ or /i)[0].trim();
+    }
+
+    // Handle comparison operators: eq, ne, gt, ge, lt, le
+    const comparisonMatch = expr.match(/^(.+?)\s+(eq|ne|gt|ge|lt|le)\s+(.+)$/i);
+    if (comparisonMatch) {
+      const column = comparisonMatch[1].trim();
+      const operator = comparisonMatch[2].toLowerCase();
+      let rawValue = comparisonMatch[3].trim();
+
+      // Parse the value according to SharePoint conventions
+      let value: string | number | boolean | null;
+      if (rawValue.startsWith("'") && rawValue.endsWith("'")) {
+        // String or date value - remove quotes
+        value = rawValue.slice(1, -1);
+      } else if (rawValue === "null") {
+        value = null;
+      } else if (rawValue === "true") {
+        value = true;
+      } else if (rawValue === "false") {
+        value = false;
+      } else if (!isNaN(Number(rawValue))) {
+        value = Number(rawValue);
+      } else {
+        value = rawValue;
+      }
+
+      return { column, operator, value };
+    }
+
+    return null;
+  }
+
+  /**
    * Apply $select operation - returns only specified fields
    * Handles nested fields like "Author/Id,Author/Title" by preserving nested structure
    * In DEV mode, wraps items in Proxy to warn when accessing non-selected fields
@@ -392,118 +468,50 @@ export abstract class BaseMockDataProvider implements DataProvider {
     let mockData = [...this.getSessionData(options.listName)]; // Clone to avoid mutation during filtering
     // console.log(`[MockDataProvider] getListItems ${options.listName}, sessionItems=${mockData.length}, ids=[${mockData.map((i) => i.Id).join(",")}]`);
 
-    // Simulate new entries being created during polling for testing live updates
-    // Only for Story list, when cacheResponse is false (polling scenario), and with a Created >= filter
+    // Simulate new entries during polling for testing live updates
+    // Triggers when: LOCAL_MODE + cacheResponse=false (polling) + has a filter
     const operations = options.operations;
-    const hasCreatedFilter = operations && typeof operations !== "string" && operations.some(([op, value]) => op === "filter" && typeof value === "string" && /Created\s+ge\s+/.test(value));
+    const opMap = this.parseOperations(operations);
+    const filterExpr = opMap.get("filter");
 
-    if (LOCAL_MODE && hasCreatedFilter && options.cacheResponse === false && options.listName === this.config.lists.Story?.name) {
-      const currentCount = this.simulatedEntryCount.get(options.listName) || 0;
+    if (LOCAL_MODE && options.cacheResponse === false && filterExpr && typeof filterExpr === "string") {
+      const filterComponents = this.extractFilterComponents(filterExpr);
 
-      // Randomly create 1 or 2 new entries per poll (50% chance for each)
-      const numNewEntries = Math.random() > 0.5 ? (Math.random() > 0.5 ? 2 : 1) : 0;
+      if (filterComponents) {
+        // Build unique key for tracking simulated entries (include filter column for multi-filter scenarios)
+        const entryKey = `${options.listName}_${filterComponents.column}_${filterComponents.value ?? ""}`;
+        const currentCount = this.simulatedEntryCount.get(entryKey) || 0;
 
-      for (let i = 0; i < numNewEntries; i++) {
-        const entryNum = currentCount + i + 1;
-        // console.log(`[MockDataProvider] Simulating new story entry #${entryNum}`);
+        // Randomly create 0-2 new entries per poll (50% chance for any, then 50% for second)
+        const numNewEntries = Math.random() > 0.5 ? (Math.random() > 0.5 ? 2 : 1) : 0;
 
-        const newStory = {
-          Id: this.getNextId(options.listName),
-          Title: `Live Update Story #${entryNum}`,
-          Introduction: `This story was dynamically created during polling to test live updates. Created at ${new Date().toLocaleTimeString()}`,
-          Content: `<h2>Live Update Test</h2><p>This story appeared dynamically during polling at ${new Date().toLocaleTimeString()} to demonstrate the live update feature.</p>`,
-          Created: new Date().toISOString(),
-          Modified: new Date().toISOString(),
-          Author: { Id: 1, Title: "Modukuru, Sateeshsai" },
-          Tags: "live,polling,test",
-          CoverFileName: "1.avif",
-          ActiveStatus: "Active",
-          PublishStatus: "Published",
+        const context: MockPollContext = {
+          filterColumn: filterComponents.column,
+          filterOperator: filterComponents.operator,
+          filterValue: filterComponents.value,
+          cacheResponse: options.cacheResponse,
         };
 
-        // Add to session store so it persists (will be picked up on next poll)
-        const sessionData = this.getSessionData(options.listName);
-        sessionData.push(newStory);
-      }
+        for (let i = 0; i < numNewEntries; i++) {
+          const entryNum = currentCount + i + 1;
+          const newItems = this.generateMockPollItems(options.listName, entryNum, context);
 
-      if (numNewEntries > 0) {
-        this.simulatedEntryCount.set(options.listName, currentCount + numNewEntries);
-      }
-    }
-
-    // Simulate new engagements during polling for testing live reaction/comment updates
-    // Only for Engagements list, when cacheResponse is false (polling scenario), and with Parent/Id filter
-    const hasParentIdFilter = operations && typeof operations !== "string" && operations.some(([op, value]) => op === "filter" && typeof value === "string" && /Parent\/Id\s+eq\s+\d+/.test(value));
-
-    if (LOCAL_MODE && hasParentIdFilter && options.cacheResponse === false && options.listName === this.config.lists.Engagements?.name) {
-      // Extract parentId from filter
-      const filterOp = operations && typeof operations !== "string" && operations.find(([op, value]) => op === "filter" && typeof value === "string" && /Parent\/Id\s+eq\s+\d+/.test(String(value)));
-      const parentIdMatch = filterOp ? String(filterOp[1]).match(/Parent\/Id\s+eq\s+(\d+)/) : null;
-      const parentId = parentIdMatch ? parseInt(parentIdMatch[1], 10) : 1;
-
-      const engagementKey = `${options.listName}_${parentId}`;
-      const currentCount = this.simulatedEntryCount.get(engagementKey) || 0;
-
-      // Randomly create 0-2 new engagements per poll (50% chance for each)
-      const numNewEntries = Math.random() > 0.5 ? (Math.random() > 0.5 ? 2 : 1) : 0;
-
-      // Emoji and comment options for simulation
-      const reactionEmojis = ["❤️", "🚀", "⭐", "👏", "💡", "🎉"];
-      const mockAuthors = [
-        { Id: 1, Title: "Modukuru, Sateeshsai" },
-        { Id: 2, Title: "Doe, John" },
-        { Id: 3, Title: "Simpson, Homer" },
-        { Id: 4, Title: "Test, User" },
-      ];
-      const mockComments = ["Great work on this!", "Very insightful content.", "I learned something new today.", "Thanks for sharing!", "This is really helpful."];
-
-      for (let i = 0; i < numNewEntries; i++) {
-        const entryNum = currentCount + i + 1;
-        const isReaction = Math.random() > 0.3; // 70% reactions, 30% comments
-        const randomAuthor = mockAuthors[Math.floor(Math.random() * mockAuthors.length)];
-        const now = new Date().toISOString();
-
-        if (isReaction) {
-          const emoji = reactionEmojis[Math.floor(Math.random() * reactionEmojis.length)];
-          // console.log(`[MockDataProvider] Simulating new engagement reaction #${entryNum}: ${emoji}`);
-
-          const newEngagement = {
-            Id: this.getNextId(options.listName),
-            Title: emoji,
-            EngagementType: "Reaction",
-            Content: null,
-            Created: now,
-            Modified: now,
-            Author: randomAuthor,
-            Parent: { Id: parentId, Title: `Parent ${parentId}` },
-            ParentType: "Story",
-          };
-
-          const sessionData = this.getSessionData(options.listName);
-          sessionData.push(newEngagement);
-        } else {
-          const comment = mockComments[Math.floor(Math.random() * mockComments.length)];
-          // console.log(`[MockDataProvider] Simulating new engagement comment #${entryNum}`);
-
-          const newEngagement = {
-            Id: this.getNextId(options.listName),
-            Title: "",
-            EngagementType: "Comment",
-            Content: comment,
-            Created: now,
-            Modified: now,
-            Author: randomAuthor,
-            Parent: { Id: parentId, Title: `Parent ${parentId}` },
-            ParentType: "Story",
-          };
-
-          const sessionData = this.getSessionData(options.listName);
-          sessionData.push(newEngagement);
+          // Add base fields and push to session store
+          const now = new Date().toISOString();
+          for (const item of newItems) {
+            const completeItem = {
+              ...item,
+              Id: this.getNextId(options.listName),
+              Created: now,
+              Modified: now,
+            };
+            this.getSessionData(options.listName).push(completeItem);
+          }
         }
-      }
 
-      if (numNewEntries > 0) {
-        this.simulatedEntryCount.set(engagementKey, currentCount + numNewEntries);
+        if (numNewEntries > 0) {
+          this.simulatedEntryCount.set(entryKey, currentCount + numNewEntries);
+        }
       }
     }
 
